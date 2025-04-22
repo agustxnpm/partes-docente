@@ -34,4 +34,8 @@ public class Response {
         return response(HttpStatus.NOT_FOUND, msj, null);
     }
 
+	public static ResponseEntity<Object> badRequest(Object responseObj, String msj) {
+        return response(HttpStatus.BAD_REQUEST, msj, responseObj);
+    }
+
 }
