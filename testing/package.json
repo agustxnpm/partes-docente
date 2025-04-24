@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@cucumber/cucumber": "^11.2.0",
     "cucumber": "^6.0.7",
     "json-diff": "^1.0.3",
     "sync-request": "^6.1.0"
