@@ -12,5 +12,5 @@ Esquema del escenario: ingresar nueva división
    | año | número | orientación | turno  | status | respuesta                                            |
    | 5   | 2      | Biológicas  | Mañana | 200    | División 5º 2º turno Mañana ingresada correctamente  |
    | 3   | 1      | Sociales    | Tarde  | 200    | División 3º 1º turno Tarde ingresada correctamente   |
-   | 3   | 1      | Sociales    | Tarde  | 200    | División 3º 1º turno Tarde ingresada correctamente   |
+   | 3   | 2      | Sociales    | Tarde  | 200    | División 3º 2º turno Tarde ingresada correctamente   |
 
