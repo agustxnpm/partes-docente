@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.presenter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +25,8 @@ public class DivisionPresenter {
         try {
             divisionService.save(division);
             return Response.ok("División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno " + division.getTurno() + " ingresada correctamente");
-        } catch (IllegalArgumentException e) {
-            return Response.badRequest(division, e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            return Response.duplicateError(division, "Ya existe la division " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno " + division.getTurno());
         }
-    }
+    }   
 }

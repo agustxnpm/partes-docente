@@ -38,4 +38,13 @@ public class Response {
         return response(HttpStatus.BAD_REQUEST, msj, responseObj);
     }
 
+	public static ResponseEntity<Object> duplicateError(Object responseObj, String msj) {
+        return response(HttpStatus.CONFLICT, msj, responseObj);
+    }
+
+	public static ResponseEntity<Object> notImplemented(Object responseObj, String msj) {
+        return response(HttpStatus.NOT_IMPLEMENTED, msj, responseObj);
+    }
+
+
 }

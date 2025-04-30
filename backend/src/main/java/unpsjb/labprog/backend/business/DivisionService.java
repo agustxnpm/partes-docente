@@ -12,21 +12,8 @@ public class DivisionService {
     private DivisionRepository divisionRepository;
 
     public Division save(Division division) {
-        if (exists(division)) {
-            throw new IllegalArgumentException("Ya existe la division: " + division.getAnio() + "º" + division.getNumDivision());  
-        }
 
         return divisionRepository.save(division);
-    }
-
-    // validador de divisiones
-    private boolean exists(Division division) {
-        return divisionRepository.findByAnioAndNumDivisionAndOrientacionAndTurno(
-            division.getAnio(), 
-            division.getNumDivision(), 
-            division.getOrientacion(), 
-            division.getTurno()
-        ).isPresent();
     }
 
 }

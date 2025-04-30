@@ -5,6 +5,7 @@ const request = require("sync-request");
 class HttpClient {
   static post(endpoint, data) {
     try {
+      //console.log(JSON.stringify(data, null, 2)); // Formato legible
       const res = request("POST", `http://backend-pd:8080/${endpoint}`, {
         json: data,
       });

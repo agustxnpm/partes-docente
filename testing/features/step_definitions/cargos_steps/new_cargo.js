@@ -37,7 +37,7 @@ Given('que si el tipo es {string}, opcionalmente se asigna a la división {strin
                 ...this.currentCargo,
                 division: {
                     anio: parseInt(anio),
-                    numero: parseInt(numero),
+                    numDivision: parseInt(numero),
                     turno: turno
                 }
             };
