@@ -24,8 +24,8 @@ Given('que tiene una carga horaria de {int} horas, con vigencia desde {string} h
         this.currentCargo = {
             ...this.currentCargo,
             cargaHoraria: cargaHoraria,
-            fechaDesde: fechaDesde,
-            fechaHasta: fechaHasta || null
+            fechaInicio: fechaDesde,
+            fechaFin: fechaHasta || null
         };
 });
 
