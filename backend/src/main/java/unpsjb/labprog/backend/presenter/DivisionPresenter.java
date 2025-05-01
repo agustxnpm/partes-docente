@@ -15,11 +15,10 @@ import unpsjb.labprog.backend.model.Division;
 @RestController
 @RequestMapping("divisiones")
 public class DivisionPresenter {
-    
 
     @Autowired
     private DivisionService divisionService;
-    
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createDivision(@RequestBody Division division) {
         try {
@@ -30,5 +29,10 @@ public class DivisionPresenter {
         }
     }
 
-    
+    @RequestMapping(method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteAllDivisions() {
+        divisionService.deleteAll();
+        return Response.ok("Divisiones eliminadas correctamente");
+    }
+
 }

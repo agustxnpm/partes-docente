@@ -29,18 +29,20 @@ Given('que tiene una carga horaria de {int} horas, con vigencia desde {string} h
         };
 });
 
-// Y que si el tipo es "ESPACIO CURRICULAR", opcionalmente se asigna a la división "<año>" "<número>" "<turno>"
-Given('que si el tipo es {string}, opcionalmente se asigna a la división {string} {string} {string}',
-    function(tipo, anio, numero, turno) {
+// Y que si el tipo es "ESPACIO CURRICULAR", opcionalmente se asigna a la división "<año>" "<número>" "<orientacion>" "<turno>"
+Given('que si el tipo es {string}, opcionalmente se asigna a la división {string} {string} {string} {string}',
+    function(tipo, anio, numero, orientacion, turno) {
         if (tipo === "ESPACIO CURRICULAR" && anio && numero && turno) {
             this.currentCargo = {
                 ...this.currentCargo,
                 division: {
                     anio: parseInt(anio),
                     numDivision: parseInt(numero),
+                    orientacion: orientacion || null,
                     turno: turno
                 }
             };
         }
-});
+    }
+);
 

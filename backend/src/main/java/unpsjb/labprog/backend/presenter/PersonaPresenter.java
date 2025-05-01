@@ -30,4 +30,10 @@ public class PersonaPresenter {
 
     }
 
+    @RequestMapping(method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteAllPersonas() {
+        personaService.deleteAll();
+        return Response.ok("Personas eliminadas correctamente");
+    }
+
 }

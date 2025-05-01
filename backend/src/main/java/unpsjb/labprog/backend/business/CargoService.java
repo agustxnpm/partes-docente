@@ -26,4 +26,8 @@ public class CargoService {
     public String getMensajeExito(Cargo cargo) {
         return mensajeBuilder.generarMensajeExitoCargo(cargo);
     }
+
+    public void deleteAll() {
+        cargoRepository.deleteAll();
+    }
 }

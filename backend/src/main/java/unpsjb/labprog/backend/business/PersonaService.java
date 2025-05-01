@@ -50,4 +50,8 @@ public class PersonaService {
     public String getMensajeExito(Persona persona) {
         return mensajeBuilder.generarMensajeExitoPersona(persona);
     }
+
+    public void deleteAll() {
+        personaRepository.deleteAll();
+    }
 }

@@ -14,6 +14,10 @@ public class DivisionService {
     @Autowired
     private MensajeBuilder mensajeBuilder;
 
+    public void deleteAll() {
+        divisionRepository.deleteAll();
+    }
+    
     public Division save(Division division) {
 
         return divisionRepository.save(division);
@@ -27,4 +31,13 @@ public class DivisionService {
         return mensajeBuilder.generarMensajeDivisionDuplicada(division);
     }
 
+    public Division buscarDivisionExistente(Division division) {
+        return divisionRepository
+            .findByAnioAndNumDivisionAndTurnoAndOrientacion(
+                division.getAnio(),
+                division.getNumDivision(),
+                division.getTurno(),
+                division.getOrientacion()
+            ).orElse(null);
+    }
 }

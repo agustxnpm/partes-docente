@@ -42,7 +42,7 @@ public class Cargo {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Division division;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

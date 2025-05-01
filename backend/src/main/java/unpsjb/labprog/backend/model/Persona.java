@@ -30,7 +30,7 @@ public class Persona {
     private String domicilio;
     private String telefono;
 
-    /*@OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Designacion> designaciones;
-     */
+    
 }

@@ -22,15 +22,20 @@ public class CargoPresenter {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createCargo(@RequestBody Cargo cargo) {
 
-       
         try {
-           cargoService.save(cargo);
-           return Response.ok(cargoService.getMensajeExito(cargo));
+            cargoService.save(cargo);
+            return Response.ok(cargoService.getMensajeExito(cargo));
         } catch (DataIntegrityViolationException e) {
             return Response.duplicateError(cargo, "El cargo ya existe");
         } catch (IllegalArgumentException e) {
             return Response.notImplemented(e.getMessage(), null);
         }
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteAllCargos() {
+        cargoService.deleteAll();
+        return Response.ok("Cargos eliminados correctamente");
     }
 
 }
