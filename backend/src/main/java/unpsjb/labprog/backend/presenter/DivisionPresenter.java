@@ -24,9 +24,11 @@ public class DivisionPresenter {
     public ResponseEntity<Object> createDivision(@RequestBody Division division) {
         try {
             divisionService.save(division);
-            return Response.ok("División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno " + division.getTurno() + " ingresada correctamente");
+            return Response.ok(divisionService.getMensajeExito(division));
         } catch (DataIntegrityViolationException e) {
-            return Response.duplicateError(division, "Ya existe la division " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno " + division.getTurno());
+            return Response.duplicateError(division, divisionService.getMensajeDivisionDuplicada(division));
         }
-    }   
+    }
+
+    
 }

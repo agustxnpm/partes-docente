@@ -11,9 +11,20 @@ public class DivisionService {
     @Autowired
     private DivisionRepository divisionRepository;
 
+    @Autowired
+    private MensajeBuilder mensajeBuilder;
+
     public Division save(Division division) {
 
         return divisionRepository.save(division);
+    }
+
+    public String getMensajeExito(Division division) {
+        return mensajeBuilder.generarMensajeExitoDivision(division);
+    }
+
+    public String getMensajeDivisionDuplicada(Division division) {
+        return mensajeBuilder.generarMensajeDivisionDuplicada(division);
     }
 
 }

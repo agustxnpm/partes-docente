@@ -23,8 +23,7 @@ public class PersonaPresenter {
 
         try {
             personaService.save(persona);
-            return Response.ok(persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
-                    + " ingresado/a correctamente");
+            return Response.ok(personaService.getMensajeExito(persona));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(persona, e.getMessage());    
         }
