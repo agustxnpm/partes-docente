@@ -10,7 +10,7 @@ import unpsjb.labprog.backend.model.TipoDesignacion;
 @Component
 public class MensajeBuilder {
 
-    public String generarMensajeExitoCargo(Cargo cargo) {
+    public String generarMensajeExitoCargoCreado(Cargo cargo) {
         if (cargo.getTipoDesignacion() == TipoDesignacion.CARGO) {
             return "Cargo de " + cargo.getNombre() + " ingresado correctamente";
         }
@@ -24,7 +24,7 @@ public class MensajeBuilder {
         throw new IllegalArgumentException("Tipo de designación no válido");
     }
 
-    public String generarMensajeExitoDivision(Division division) {
+    public String generarMensajeExitoDivisionCreada(Division division) {
         return "División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
                 + division.getTurno() + " ingresada correctamente";
     }
@@ -34,8 +34,18 @@ public class MensajeBuilder {
                 + division.getTurno();
     }
 
-    public String generarMensajeExitoPersona(Persona persona) {
+    public String generarMensajeExitoPersonaCreada(Persona persona) {
         return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
                 + " ingresado/a correctamente";
+    }
+
+    public String generarMensajeExitoPersonaActualizada(Persona persona) {
+        return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
+                + " actualizado/a correctamente";
+    }
+
+    public String generarMensajeExitoPersonaBorrada(Persona persona) {
+        return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
+                + " borrado/a correctamente";
     }
 }

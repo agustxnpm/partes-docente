@@ -1,0 +1,171 @@
+<div class="container mt-5 flashy-form">
+  <div class="bg-light rounded shadow p-4 border border-2 border-primary-subtle animated-border">
+    <div class="d-flex align-items-center mb-4">
+      <i class="bi bi-person-badge-fill text-primary fs-3 me-2 neon-icon"></i>
+      <h3 class="m-0">{{ isNew ? "Nueva Persona" : "Editar Persona" }}</h3>
+    </div>
+
+    <form #personaForm="ngForm" (ngSubmit)="savePersona()">
+      <div class="row g-4">
+        <!-- DNI -->
+        <div class="col-md-4">
+          <label for="dni" class="form-label required-field">DNI</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="persona.dni"
+            name="dni"
+            #dni="ngModel"
+            [disabled]="!isNew"
+            pattern="[0-9]*"
+            (keypress)="onlyNumbers($event)"
+            required
+          />
+          <div class="d-flex mt-1">
+            <div class="flex-grow-1">
+              <small class="error-message" *ngIf="dni.invalid && (dni.dirty || dni.touched)">
+                Campo obligatorio
+              </small>
+            </div>
+            <div class="text-end">
+              <small class="text-danger" *ngIf="showErrorDni">
+                Solo se permiten números
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- CUIL -->
+        <div class="col-md-4">
+          <label for="cuil" class="form-label required-field">CUIL</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="persona.cuil"
+            name="cuil"
+            #cuil="ngModel"
+            [disabled]="!isNew"
+            pattern="[0-9]*"
+            (keypress)="onlyNumbers($event)"
+            required
+          />
+          <div class="d-flex mt-1">
+            <div class="flex-grow-1">
+              <small class="error-message" *ngIf="cuil.invalid && (cuil.dirty || cuil.touched)">
+                Campo obligatorio
+              </small>
+            </div>
+            <div class="text-end">
+              <small class="text-danger" *ngIf="showErrorCuil">
+                Solo se permiten números
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sexo -->
+        <div class="col-md-4">
+          <label for="sexo" class="form-label required-field">Sexo</label>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="persona.sexo"
+            name="sexo"
+            #sexo="ngModel"
+            required
+          >
+            <option value="">Seleccione una opción</option>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+          </select>
+          <small class="error-message" *ngIf="sexo.invalid && (sexo.dirty || sexo.touched)">
+            Campo obligatorio
+          </small>
+        </div>
+
+        <!-- Nombre -->
+        <div class="col-md-6">
+          <label for="nombre" class="form-label required-field">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="persona.nombre"
+            name="nombre"
+            #nombre="ngModel"
+            required
+          />
+          <small class="error-message" *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)">
+            Campo obligatorio
+          </small>
+        </div>
+
+        <!-- Apellido -->
+        <div class="col-md-6">
+          <label for="apellido" class="form-label required-field">Apellido</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="persona.apellido"
+            name="apellido"
+            #apellido="ngModel"
+            required
+          />
+          <small class="error-message" *ngIf="apellido.invalid && (apellido.dirty || apellido.touched)">
+            Campo obligatorio
+          </small>
+        </div>
+
+        <!-- Domicilio -->
+        <div class="col-md-6">
+          <label for="domicilio" class="form-label required-field">Domicilio</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="persona.domicilio"
+            name="domicilio"
+            #domicilio="ngModel"
+            required
+          />
+          <small class="error-message" *ngIf="domicilio.invalid && (domicilio.dirty || domicilio.touched)">
+            Campo obligatorio
+          </small>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="col-md-6">
+          <label for="telefono" class="form-label required-field">Teléfono</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="persona.telefono"
+            name="telefono"
+            #telefono="ngModel"
+            required
+          />
+          <small class="error-message" *ngIf="telefono.invalid && (telefono.dirty || telefono.touched)">
+            Campo obligatorio
+          </small>
+        </div>
+      </div>
+
+      <div class="mt-4 text-end">
+        <button
+          type="submit"
+          class="btn btn-outline-primary px-4"
+          [disabled]="personaForm.invalid"
+        >
+          <i class="bi bi-check-circle me-1"></i>
+          {{ isNew ? "Crear Persona" : "Guardar Cambios" }}
+        </button>
+      </div>
+
+      <div *ngIf="mensaje" class="alert mt-4" [ngClass]="{ 'alert-danger': isError, 'alert-success': !isError }" role="alert">
+        <div class="d-flex justify-content-between align-items-center">
+          <span>{{ mensaje }}</span>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="volver()">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

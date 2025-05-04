@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.model.Persona;
 
 @Service
@@ -20,9 +24,11 @@ public class PersonaService {
     @Autowired
     private Validator validator;
 
-    public Persona findById(Long id) {
-        return personaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No se encontró una persona con el ID " + id));
+
+    public Page<Persona> findByPage(int page, int size) {
+        return personaRepository.findAll(
+            PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"))
+        );
     }
 
     public List<Persona> findAll() {
@@ -31,27 +37,33 @@ public class PersonaService {
         return result;
     }
 
-    /*
-     * public Persona findByNombre(String nombre) {
-     * return personaRepository.findByNombre(nombre).orElse(null);
-     * }
-     */
-
+    @Transactional
     public Persona save(Persona persona) {
         validator.validarPersona(persona);
         return personaRepository.save(persona);
     }
 
-    public void deleteByDni(Long dni) {
-        validator.validarDni(dni);
-        personaRepository.deleteByDni(dni);
+    @Transactional
+    public void delete(Persona persona) {
+        personaRepository.delete(persona);
+    }
+
+    public Persona findById(Long id) {
+        return personaRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Persona no encontrada"));
     }
 
     public String getMensajeExito(Persona persona) {
-        return mensajeBuilder.generarMensajeExitoPersona(persona);
+        return mensajeBuilder.generarMensajeExitoPersonaCreada(persona);
     }
 
-    public void deleteAll() {
-        personaRepository.deleteAll();
+    public String getMensajeExitoActualizacion(Persona persona) {
+        return mensajeBuilder.generarMensajeExitoPersonaActualizada(persona);
     }
+
+    public String getMensajeExitoBorrado (Persona persona) {
+        return mensajeBuilder.generarMensajeExitoPersonaBorrada(persona);
+    }
+
+
 }

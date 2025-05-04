@@ -14,17 +14,13 @@ public class DivisionService {
     @Autowired
     private MensajeBuilder mensajeBuilder;
 
-    public void deleteAll() {
-        divisionRepository.deleteAll();
-    }
-    
     public Division save(Division division) {
 
         return divisionRepository.save(division);
     }
 
     public String getMensajeExito(Division division) {
-        return mensajeBuilder.generarMensajeExitoDivision(division);
+        return mensajeBuilder.generarMensajeExitoDivisionCreada(division);
     }
 
     public String getMensajeDivisionDuplicada(Division division) {

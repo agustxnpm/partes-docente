@@ -29,10 +29,5 @@ public class DivisionPresenter {
         }
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteAllDivisions() {
-        divisionService.deleteAll();
-        return Response.ok("Divisiones eliminadas correctamente");
-    }
 
 }

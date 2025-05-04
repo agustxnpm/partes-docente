@@ -32,10 +32,5 @@ public class CargoPresenter {
         }
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteAllCargos() {
-        cargoService.deleteAll();
-        return Response.ok("Cargos eliminados correctamente");
-    }
 
 }

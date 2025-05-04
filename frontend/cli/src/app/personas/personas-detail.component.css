@@ -1,0 +1,29 @@
+/* Estilos para el campo requerido */
+.required-field::after {
+    content: " *";
+    color: red;
+  }
+  
+  /* Estilos para mensajes de error */
+  .error-message {
+    color: red;
+    line-height: 1;
+    display: block;
+  }
+  
+  .text-danger {
+    line-height: 1;
+    display: block;
+  }
+  
+  .flex-grow-1 {
+    min-width: 50%;
+  }
+  
+  /* Estilos para campos deshabilitados */
+  .form-control:disabled, 
+  .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }

@@ -1,0 +1,72 @@
+<div class="container mt-5">
+  <div
+    class="bg-white border border-2 border-dark-subtle rounded shadow-sm p-4"
+  >
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-people-fill text-dark fs-3 me-2"></i>
+        <h3 class="m-0">Lista de Personas</h3>
+      </div>
+      <span class="badge bg-dark text-white fs-6">
+        {{ resultsPage.totalElements }} registro(s)
+      </span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle mb-0">
+        <thead class="table-light text-center">
+          <tr>
+            <th>#</th>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>CUIL</th>
+            <th>Sexo</th>
+            <th>Domicilio</th>
+            <th>Teléfono</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let persona of resultsPage.content; let i = index">
+            <td class="text-center">{{ (currentPage - 1) * resultsPage.size + i + 1 }}</td>            <td>{{ persona.dni }}</td>
+            <td>{{ persona.nombre }}</td>
+            <td>{{ persona.apellido }}</td>
+            <td>{{ persona.cuil }}</td>
+            <td>{{ persona.sexo }}</td>
+            <td>{{ persona.domicilio }}</td>
+            <td>{{ persona.telefono }}</td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  class="btn btn-outline-primary"
+                  [routerLink]="['/personas', persona.id]"
+                >
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button
+                  class="btn btn-outline-danger"
+                  (click)="eliminarPersona(persona)"
+                >
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Componente de paginación -->
+    <div class="d-flex justify-content-center mt-4">
+      <app-pagination
+        [totalPages]="resultsPage.totalPages"
+        [currentPage]="currentPage"
+        [last]="resultsPage.last"
+        [number]="resultsPage.number"
+        (pageChangeRequested)="onPageChangeRequested($event)"
+      >
+      </app-pagination>
+    </div>
+  </div>
+</div>
