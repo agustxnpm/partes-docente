@@ -1,10 +1,12 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output, SimpleChange, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, Output, SimpleChanges } from "@angular/core";
 
 @Component({
   selector: 'app-pagination',
   templateUrl: './pagination.component.html',
+  imports: [CommonModule],
   styleUrls: ['./styles-pagination.css'],
+  standalone: true
 })
 export class PaginationComponent {
   @Input() totalPages: number = 0;
@@ -12,46 +14,50 @@ export class PaginationComponent {
   @Input() currentPage: number = 1;
   @Input() number: number = 1;
   @Output() pageChangeRequested = new EventEmitter<number>();
-  pages: number[] = [];
+  pages: (number | string)[] = [];
 
-  constructor () {}
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['totalPages']){
-      this.pages = Array.from(Array(this.totalPages).keys())
+    if (changes['totalPages'] || changes['currentPage']) {
+      this.pages = this.generateVisiblePages(this.currentPage, this.totalPages);
     }
-
   }
 
-  onPageChange(pageId: number): void {
-    if (!this.currentPage) {
-      this.currentPage = 1;
-    }
-
-    let page = pageId;
-    if (pageId === -2) {
-      page = 1;
-    }
-
-    if (pageId === -1) {
-      page = this.currentPage > 1 ? this.currentPage - 1 : 1;
-    }
-
-    if (pageId === -3) {
-      page = !this.last ? this.currentPage + 1 : this.currentPage;
-    }
-
-    if (pageId === -4) {
-      page = this.totalPages;
-    }
-
-    if (pageId > 1 && this.pages.length >= pageId) {
-      page = this.pages[pageId - 1] + 1;
-    }
-
-    page = Math.max(1, Math.min(this.totalPages, page));
-    this.currentPage = page;
-    this.pageChangeRequested.emit(page);
+  onPageChange(pageId: number | string): void {
+    if (typeof pageId !== 'number') return;
+  
+    if (!pageId || pageId < 1 || pageId > this.totalPages || pageId === this.currentPage) return;
+  
+    this.currentPage = pageId;
+    this.pageChangeRequested.emit(pageId);
   }
+  
 
+  private generateVisiblePages(current: number, total: number): (number | string)[] {
+    const delta = 2;
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let last: number | undefined;
+
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (last !== undefined) {
+        if (i - last === 2) {
+          rangeWithDots.push(last + 1);
+        } else if (i - last > 2) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      last = i;
+    }
+
+    return rangeWithDots;
+  }
 }
