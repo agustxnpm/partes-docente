@@ -23,7 +23,7 @@ public class DivisionPresenter {
     public ResponseEntity<Object> createDivision(@RequestBody Division division) {
         try {
             divisionService.save(division);
-            return Response.ok(divisionService.getMensajeExito(division));
+            return Response.ok(division, divisionService.getMensajeExito(division));
         } catch (DataIntegrityViolationException e) {
             return Response.duplicateError(division, divisionService.getMensajeDivisionDuplicada(division));
         }

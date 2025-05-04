@@ -29,6 +29,10 @@ export class PersonasDetailComponent {
   mensaje: string = ""; // Para mostrar el mensaje del backend
   isNew: boolean = true;
 
+  cuilPrefix: string = ""; // Prefijo del CUIL
+  cuilSuffix: string = ""; // Sufijo del CUIL
+  cuilInvalid: boolean = false;
+
   constructor(
     private personaService: PersonaService,
     private route: ActivatedRoute,
@@ -48,25 +52,30 @@ export class PersonasDetailComponent {
         this.persona = {
           id: 0,
           dni: null,
-          cuil: '',
-          nombre: '',
-          apellido: '',
-          sexo: 'M',
+          cuil: "",
+          nombre: "",
+          apellido: "",
+          sexo: "M",
           titulo: null,
-          domicilio: '',
-          telefono: '',
+          domicilio: "",
+          telefono: "",
           designaciones: [],
         };
+        this.cuilPrefix = "";
+        this.cuilSuffix = "";
       } else {
         // Editar persona existente
         this.isNew = false;
         this.personaService.findById(Number(id)).subscribe({
           next: (response) => {
-            this.persona = response.data as Persona; // Extraer el campo `data`
+            this.persona = response.data as Persona;
+            const cuilParts = this.persona.cuil.split("-");
+            this.cuilPrefix = cuilParts[0];
+            this.cuilSuffix = cuilParts[2];
           },
           error: (err) => {
-            console.error('Error al obtener la persona:', err);
-            this.mensaje = 'Error al cargar la persona.';
+            console.error("Error al obtener la persona:", err);
+            this.mensaje = "Error al cargar la persona.";
           },
         });
       }
@@ -80,21 +89,29 @@ export class PersonasDetailComponent {
   isError: boolean = false;
 
   savePersona(): void {
+    // Validar que el CUIL esté completo
+    if (!this.cuilPrefix || !this.cuilSuffix || !this.persona.dni) {
+      this.cuilInvalid = true;
+      return;
+    }
+
+    // Construir el CUIL completo
+    this.persona.cuil = `${this.cuilPrefix}-${this.persona.dni}-${this.cuilSuffix}`;
+    this.cuilInvalid = false;
+
     if (this.isNew) {
-      // Crear nueva persona
       this.personaService.createPersona(this.persona).subscribe({
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
-        }
-      }); 
+        },
+      });
     } else {
-      // Actualizar persona existente
       this.personaService.updatePersona(this.persona).subscribe({
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
-        }
+        },
       });
     }
   }

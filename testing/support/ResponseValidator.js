@@ -10,9 +10,9 @@ class ResponseValidator {
     );
 
     assert.equal(
-      actual.data,
+      actual.message,
       expectedMessage,
-      `La respuesta esperada era "${expectedMessage}", pero se recibió "${actual.data}"`
+      `La respuesta esperada era "${expectedMessage}", pero se recibió "${actual.message}"`
     );
   }
 }

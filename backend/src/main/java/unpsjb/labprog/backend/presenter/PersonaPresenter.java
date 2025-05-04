@@ -37,7 +37,7 @@ public class PersonaPresenter {
         try {
             return Response.ok(personaService.findAll());
         } catch (IllegalArgumentException e) {
-            return Response.badRequest(null, e.getMessage());
+            return Response.badRequest(e, e.getMessage());
         }
     }
 
@@ -65,7 +65,7 @@ public class PersonaPresenter {
             personaService.delete(persona);
             return Response.ok(persona, personaService.getMensajeExitoBorrado(persona));
         } catch (IllegalArgumentException e) {
-            return Response.badRequest(null, e.getMessage());
+            return Response.badRequest(e, e.getMessage());
         }
     }
 
@@ -75,7 +75,7 @@ public class PersonaPresenter {
             Persona persona = personaService.findById(id);
             return Response.ok(persona);
         } catch (IllegalArgumentException e) {
-            return Response.badRequest(null, e.getMessage());
+            return Response.badRequest(e, e.getMessage());
         }
     }
 

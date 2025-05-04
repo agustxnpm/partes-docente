@@ -22,6 +22,8 @@
             <th>Apellido</th>
             <th>CUIL</th>
             <th>Sexo</th>
+            <th>Título</th>
+            <!-- Nueva columna -->
             <th>Domicilio</th>
             <th>Teléfono</th>
             <th></th>
@@ -29,11 +31,16 @@
         </thead>
         <tbody>
           <tr *ngFor="let persona of resultsPage.content; let i = index">
-            <td class="text-center">{{ (currentPage - 1) * resultsPage.size + i + 1 }}</td>            <td>{{ persona.dni }}</td>
+            <td class="text-center">
+              {{ (currentPage - 1) * resultsPage.size + i + 1 }}
+            </td>
+            <td>{{ persona.dni }}</td>
             <td>{{ persona.nombre }}</td>
             <td>{{ persona.apellido }}</td>
             <td>{{ persona.cuil }}</td>
             <td>{{ persona.sexo }}</td>
+            <td>{{ persona.titulo || "Sin título" }}</td> <!-- Mostrar "Sin título" si es nulo -->
+
             <td>{{ persona.domicilio }}</td>
             <td>{{ persona.telefono }}</td>
             <td class="text-center">

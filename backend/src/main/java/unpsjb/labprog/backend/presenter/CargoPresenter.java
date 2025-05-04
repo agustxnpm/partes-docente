@@ -24,11 +24,11 @@ public class CargoPresenter {
 
         try {
             cargoService.save(cargo);
-            return Response.ok(cargoService.getMensajeExito(cargo));
+            return Response.ok(cargo, cargoService.getMensajeExito(cargo));
         } catch (DataIntegrityViolationException e) {
             return Response.duplicateError(cargo, "El cargo ya existe");
         } catch (IllegalArgumentException e) {
-            return Response.notImplemented(e.getMessage(), null);
+            return Response.notImplemented(cargo, e.getMessage());
         }
     }
 
