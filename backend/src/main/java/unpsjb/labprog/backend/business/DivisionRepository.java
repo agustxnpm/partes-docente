@@ -19,4 +19,6 @@ public interface DivisionRepository extends JpaRepository<Division, Long> {
     Turno turno,
     String orientacion
 );
+
+
 }

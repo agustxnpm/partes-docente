@@ -10,6 +10,8 @@ import unpsjb.labprog.backend.model.TipoDesignacion;
 @Component
 public class MensajeBuilder {
 
+    /* ---------------------------MENSAJES PARA LA ENTIDAD CARGO --------------------------- */
+
     public String generarMensajeExitoCargoCreado(Cargo cargo) {
         if (cargo.getTipoDesignacion() == TipoDesignacion.CARGO) {
             return "Cargo de " + cargo.getNombre() + " ingresado correctamente";
@@ -24,6 +26,14 @@ public class MensajeBuilder {
         throw new IllegalArgumentException("Tipo de designación no válido");
     }
 
+    /* ---------------------------MENSAJES PARA LA ENTIDAD CARGO --------------------------- */
+
+
+
+
+
+    /* ---------------------------MENSAJES PARA LA ENTIDAD DIVISION --------------------------- */
+
     public String generarMensajeExitoDivisionCreada(Division division) {
         return "División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
                 + division.getTurno() + " ingresada correctamente";
@@ -34,11 +44,24 @@ public class MensajeBuilder {
                 + division.getTurno();
     }
 
-    public String generarMensajeExitoPersonaCreada(Persona persona) {
-        return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
-                + " ingresado/a correctamente";
+    public String generarMensajeExitoDivisionActualizada(Division division) {
+        return "División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
+                + division.getTurno() + " actualizada correctamente";
     }
 
+    public String generarMensajeExitoDivisionBorrada(Division division) {
+        return "División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
+                + division.getTurno() + " borrada correctamente";
+    }
+    /* ---------------------------MENSAJES PARA LA ENTIDAD DIVISION --------------------------- */
+
+
+
+
+
+
+
+    /* ---------------------------MENSAJES PARA LA ENTIDAD PERSONA --------------------------- */
     public String generarMensajeExitoPersonaActualizada(Persona persona) {
         return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
                 + " actualizado/a correctamente";
@@ -48,4 +71,11 @@ public class MensajeBuilder {
         return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
                 + " borrado/a correctamente";
     }
+
+    public String generarMensajeExitoPersonaCreada(Persona persona) {
+        return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
+                + " ingresado/a correctamente";
+    }
+     /* ---------------------------MENSAJES PARA LA ENTIDAD PERSONA --------------------------- */
+
 }

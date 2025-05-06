@@ -4,5 +4,9 @@ public enum Turno {
     Mañana,
     Tarde,
     Vespertino,
-    Noche
+    Noche;
+
+    public boolean isEmpty() {
+        return this == null || this.name().isEmpty();
+    }
 }
