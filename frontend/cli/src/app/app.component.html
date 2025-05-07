@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand">Partes Docente</a>
     <button
@@ -14,23 +14,20 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <!-- Botón Inicio -->
         <li class="nav-item">
           <a class="nav-link" routerLink="/home" routerLinkActive="active"
             >Inicio</a
           >
         </li>
 
-        <!-- Botón Persona -->
         <li class="nav-item" ngbDropdown>
           <a
             class="nav-link dropdown-toggle"
             id="personaDropdown"
             role="button"
             ngbDropdownToggle
+            >Persona</a
           >
-            Persona
-          </a>
           <ul ngbDropdownMenu aria-labelledby="personaDropdown">
             <li>
               <a
@@ -56,16 +53,14 @@
           </ul>
         </li>
 
-        <!-- Botón Divisiones -->
         <li class="nav-item" ngbDropdown>
           <a
             class="nav-link dropdown-toggle"
             id="divisionDropdown"
             role="button"
             ngbDropdownToggle
+            >Divisiones</a
           >
-            Divisiones
-          </a>
           <ul ngbDropdownMenu aria-labelledby="divisionDropdown">
             <li>
               <a
@@ -95,6 +90,6 @@
   </div>
 </nav>
 
-<div class="container mt-4">
+<div class="container">
   <router-outlet></router-outlet>
 </div>

@@ -6,13 +6,8 @@ import { NgbDropdownModule } from "@ng-bootstrap/ng-bootstrap"; // Añadir esta 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [
-    RouterModule,
-    RouterOutlet,
-    CommonModule,
-    NgbDropdownModule,
-  ],
-  templateUrl: './app.component.html',
-  styles: [``],
+  imports: [RouterModule, RouterOutlet, CommonModule, NgbDropdownModule],
+  templateUrl: "./app.component.html",
+  styleUrl: "./app.component.css",
 })
 export class AppComponent {}

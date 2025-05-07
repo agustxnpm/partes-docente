@@ -9,15 +9,14 @@ import { PaginationComponent } from "../pagination/pagination.component";
 @Component({
   selector: "app-persona",
   imports: [RouterModule, CommonModule, PaginationComponent],
-  templateUrl: './persona.component.html',
-  styleUrls: ['./persona.component.css']
+  templateUrl: "./persona.component.html",
+  styleUrls: ["./persona.component.css"],
 })
 export class PersonaComponent {
-
   personas: Persona[] = [];
   resultsPage: ResultsPage = <ResultsPage>{};
   currentPage: number = 1;
-  mensaje: string = ''; // Para manejar mensajes de error o éxito
+  mensaje: string = ""; // Para manejar mensajes de error o éxito
 
   constructor(private personaService: PersonaService) {}
 
@@ -26,13 +25,17 @@ export class PersonaComponent {
   }
 
   getPersonas(): void {
-    this.personaService.byPage(this.currentPage, 7).subscribe((response) => {
+    this.personaService.byPage(this.currentPage, 4).subscribe((response) => {
       this.resultsPage = <ResultsPage>response.data;
     });
   }
 
   eliminarPersona(persona: Persona): void {
-    if (confirm(`¿Está seguro que desea eliminar a ${persona.nombre} ${persona.apellido}?`)) {
+    if (
+      confirm(
+        `¿Está seguro que desea eliminar a ${persona.nombre} ${persona.apellido}?`
+      )
+    ) {
       this.personaService.delete(persona).subscribe({
         next: (response) => {
           this.mensaje = response.message;
@@ -40,8 +43,8 @@ export class PersonaComponent {
           this.getPersonas(); // Actualizar la lista
         },
         error: (err) => {
-          console.error('Error al eliminar la persona:', err);
-          this.mensaje = 'Error al eliminar la persona.';
+          console.error("Error al eliminar la persona:", err);
+          this.mensaje = "Error al eliminar la persona.";
         },
       });
     }
@@ -51,5 +54,4 @@ export class PersonaComponent {
     this.currentPage = page;
     this.getPersonas();
   }
-
 }
