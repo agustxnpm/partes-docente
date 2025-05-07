@@ -5,6 +5,7 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { ResultsPage } from "../results-page";
 import { PaginationComponent } from "../pagination/pagination.component";
+import { ModalService } from "../modal/modal.service";
 
 @Component({
   selector: "app-persona",
@@ -18,7 +19,10 @@ export class PersonaComponent {
   currentPage: number = 1;
   mensaje: string = ""; // Para manejar mensajes de error o éxito
 
-  constructor(private personaService: PersonaService) {}
+  constructor(
+    private personaService: PersonaService,
+    private modalService: ModalService
+  ) {}
 
   ngOnInit(): void {
     this.getPersonas();
@@ -31,23 +35,33 @@ export class PersonaComponent {
   }
 
   eliminarPersona(persona: Persona): void {
-    if (
-      confirm(
-        `¿Está seguro que desea eliminar a ${persona.nombre} ${persona.apellido}?`
+    this.modalService
+      .confirm(
+        "Eliminar Persona",
+        `¿Está seguro que desea eliminar a ${persona.nombre} ${persona.apellido}?`,
+        "Esta acción no se puede deshacer"
       )
-    ) {
-      this.personaService.delete(persona).subscribe({
-        next: (response) => {
-          this.mensaje = response.message;
-          alert(this.mensaje);
-          this.getPersonas(); // Actualizar la lista
+      .then(
+        () => {
+          // Si el usuario confirma
+          this.personaService.delete(persona).subscribe({
+            next: (response) => {
+              this.mensaje = response.message;
+              this.modalService.alert("Éxito", this.mensaje);
+              this.getPersonas();
+            },
+            error: (err) => {
+              console.error("Error al eliminar la persona:", err);
+              this.mensaje = "Error al eliminar la persona.";
+              this.modalService.alert("Error", this.mensaje);
+            },
+          });
         },
-        error: (err) => {
-          console.error("Error al eliminar la persona:", err);
-          this.mensaje = "Error al eliminar la persona.";
-        },
-      });
-    }
+        () => {
+          // Si el usuario cancela
+          console.log("Operación cancelada");
+        }
+      );
   }
 
   onPageChangeRequested(page: number): void {

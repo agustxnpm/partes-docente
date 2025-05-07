@@ -1,0 +1,35 @@
+<div class="modal-content custom-modal-content animate-fade-slide">
+  <div class="modal-header custom-modal-header">
+    <div class="w-100 d-flex flex-column align-items-start">
+      <h4 class="modal-title mb-1" id="modal-title">{{ title }}</h4>
+      <small class="modal-subtitle" *ngIf="description">{{
+        description
+      }}</small>
+    </div>
+    <button
+      *ngIf="!isSingleButton"
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+
+  <div class="modal-body custom-modal-body">
+    <p class="modal-message">{{ message }}</p>
+  </div>
+
+  <div class="modal-footer custom-modal-footer">
+    <button
+      *ngIf="!isSingleButton"
+      type="button"
+      class="btn btn-outline-light"
+      (click)="modal.dismiss()"
+    >
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-custom-accept" (click)="modal.close()">
+      Aceptar
+    </button>
+  </div>
+</div>
