@@ -28,4 +28,12 @@
     cursor: not-allowed;
   }
 
+  /* Estilo para los campos inválidos */
+.is-invalid {
+  border: 1px solid red !important;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+
+
   

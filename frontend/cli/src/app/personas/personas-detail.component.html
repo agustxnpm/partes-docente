@@ -15,6 +15,7 @@
           <input
             type="text"
             class="form-control form-control-sm"
+            [ngClass]="{'is-invalid': dni.invalid && (dni.dirty || dni.touched)}"
             [(ngModel)]="persona.dni"
             name="dni"
             #dni="ngModel"
@@ -48,6 +49,7 @@
             <input
               type="text"
               class="form-control form-control-sm me-1"
+              [ngClass]="{'is-invalid': cuilPrefixField.invalid && (cuilPrefixField.dirty || cuilPrefixField.touched)}"
               [(ngModel)]="cuilPrefix"
               name="cuilPrefix"
               #cuilPrefixField="ngModel"
@@ -70,6 +72,7 @@
             <input
               type="text"
               class="form-control form-control-sm"
+              [ngClass]="{'is-invalid': cuilSuffixField.invalid && (cuilSuffixField.dirty || cuilSuffixField.touched)}"
               [(ngModel)]="cuilSuffix"
               name="cuilSuffix"
               #cuilSuffixField="ngModel"
@@ -107,6 +110,7 @@
           <label for="sexo" class="form-label required-field">Sexo</label>
           <select
             class="form-select form-select-sm"
+            [ngClass]="{'is-invalid': sexo.invalid && (sexo.dirty || sexo.touched)}"
             [(ngModel)]="persona.sexo"
             name="sexo"
             #sexo="ngModel"
@@ -130,6 +134,7 @@
           <input
             type="text"
             class="form-control"
+            [ngClass]="{'is-invalid': nombre.invalid && (nombre.dirty || nombre.touched)}"
             [(ngModel)]="persona.nombre"
             name="nombre"
             #nombre="ngModel"
@@ -145,12 +150,11 @@
 
         <!-- Apellido -->
         <div class="col-md-6">
-          <label for="apellido" class="form-label required-field"
-            >Apellido</label
-          >
+          <label for="apellido" class="form-label required-field">Apellido</label>
           <input
             type="text"
             class="form-control"
+            [ngClass]="{'is-invalid': apellido.invalid && (apellido.dirty || apellido.touched)}"
             [(ngModel)]="persona.apellido"
             name="apellido"
             #apellido="ngModel"
@@ -166,12 +170,11 @@
 
         <!-- Domicilio -->
         <div class="col-md-6">
-          <label for="domicilio" class="form-label required-field"
-            >Domicilio</label
-          >
+          <label for="domicilio" class="form-label required-field">Domicilio</label>
           <input
             type="text"
             class="form-control"
+            [ngClass]="{'is-invalid': domicilio.invalid && (domicilio.dirty || domicilio.touched)}"
             [(ngModel)]="persona.domicilio"
             name="domicilio"
             #domicilio="ngModel"
@@ -200,13 +203,12 @@
 
         <!-- Teléfono -->
         <div class="col-md-6">
-          <label for="telefono" class="form-label required-field"
-            >Teléfono</label
-          >
+          <label for="telefono" class="form-label required-field">Teléfono</label>
           <input
             type="text"
             class="form-control"
-            [(ngModel)]="persona.telefono" 
+            [ngClass]="{'is-invalid': telefono.invalid && (telefono.dirty || telefono.touched)}"
+            [(ngModel)]="persona.telefono"
             name="telefono"
             #telefono="ngModel"
             required
