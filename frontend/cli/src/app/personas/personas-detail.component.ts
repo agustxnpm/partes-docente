@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { PersonaService } from "./persona.service";
 import { Persona } from "./persona";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -8,9 +8,8 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "app-personas-create",
   imports: [CommonModule, FormsModule],
-  templateUrl: './personas-detail.component.html',
-  styleUrls: ['./personas-detail.component.css']
-
+  templateUrl: "./personas-detail.component.html",
+  styleUrls: ["./personas-detail.component.css"],
 })
 export class PersonasDetailComponent {
   persona: Persona = {
@@ -36,7 +35,8 @@ export class PersonasDetailComponent {
   constructor(
     private personaService: PersonaService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -45,8 +45,8 @@ export class PersonasDetailComponent {
 
   getPersona(): void {
     this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      if (id === 'new') {
+      const id = params.get("id");
+      if (id === "new") {
         // Persona nueva
         this.isNew = true;
         this.persona = {
@@ -83,7 +83,7 @@ export class PersonasDetailComponent {
   }
 
   volver(): void {
-    this.router.navigate(['/personas']);
+    this.router.navigate(["/personas"]);
   }
 
   isError: boolean = false;
@@ -104,6 +104,8 @@ export class PersonasDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
+          this.cdr.detectChanges(); // Forzar detección de cambios
+          this.scrollToMessage(); // Desplazar hacia el mensaje de exito o error
         },
       });
     } else {
@@ -111,25 +113,33 @@ export class PersonasDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
+          this.cdr.detectChanges(); // Forzar detección de cambios
+          this.scrollToMessage(); // Desplazar hacia el mensaje de exito o error
         },
       });
     }
   }
 
+  scrollToMessage(): void {
+    const messageElement = document.getElementById("message-container");
+    if (messageElement) {
+      messageElement.scrollIntoView({ behavior: "smooth" });
+    }
+  }
 
   showErrorDni: boolean = false;
   showErrorCuil: boolean = false;
 
   onlyNumbers(event: KeyboardEvent): boolean {
-    const charCode = (event.which) ? event.which : event.keyCode;
+    const charCode = event.which ? event.which : event.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
       // Identificar qué campo disparó el evento
-      if ((event.target as HTMLInputElement).name === 'dni') {
+      if ((event.target as HTMLInputElement).name === "dni") {
         this.showErrorDni = true;
-        setTimeout(() => this.showErrorDni = false, 5000); 
-      } else if ((event.target as HTMLInputElement).name === 'cuil') {
+        setTimeout(() => (this.showErrorDni = false), 5000);
+      } else if ((event.target as HTMLInputElement).name === "cuil") {
         this.showErrorCuil = true;
-        setTimeout(() => this.showErrorCuil = false, 5000); // 
+        setTimeout(() => (this.showErrorCuil = false), 5000); //
       }
       return false;
     }
