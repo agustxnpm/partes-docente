@@ -39,6 +39,12 @@
   color: white !important;
 }
 
+.dropdown-item.active {
+  background-color: #14385c;
+  color: #c3c9d8 !important;
+  font-weight: 500;
+}
+
 .dropdown-divider {
   border-top: 1px solid #ccc;
 }

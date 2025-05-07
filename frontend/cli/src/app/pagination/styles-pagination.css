@@ -41,7 +41,7 @@
 
 .pagination .disabled .custom-page-link {
   color: #c7cfd8;
-  background: #f3f6f9; /* gris claro para botón deshabilitado */
+  background: #f3f6f9;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
