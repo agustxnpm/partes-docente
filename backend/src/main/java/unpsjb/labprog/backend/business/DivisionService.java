@@ -69,6 +69,10 @@ public class DivisionService {
         return mensajeBuilder.generarMensajeExitoDivisionBorrada(division);
     }
 
+    public String getMensajeFalloBorrado(Division division) {
+        return mensajeBuilder.generarMensajeFalloBorrado(division);
+    }
+
     public Division buscarDivisionExistente(Division division) {
         return divisionRepository
             .findByAnioAndNumDivisionAndTurnoAndOrientacion(

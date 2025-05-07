@@ -53,6 +53,11 @@ public class MensajeBuilder {
         return "División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
                 + division.getTurno() + " borrada correctamente";
     }
+
+    public String generarMensajeFalloBorrado(Division division) {
+        return "No se puede borrar la división " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
+                + division.getTurno() + " porque tiene cargos asignados";
+    }
     /* ---------------------------MENSAJES PARA LA ENTIDAD DIVISION --------------------------- */
 
 
