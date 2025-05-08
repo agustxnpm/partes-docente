@@ -10,7 +10,6 @@ export const routes: Routes = [
   { path: "personas/:id", component: PersonasDetailComponent }, // Ruta para crear o editar persona
   { path: "home", component: HomeComponent },
   { path: 'divisiones', component: DivisionComponent },
-  { path: 'divisiones/new', component: DivisionDetailComponent },
   { path: 'divisiones/:id', component: DivisionDetailComponent },
   { path: "", redirectTo: "/home", pathMatch: "full" }, // Redirigir a la ruta de inicio
 ];

@@ -40,8 +40,7 @@ public class MensajeBuilder {
     }
 
     public String generarMensajeDivisionDuplicada(Division division) {
-        return "Ya existe la division " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
-                + division.getTurno();
+        return "Ya existe la division " + division.getAnio() + "º" + " " + division.getNumDivision() + "º";
     }
 
     public String generarMensajeExitoDivisionActualizada(Division division) {

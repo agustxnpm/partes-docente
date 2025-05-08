@@ -14,7 +14,7 @@ import lombok.Setter;
 
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"anio", "numDivision", "orientacion", "turno"})
+    uniqueConstraints = @UniqueConstraint(columnNames = {"anio", "numDivision"})
 )
 @Getter
 @Setter

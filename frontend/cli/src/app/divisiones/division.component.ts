@@ -4,6 +4,7 @@ import { DivisionService } from "./division.service";
 import { PaginationComponent } from "../pagination/pagination.component";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
+import { ModalService } from "../modal/modal.service";
 
 @Component({
   selector: "app-division",
@@ -16,7 +17,10 @@ export class DivisionComponent {
   currentPage: number = 1;
   mensaje: string = "";
 
-  constructor(private divisionService: DivisionService) {}
+  constructor(
+    private divisionService: DivisionService,
+    private modalService: ModalService
+  ) {}
 
   ngOnInit(): void {
     this.getDivisiones();
@@ -29,23 +33,33 @@ export class DivisionComponent {
   }
 
   eliminarDivision(division: any): void {
-    if (
-      confirm(
-        `¿Está seguro que desea eliminar la división ${division.anio}º ${division.numDivision}º Turno: ${division.turno}?`
+    this.modalService
+      .confirm(
+        "Eliminar División",
+        `¿Está seguro que desea eliminar la división ${division.anio}º ${division.numDivision}º turno ${division.turno}?`,
+        "Esta acción no se puede deshacer"
       )
-    ) {
-      this.divisionService.delete(division).subscribe({
-        next: (response) => {
-          this.mensaje = response.message;
-          alert(this.mensaje);
-          this.getDivisiones(); // Actualizar la lista
+      .then(
+        () => {
+          // Si el usuario confirma
+          this.divisionService.delete(division).subscribe({
+            next: (response) => {
+              this.mensaje = response.message;
+              this.modalService.alert("Éxito", this.mensaje);
+              this.getDivisiones();
+            },
+            error: (err) => {
+              console.error("Error al eliminar la división:", err);
+              this.mensaje = "Error al eliminar la división.";
+              this.modalService.alert("Error", this.mensaje);
+            },
+          });
         },
-        error: (err) => {
-          console.error("Error al eliminar la división:", err);
-          this.mensaje = "Error al eliminar la división.";
-        },
-      });
-    }
+        () => {
+          // Si el usuario cancela
+          console.log("Operación cancelada");
+        }
+      );
   }
 
   onPageChangeRequested(page: number): void {
