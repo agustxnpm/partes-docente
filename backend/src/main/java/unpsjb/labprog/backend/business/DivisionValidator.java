@@ -17,5 +17,6 @@ public class DivisionValidator {
 
         if (division.getTurno() == null || division.getTurno().isEmpty())
             throw new IllegalArgumentException("El turno no puede estar vacío");
+        
     }
 }
