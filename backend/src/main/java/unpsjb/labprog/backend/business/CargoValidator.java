@@ -28,7 +28,7 @@ public class CargoValidator {
         }
 
         if (cargo.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR && cargo.getDivision() == null) {
-            throw new IllegalArgumentException("Espacio Curricular " + cargo.getNombre() + " falta asignar división");
+            throw new IllegalArgumentException("Espacio curricular " + cargo.getNombre() + " falta asignar división");
         }
 
         if (cargo.getDivision() != null) {
