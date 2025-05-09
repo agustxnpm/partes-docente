@@ -1,4 +1,4 @@
 export enum TipoDesignacion {
     CARGO = 'CARGO',
-    ESPACIO_CURRICULAR = 'ESPACIO CURRICULAR'
+    ESPACIO_CURRICULAR = 'ESPACIO_CURRICULAR'
   }

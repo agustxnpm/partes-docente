@@ -9,7 +9,7 @@ import { CommonModule } from "@angular/common";
   selector: "app-personas-create",
   imports: [CommonModule, FormsModule],
   templateUrl: "./personas-detail.component.html",
-  styleUrls: ["./personas-detail.component.css"],
+  styleUrls: ["../global-styles/detail-styles.css"],
 })
 export class PersonasDetailComponent {
   persona: Persona = {

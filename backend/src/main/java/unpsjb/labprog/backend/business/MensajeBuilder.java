@@ -18,7 +18,7 @@ public class MensajeBuilder {
         }
 
         if (cargo.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR) {
-            return "Espacio Curricular " + cargo.getNombre() + " para la división "
+            return "Espacio curricular " + cargo.getNombre() + " para la división "
                     + cargo.getDivision().getAnio() + "º " + cargo.getDivision().getNumDivision() + "º "
                     + "Turno " + cargo.getDivision().getTurno() + " ingresado correctamente";
         }
@@ -26,7 +26,35 @@ public class MensajeBuilder {
         throw new IllegalArgumentException("Tipo de designación no válido");
     }
 
-    /* ---------------------------MENSAJES PARA LA ENTIDAD CARGO --------------------------- */
+    public String generarMensajeExitoCargoActualizado(Cargo cargo) {
+        if (cargo.getTipoDesignacion() == TipoDesignacion.CARGO) {
+            return "Cargo de " + cargo.getNombre() + " actualizado correctamente";
+        }
+
+        if (cargo.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR) {
+            return "Espacio curricular " + cargo.getNombre() + " para la división "
+                    + cargo.getDivision().getAnio() + "º " + cargo.getDivision().getNumDivision() + "º "
+                    + "Turno " + cargo.getDivision().getTurno() + " actualizado correctamente";
+        }
+
+        throw new IllegalArgumentException("Tipo de designación no válido");
+    }
+
+    public String generarMensajeExitoCargoBorrado(Cargo cargo) {
+        if (cargo.getTipoDesignacion() == TipoDesignacion.CARGO) {
+            return "Cargo de " + cargo.getNombre() + " borrado correctamente";
+        }
+
+        if (cargo.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR) {
+            return "Espacio curricular " + cargo.getNombre() + " para la división "
+                    + cargo.getDivision().getAnio() + "º " + cargo.getDivision().getNumDivision() + "º "
+                    + "Turno " + cargo.getDivision().getTurno() + " borrado correctamente";
+        }
+
+        throw new IllegalArgumentException("Tipo de designación no válido");
+    }
+
+     /* -------------------------------------------------------------------------------------- */
 
 
 
@@ -57,7 +85,7 @@ public class MensajeBuilder {
         return "No se puede borrar la división " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
                 + division.getTurno() + " porque tiene cargos asignados";
     }
-    /* ---------------------------MENSAJES PARA LA ENTIDAD DIVISION --------------------------- */
+     /* -------------------------------------------------------------------------------------- */
 
 
 
@@ -80,6 +108,8 @@ public class MensajeBuilder {
         return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
                 + " ingresado/a correctamente";
     }
-     /* ---------------------------MENSAJES PARA LA ENTIDAD PERSONA --------------------------- */
+     /* -------------------------------------------------------------------------------------- */
+
+    
 
 }

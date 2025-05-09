@@ -1,0 +1,217 @@
+<div class="container mt-5 flashy-form">
+  <div
+    class="bg-light rounded shadow p-4 border border-2 border-primary-subtle animated-border"
+  >
+    <div class="d-flex align-items-center mb-4">
+      <i class="bi bi-briefcase-fill text-primary fs-3 me-2 neon-icon"></i>
+      <h3 class="m-0">{{ isNew ? "Nuevo Cargo" : "Editar Cargo" }}</h3>
+    </div>
+
+    <form #cargoForm="ngForm" (ngSubmit)="saveCargo()">
+      <div class="row g-4">
+        <!-- Nombre -->
+        <div class="col-md-6">
+          <label for="nombre" class="form-label required-field">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid': nombre.invalid && (nombre.dirty || nombre.touched)
+            }"
+            [(ngModel)]="cargo.nombre"
+            name="nombre"
+            #nombre="ngModel"
+            required
+          />
+          <small
+            class="error-message"
+            *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
+          >
+            Campo obligatorio
+          </small>
+        </div>
+
+        <!-- Carga Horaria -->
+        <div class="col-md-6">
+          <label for="cargaHoraria" class="form-label required-field"
+            >Carga Horaria</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                cargaHoraria.invalid &&
+                (cargaHoraria.dirty || cargaHoraria.touched)
+            }"
+            [(ngModel)]="cargo.cargaHoraria"
+            name="cargaHoraria"
+            #cargaHoraria="ngModel"
+            pattern="[0-9]*"
+            (keypress)="onlyNumbers($event)"
+            required
+          />
+          <div class="d-flex mt-1">
+            <div class="flex-grow-1">
+              <small
+                class="error-message"
+                *ngIf="
+                  cargaHoraria.invalid &&
+                  (cargaHoraria.dirty || cargaHoraria.touched)
+                "
+              >
+                Campo obligatorio
+              </small>
+            </div>
+            <div class="text-end">
+              <small class="text-danger" *ngIf="showErrorNumero">
+                Solo se permiten números
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tipo de Designación -->
+        <div class="col-md-6">
+          <label for="tipoDesignacion" class="form-label required-field"
+            >Tipo de Designación</label
+          >
+          <select
+            class="form-select"
+            [ngClass]="{
+              'is-invalid':
+                tipoDesignacion.invalid &&
+                (tipoDesignacion.dirty || tipoDesignacion.touched)
+            }"
+            [(ngModel)]="cargo.tipoDesignacion"
+            name="tipoDesignacion"
+            #tipoDesignacion="ngModel"
+            (change)="onTipoDesignacionChange()"
+            required
+          >
+            <option [ngValue]="null">Seleccione un tipo</option>
+            <option *ngFor="let tipo of tiposDesignacionArray" [ngValue]="tipo">
+              {{ tipo }}
+            </option>
+          </select>
+          <small
+            class="error-message"
+            *ngIf="
+              tipoDesignacion.invalid &&
+              (tipoDesignacion.dirty || tipoDesignacion.touched)
+            "
+          >
+            Campo obligatorio
+          </small>
+        </div>
+
+        <!-- División (solo para ESPACIO_CURRICULAR) -->
+        <div
+          class="col-md-6"
+          *ngIf="cargo.tipoDesignacion === TipoDesignacion.ESPACIO_CURRICULAR"
+        >
+          <label for="division" class="form-label required-field"
+            >División</label
+          >
+          <select
+            class="form-select"
+            [ngClass]="{
+              'is-invalid':
+                division.invalid && (division.dirty || division.touched)
+            }"
+            [(ngModel)]="cargo.division"
+            name="division"
+            #division="ngModel"
+            required
+          >
+            <option [ngValue]="null">Seleccione una división</option>
+            <option *ngFor="let div of divisiones" [ngValue]="div">
+              {{ div.anio }}° {{ div.numDivision }}º - {{ div.turno }}
+            </option>
+          </select>
+          <small
+            class="error-message"
+            *ngIf="division.invalid && (division.dirty || division.touched)"
+          >
+            Campo obligatorio para espacios curriculares
+          </small>
+        </div>
+
+        <!-- Fecha de Inicio -->
+        <div class="col-md-6">
+          <label for="fechaInicio" class="form-label required-field"
+            >Vigencia desde</label
+          >
+          <input
+            type="date"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                fechaInicio.invalid &&
+                (fechaInicio.dirty || fechaInicio.touched)
+            }"
+            [(ngModel)]="cargo.fechaInicio"
+            name="fechaInicio"
+            #fechaInicio="ngModel"
+            [max]="maxFechaInicio || '9999-12-31'"
+            [min]="'2000-01-01'"
+            (change)="onFechaInicioChange()"
+            required
+          />
+          <small
+            class="error-message"
+            *ngIf="
+              fechaInicio.invalid && (fechaInicio.dirty || fechaInicio.touched)
+            "
+          >
+            Campo obligatorio
+          </small>
+        </div>
+
+        <!-- Fecha de Fin (opcional) -->
+        <div class="col-md-6">
+          <label for="fechaFin" class="form-label">Vigencia hasta</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="cargo.fechaFin"
+            name="fechaFin"
+            #fechaFin="ngModel"
+            [min]="minFechaFin"
+            [max]="'9999-12-31'"
+            (change)="onFechaFinChange()"
+          />
+          <small class="text-muted">Este campo es opcional</small>
+        </div>
+      </div>
+
+      <div class="mt-4 text-end">
+        <button
+          type="submit"
+          class="btn btn-outline-primary px-4"
+          [disabled]="cargoForm.invalid"
+        >
+          <i class="bi bi-check-circle me-1"></i>
+          {{ isNew ? "Crear Cargo" : "Guardar Cambios" }}
+        </button>
+      </div>
+      <div
+        *ngIf="mensaje"
+        class="alert mt-4"
+        [ngClass]="{ 'alert-danger': isError, 'alert-success': !isError }"
+        role="alert"
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <span>{{ mensaje }}</span>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            (click)="volver()"
+          >
+            <i class="bi bi-arrow-left me-1"></i>Volver
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -11,7 +11,7 @@ import { Cargo } from "./cargo";
   selector: "app-cargo",
   imports: [CommonModule, RouterModule, PaginationComponent],
   templateUrl: "./cargo.component.html",
-  styleUrls: ["./cargo.component.css"],
+  styleUrls: ["../global-styles/table-styles.css"],
 })
 export class CargoComponent {
   resultsPage: ResultsPage = <ResultsPage>{};

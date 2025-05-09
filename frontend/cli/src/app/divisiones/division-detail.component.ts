@@ -10,7 +10,7 @@ import { Turno } from './turno';
   selector: 'app-division-detail',
   imports: [CommonModule, FormsModule],
   templateUrl: './division-detail.component.html',
-  styleUrls: ['./division-detail.component.css'],
+  styleUrls: ["../global-styles/detail-styles.css"],
   standalone: true
 })
 export class DivisionDetailComponent {

@@ -10,7 +10,7 @@ import { ModalService } from "../modal/modal.service";
   selector: "app-division",
   imports: [RouterModule, CommonModule, PaginationComponent],
   templateUrl: "./division.component.html",
-  styleUrls: ["./division.component.css"],
+  styleUrls: ["../global-styles/table-styles.css"],
 })
 export class DivisionComponent {
   resultsPage: ResultsPage = <ResultsPage>{};

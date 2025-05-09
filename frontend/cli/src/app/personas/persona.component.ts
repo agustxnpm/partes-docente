@@ -11,7 +11,7 @@ import { ModalService } from "../modal/modal.service";
   selector: "app-persona",
   imports: [RouterModule, CommonModule, PaginationComponent],
   templateUrl: "./persona.component.html",
-  styleUrls: ["./persona.component.css"],
+  styleUrls: ["../global-styles/table-styles.css"],
 })
 export class PersonaComponent {
   personas: Persona[] = [];
