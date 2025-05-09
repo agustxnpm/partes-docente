@@ -141,32 +141,36 @@ export class CargoDetailComponent {
     return true;
   }
 
+  isValidDateRange: boolean = true; // propiedad para controlar la validación de fechas
+
   onFechaInicioChange(): void {
     if (this.cargo.fechaInicio) {
-      // Actualizar la fecha mínima para fechaFin
       this.minFechaFin = this.cargo.fechaInicio;
       
-      // Si la fecha de fin es menor que la fecha de inicio, limpiarla
       if (this.cargo.fechaFin && this.cargo.fechaFin < this.cargo.fechaInicio) {
         this.cargo.fechaFin = null;
         this.modalService.alert('Aviso', 'La fecha de fin debe ser posterior a la fecha de inicio');
+        this.isValidDateRange = false;
+      } else {
+        this.isValidDateRange = true;
       }
     }
   }
 
   onFechaFinChange(): void {
     if (this.cargo.fechaFin) {
-      // Actualizar la fecha máxima para fechaInicio
       this.maxFechaInicio = this.cargo.fechaFin;
       
-      // Si la fecha de inicio es mayor que la fecha de fin, mostrar error
       if (this.cargo.fechaInicio && this.cargo.fechaInicio > this.cargo.fechaFin) {
         this.cargo.fechaFin = null;
         this.modalService.alert('Aviso', 'La fecha de fin no puede ser anterior a la fecha de inicio');
+        this.isValidDateRange = false;
+      } else {
+        this.isValidDateRange = true;
       }
     } else {
-      // Si se limpia la fecha de fin, eliminar la restricción de fecha máxima
       this.maxFechaInicio = null;
+      this.isValidDateRange = true;
     }
   }
 
@@ -183,5 +187,7 @@ export class CargoDetailComponent {
     };
     this.mensaje = "";
     this.isError = false;
+    this.isValidDateRange = true;
+
   }
 }
