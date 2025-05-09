@@ -23,7 +23,6 @@
             <th>CUIL</th>
             <th>Sexo</th>
             <th>Título</th>
-            <!-- Nueva columna -->
             <th>Domicilio</th>
             <th>Teléfono</th>
             <th></th>
@@ -39,7 +38,8 @@
             <td>{{ persona.apellido }}</td>
             <td>{{ persona.cuil }}</td>
             <td>{{ persona.sexo }}</td>
-            <td>{{ persona.titulo || "Sin título" }}</td> <!-- Mostrar "Sin título" si es nulo -->
+            <td>{{ persona.titulo || "Sin título" }}</td>
+            <!-- Mostrar "Sin título" si es nulo -->
 
             <td>{{ persona.domicilio }}</td>
             <td>{{ persona.telefono }}</td>
