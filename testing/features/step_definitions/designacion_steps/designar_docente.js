@@ -30,17 +30,24 @@ Given(
   }
 );
 
-//Y si es espacio curricular asignada a la división <año> <número> <turno>
+// Y si es espacio curricular asignada a la división <año> <número> <turno>
 Given(
   "si es espacio curricular asignada a la división {int} {int} {string}",
   function (anio, numDivision, turno) {
-    this.currentDivision = {
-      anio: anio,
-      numDivision: numDivision,
-      turno: turno,
-    };
+    if (this.currentCargo?.tipo === "ESPACIO CURRICULAR") {
+      this.currentDivision = {
+        anio: parseInt(anio),
+        numDivision: parseInt(numDivision),
+        turno: turno,
+      };
+    } else {
+      this.currentDivision = null;
+    }
   }
 );
+
+
+
 
 //   Y se designa por el período <fechadesde> <fechaHasta>
 Given(

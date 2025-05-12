@@ -3,7 +3,8 @@ module.exports = {
     paths: [
       'features/personas_features/create_persona.feature', // Asegúrate de que exista
       'features/divisiones_features/create_division.feature',
-      'features/cargos_features/nuevo_cargo.feature'
+      'features/cargos_features/nuevo_cargo.feature',
+      'features/designacion_features/nueva_designacion.feature',
     ],
     require: [
       'features/**/*.js',
