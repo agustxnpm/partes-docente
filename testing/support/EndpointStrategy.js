@@ -1,6 +1,19 @@
 class EndpointStrategy {
   static strategies = new Map([
     [
+      "currentDesignation",
+      {
+        endpoint: "designaciones",
+        getData: (context) => ({
+          persona: context.currentDesignation.persona,
+          cargo: context.currentDesignation.cargo,
+          situacionRevista: context.currentDesignation.situacionRevista,
+          fechaInicio: context.currentDesignation.fechaInicio,
+          fechaFin: context.currentDesignation.fechaFin,
+        }),
+      },
+    ],
+    [
       "currentDivision",
       { endpoint: "divisiones", getData: (context) => context.currentDivision },
     ],
@@ -12,19 +25,6 @@ class EndpointStrategy {
       "currentCargo",
       { endpoint: "cargos", getData: (context) => context.currentCargo },
     ],
-    [
-      "currentDesignation",
-      {
-        endpoint: "designaciones",
-        getData: (context) => ({
-          persona: context.currentPerson,
-          cargo: context.currentCargo,
-          division: context.currentDivision || null,
-          periodo: context.currentPeriod,
-        }),
-      },
-    ],
-    // agregar más estrategias según se necesiten
   ]);
 
   static getEndpointInfo(context) {

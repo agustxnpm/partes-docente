@@ -7,6 +7,7 @@ const EndpointStrategy = require("../../../support/EndpointStrategy");
 // Paso común: Cuando se presiona el botón de guardar
 When("se presiona el botón de guardar", function () {
   const { endpoint, data } = EndpointStrategy.getEndpointInfo(this);
+
   this.apiResponse = HttpRequestPost.post(endpoint, data);
 });
 

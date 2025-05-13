@@ -19,3 +19,5 @@ Característica: Gestión de cargos institucionales
       | Auxiliar ADM   | CARGO              |           30 | 2020-03-01 |            |     |        |             |        |    200 | Cargo de Auxiliar ADM ingresado correctamente                                           |
       | Auxiliar ACAD  | CARGO              |           30 | 2020-03-01 |            |   1 |      1 | Informática | Tarde  |    501 | Cargo de Auxiliar ACAD es CARGO y no corresponde asignar división                       |
       | Matemática     | ESPACIO_CURRICULAR |            6 | 2020-03-01 |            |     |        |             |        |    501 | Espacio curricular Matemática falta asignar división                                    |
+      | Física         | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   2 |     3  |  Naturales  | Tarde  |    200 | Espacio curricular Física para la división 2º 3º Turno Tarde ingresado correctamente    |
+      | Tecnología     | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   4 |      3 | Informática | Tarde  |    200 | Espacio curricular Tecnología para la división 4º 3º Turno Tarde ingresado correctamente|

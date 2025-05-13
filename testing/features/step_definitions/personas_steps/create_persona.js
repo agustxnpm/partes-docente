@@ -2,7 +2,7 @@ const { Given } = require("@cucumber/cucumber");
 
 // Paso específico: Dada la persona con <nombre> <apellido> <DNI> <CUIL> <sexo> <título> <domicilio> <teléfono>
 Given(
-  "la persona con {word} {word} {int} {word} {word} {string} {string} {string}",
+  "la persona con {string} {word} {int} {word} {word} {string} {string} {string}",
   function (nombre, apellido, dni, cuil, sexo, titulo, domicilio, telefono) {
     this.currentPersona = {
       dni: dni,
