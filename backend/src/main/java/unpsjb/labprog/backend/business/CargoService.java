@@ -1,6 +1,5 @@
 package unpsjb.labprog.backend.business;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ import unpsjb.labprog.backend.model.Division;
 
 @Service
 public class CargoService {
-    
+
     @Autowired
     private CargoRepository cargoRepository;
 
@@ -40,11 +39,10 @@ public class CargoService {
 
     public Page<Cargo> findByPage(int page, int size) {
         return cargoRepository.findAll(
-            PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"))
-        );
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
     }
 
-     public List<Cargo> findAll() {
+    public List<Cargo> findAll() {
         List<Cargo> result = new ArrayList<>();
         cargoRepository.findAll().forEach(e -> result.add(e));
         return result;
@@ -52,7 +50,7 @@ public class CargoService {
 
     public Cargo findById(Long id) {
         return cargoRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Cargo no encontrada"));
+                .orElseThrow(() -> new IllegalArgumentException("Cargo no encontrado"));
     }
 
     public Optional<Cargo> findByNombre(String nombre) {
@@ -61,6 +59,15 @@ public class CargoService {
 
     public Optional<Cargo> findByNombreAndDivision(String nombre, Division division) {
         return cargoRepository.findByNombreAndDivision(nombre, division);
+    }
+
+    public Optional<Cargo> findByNombreAndDivisionExacta(String nombre, Division division) {
+        return cargoRepository.findByNombreAndDivisionDetalle(
+            nombre,
+            division.getAnio(),
+            division.getNumDivision(),
+            division.getTurno()
+        );
     }
 
     public String getMensajeExito(Cargo cargo) {

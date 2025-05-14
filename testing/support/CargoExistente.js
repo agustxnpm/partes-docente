@@ -1,6 +1,6 @@
 const request = require("sync-request");
 
-class CargoClient {
+class CargoExistente {
   static getAll() {
     try {
       const res = request("GET", "http://backend-pd:8080/cargos");
@@ -11,17 +11,12 @@ class CargoClient {
     }
   }
 
-  static findByNombreYTipo(nombre, tipo, anio, numDivision, turno) {
+  static findByNombreYTipo(nombre, tipo) {
     const cargos = this.getAll();
-    const cargo = cargos.find(
-      (c) => c.nombre === nombre && c.tipoDesignacion === tipo &&
-        c.anio === anio &&
-        c.numDivision === numDivision &&
-        c.turno === turno
+    return cargos.find(
+      (c) => c.nombre === nombre && c.tipoDesignacion === tipo
     );
-    if (!cargo) throw new Error(`Cargo "${nombre}" con tipo "${tipo}" no encontrado.`);
-    return cargo;
   }
 }
 
-module.exports = CargoClient;
+module.exports = CargoExistente;

@@ -16,7 +16,7 @@ class PersonaExistente {
     const persona = personas.find(
       (p) => p.dni === dni
     );
-    //if (!persona) throw new Error(`Persona con DNI "${dni}" no encontrada.`);
+    if (!persona) throw new Error(`Persona con DNI "${dni}" no encontrada.`);
     return persona;
   }
 }

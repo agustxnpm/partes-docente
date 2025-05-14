@@ -2,6 +2,8 @@ package unpsjb.labprog.backend.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,5 +34,6 @@ public class Designacion {
     private Cargo cargo;
 
     @ManyToOne
+    @JsonBackReference
     private Persona persona;
 }

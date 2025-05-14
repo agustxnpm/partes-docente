@@ -1,5 +1,6 @@
 const { Given } = require("@cucumber/cucumber");
-const CargoClient = require("../../../support/CargoExistente");
+const CargoExistente = require("../../../support/CargoExistente");
+const PersonaExistente = require("../../../support/PersonaExistente");
 /* 
 Característica: designar una persona a un cargo docente
 actividad central de información de la escuela secundaria */
@@ -12,11 +13,21 @@ actividad central de información de la escuela secundaria */
 Given(
   "la persona con {int} {string} y {string}",
   function (dni, nombre, apellido) {
-    this.currentPerson = {
-      dni: dni,
-      nombre: nombre,
-      apellido: apellido,
-    };
+    const persona = PersonaExistente.findByDni(dni);
+    
+    if (!persona) {
+      throw new Error(`No se encontró la persona con DNI ${dni}`);
+    }
+    
+    if (persona.nombre !== nombre || persona.apellido !== apellido) {
+      throw new Error(
+        `Los datos de la persona con DNI ${dni} no coinciden.\n` +
+        `Esperado: ${nombre} ${apellido}\n` +
+        `Encontrado: ${persona.nombre} ${persona.apellido}`
+      );
+    }
+    
+    this.currentPerson = persona;
   }
 );
 
@@ -24,12 +35,14 @@ Given(
 Given(
   "que se asigna al cargo con tipo de designación {string} y {string}",
   function (tipo, nombreDesignacion) {
-    /* const cargo = CargoClient.findByNombreYTipo(nombreDesignacion, tipo);
-    this.currentCargo = cargo; */
-    this.currentCargo = {
-      nombre: nombreDesignacion,
-      tipoDesignacion: tipo,
-    };
+    // Buscar el cargo existente en lugar de crear uno nuevo
+    const cargo = CargoExistente.findByNombreYTipo(nombreDesignacion, tipo);
+    
+    if (!cargo) {
+      throw new Error(`No se encontró el cargo ${nombreDesignacion} de tipo ${tipo}`);
+    }
+    
+    this.currentCargo = cargo;
   }
 );
 
@@ -46,7 +59,7 @@ Given(
 
       this.currentDivision = division;
 
-      // 🟢 Asignar la división al cargo
+      // Asignar la división al cargo
       this.currentCargo.division = division;
     } else {
       this.currentDivision = null;
