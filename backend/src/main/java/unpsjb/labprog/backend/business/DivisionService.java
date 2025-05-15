@@ -33,6 +33,7 @@ public class DivisionService {
 
     @Transactional
     public void delete(Division division) {
+        validator.validarBorradoDivision(division);
         divisionRepository.delete(division);
     }
 

@@ -28,6 +28,9 @@ public interface CargoRepository extends JpaRepository<Cargo, Long> {
         @Param("numDivision") int numDivision,
         @Param("turno") Turno turno
     );
+
+    boolean existsByDivisionId(Long divisionId);
+
 }
 
 

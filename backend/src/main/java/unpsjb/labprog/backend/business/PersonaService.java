@@ -44,7 +44,30 @@ public class PersonaService {
     }
 
     @Transactional
+    public Persona update(Persona personaActualizada) {
+    validator.validarPersona(personaActualizada);
+    // Obtener la persona existente con todas sus designaciones
+    Persona personaExistente = findById(personaActualizada.getId());
+    
+    // Actualizar los campos simples 
+    personaExistente.setNombre(personaActualizada.getNombre());
+    personaExistente.setApellido(personaActualizada.getApellido());
+    personaExistente.setDni(personaActualizada.getDni());
+    personaExistente.setCuil(personaActualizada.getCuil());
+    personaExistente.setTitulo(personaActualizada.getTitulo());
+    personaExistente.setSexo(personaActualizada.getSexo());
+    personaExistente.setDomicilio(personaActualizada.getDomicilio());
+    personaExistente.setTelefono(personaActualizada.getTelefono());
+    
+    // sin modificar las designaciones
+    // personaExistente.setDesignaciones(...)
+    
+    return personaRepository.save(personaExistente);
+}
+
+    @Transactional
     public void delete(Persona persona) {
+        validator.validarBorradoPersona(persona);
         personaRepository.delete(persona);
     }
 

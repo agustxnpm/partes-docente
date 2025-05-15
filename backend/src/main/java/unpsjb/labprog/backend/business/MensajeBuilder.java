@@ -109,6 +109,8 @@ public class MensajeBuilder {
         return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
                 + " ingresado/a correctamente";
     }
+
+    
      /* -------------------------------------------------------------------------------------- */
 
     
@@ -156,18 +158,19 @@ public class MensajeBuilder {
     public String generarMensajeExitoDesignacionBorrada(Designacion designacion) {
         if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
             return designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " ha sido desasignado/a como " + designacion.getCargo().getNombre() + " exitosamente";
+                            + " ha sido removido/a del cargo " + designacion.getCargo().getNombre() + " exitosamente";
         }
 
         if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR) {
             return designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " ha sido desasignado/a de la asignatura " + designacion.getCargo().getNombre()
-                            + " a la división " + designacion.getCargo().getDivision().getAnio() + "º "
+                            + " ha sido removido/a de la asignatura " + designacion.getCargo().getNombre()
+                            + " de " + designacion.getCargo().getDivision().getAnio() + "º "
                             + designacion.getCargo().getDivision().getNumDivision() + "º turno " + designacion.getCargo().getDivision().getTurno() + " exitosamente";
         }
 
         throw new IllegalArgumentException("Tipo de designación no válido");
     }
+
  
     /*-------------------------------------------------------------------------------------- */
 

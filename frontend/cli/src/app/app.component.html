@@ -118,6 +118,39 @@
             </li>
           </ul>
         </li>
+        <!-- ITEM DESIGNACIONES-->
+          <li class="nav-item" ngbDropdown>
+          <a
+            class="nav-link dropdown-toggle"
+            id="designacionDropdown"
+            role="button"
+            ngbDropdownToggle
+            >Designaciones</a
+          >
+          <ul ngbDropdownMenu aria-labelledby="designacionDropdown">
+            <li>
+              <a
+                ngbDropdownItem
+                routerLink="/designaciones"
+                [routerLinkActive]="['active']"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <i class="bi bi-list-ul me-2"></i>Listado de Designaciones
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                ngbDropdownItem
+                routerLink="/designaciones/new"
+                [routerLinkActive]="['active']"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <i class="bi bi-plus-circle me-2"></i>Nueva Designación
+              </a>
+            </li>
+          </ul>
+        </li>
       </ul>
     </div>
   </div>

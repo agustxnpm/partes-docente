@@ -37,7 +37,7 @@ public class PersonaPresenter {
         try {
             return Response.ok(personaService.findAll());
         } catch (IllegalArgumentException e) {
-            return Response.badRequest(e, e.getMessage());
+            return Response.badRequest(null, e.getMessage());
         }
     }
 
@@ -51,8 +51,9 @@ public class PersonaPresenter {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> updatePersona(@PathVariable("id") Long id, @RequestBody Persona persona) {
         try {
-            personaService.save(persona);
-            return Response.ok(persona, personaService.getMensajeExitoActualizacion(persona));
+            persona.setId(id);
+            Persona updatedPersona = personaService.update(persona);
+            return Response.ok(updatedPersona, personaService.getMensajeExitoActualizacion(updatedPersona));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(persona, e.getMessage());
         }
@@ -65,7 +66,7 @@ public class PersonaPresenter {
             personaService.delete(persona);
             return Response.ok(persona, personaService.getMensajeExitoBorrado(persona));
         } catch (IllegalArgumentException e) {
-            return Response.badRequest(e, e.getMessage());
+            return Response.badRequest(null, e.getMessage());
         }
     }
 
@@ -75,7 +76,7 @@ public class PersonaPresenter {
             Persona persona = personaService.findById(id);
             return Response.ok(persona);
         } catch (IllegalArgumentException e) {
-            return Response.badRequest(e, e.getMessage());
+            return Response.badRequest(null, e.getMessage());
         }
     }
 

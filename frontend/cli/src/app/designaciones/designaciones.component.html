@@ -1,0 +1,98 @@
+<div class="container mt-5">
+  <div
+    class="bg-white border border-2 border-dark-subtle rounded shadow-sm p-4"
+  >
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-person-badge-fill text-dark fs-3 me-2"></i>
+        <h3 class="m-0">Lista de Designaciones</h3>
+      </div>
+      <span class="badge bg-dark text-white fs-6">
+        {{ resultsPage.totalElements }} registro(s)
+      </span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle mb-0">
+        <thead class="table-light text-center">
+          <tr>
+            <th>#</th>
+            <th>Persona</th>
+            <th>Cargo</th>
+            <th>División</th>
+            <th>Situación de Revista</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Fin</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let designacion of resultsPage.content; let i = index">
+            <td class="text-center">
+              {{ (currentPage - 1) * resultsPage.size + i + 1 }}
+            </td>
+            <td>
+              {{ designacion.persona.apellido }},
+              {{ designacion.persona.nombre }}
+            </td>
+            <td>
+              {{ designacion.cargo.nombre }}
+            </td>
+            <td>
+              {{
+                designacion.cargo.division
+                  ? designacion.cargo.division.anio +
+                    "° " +
+                    designacion.cargo.division.numDivision +
+                    " - " +
+                    designacion.cargo.division.orientacion
+                  : ""
+              }}
+            </td>
+            <td>
+              {{ designacion.situacionRevista }}
+            </td>
+            <td>
+              {{ designacion.fechaInicio | date : "dd/MM/yyyy" }}
+            </td>
+            <td>
+              {{
+                designacion.fechaFin
+                  ? (designacion.fechaFin | date : "dd/MM/yyyy")
+                  : "—"
+              }}
+            </td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  class="btn btn-outline-primary"
+                  [routerLink]="['/designaciones', designacion.id]"
+                >
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button
+                  class="btn btn-outline-danger"
+                  (click)="eliminarDesignacion(designacion)"
+                >
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Componente de paginación -->
+    <div class="d-flex justify-content-center mt-4">
+      <app-pagination
+        [totalPages]="resultsPage.totalPages"
+        [currentPage]="currentPage"
+        [last]="resultsPage.last"
+        [number]="resultsPage.number"
+        (pageChangeRequested)="onPageChangeRequested($event)"
+      >
+      </app-pagination>
+    </div>
+  </div>
+</div>

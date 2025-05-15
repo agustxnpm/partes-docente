@@ -59,16 +59,12 @@ public class DivisionPresenter {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> deleteDivision(@PathVariable("id") Long id) {
-        String mensajeBorradoFallido = "";
         try {
             Division division = divisionService.findById(id);
-            mensajeBorradoFallido = divisionService.getMensajeFalloBorrado(division);
             divisionService.delete(division);
             return Response.ok(division, divisionService.getMensajeExitoBorrado(division));
         } catch (IllegalArgumentException e) {
-            return Response.badRequest(e, e.getMessage());
-        } catch (DataIntegrityViolationException e) {
-            return Response.badRequest(e, mensajeBorradoFallido);
+            return Response.badRequest(null, e.getMessage());
         }
     }
 

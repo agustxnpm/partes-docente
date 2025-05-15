@@ -4,9 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-designaciones-detail',
   imports: [],
   template: `
-    <p>
-      designaciones-detail works!
-    </p>
+   <h1>Designaciones Detail</h1>
   `,
   styles: ``
 })

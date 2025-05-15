@@ -31,12 +31,20 @@ public class Validator {
         personaValidator.validarPersona(persona);
     }
 
+    public void validarBorradoPersona(Persona persona) {
+        personaValidator.validarBorrado(persona);
+    }
+
     public void validarDni(Long dni) {
         personaValidator.validarDni(dni);
     }
 
     public void validarDivision(Division division) {
         divisionValidator.validarDivision(division);
+    }
+
+    public void validarBorradoDivision(Division division) {
+        divisionValidator.validarBorrado(division);
     }
 
     public void validarDesignacion(Designacion designacion) {

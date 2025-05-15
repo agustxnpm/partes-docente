@@ -81,4 +81,8 @@ public class CargoService {
     public String getMensajeExitoBorrado(Cargo cargo) {
         return mensajeBuilder.generarMensajeExitoCargoBorrado(cargo);
     }
+
+    public boolean existsByDivisionId(long id) {
+        return cargoRepository.existsByDivisionId(id);
+    }
 }

@@ -40,4 +40,10 @@ public class PersonaValidator {
             throw new IllegalArgumentException("No se encontró una persona con el DNI: " + dni);
         }
     }
+
+    public void validarBorrado(Persona persona) {
+        if (persona.getDesignaciones() != null && !persona.getDesignaciones().isEmpty()) {
+        throw new IllegalArgumentException("No se puede eliminar a " + persona.getNombre() + " " + persona.getApellido() + " porque tiene designaciones asociadas. Elimine primero las designaciones.");
+    }
+    }
 }

@@ -2,7 +2,7 @@ package unpsjb.labprog.backend.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,15 +20,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Persona {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (unique = true)
+    @Column(unique = true)
     private long dni;
-    
-    @Column (unique = true)
+
+    @Column(unique = true)
     private String cuil;
 
     private String nombre;
@@ -39,7 +39,7 @@ public class Persona {
     private String telefono;
 
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Designacion> designaciones;
-    
+
 }
