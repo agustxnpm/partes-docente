@@ -20,5 +20,9 @@ public interface DivisionRepository extends JpaRepository<Division, Long> {
     String orientacion
 );
 
+   Optional<Division> findByAnioAndNumDivision(
+    int anio,
+    int numDivision
+);
 
 }

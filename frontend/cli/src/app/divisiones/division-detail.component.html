@@ -22,8 +22,9 @@
             name="anio"
             #anio="ngModel"
             maxlength="1"
-            pattern="[1-7]"
+            pattern="[1-9]"
             (keypress)="onlyNumbers($event)"
+            [disabled]="!isNew"
             required
           />
           <div class="d-flex mt-1">
@@ -62,6 +63,7 @@
             maxlength="1"
             pattern="[1-9]"
             (keypress)="onlyNumbers($event)"
+            [disabled]="!isNew"
             required
           />
           <div class="d-flex mt-1">

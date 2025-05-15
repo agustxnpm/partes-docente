@@ -43,7 +43,9 @@ public class PersonaValidator {
 
     public void validarBorrado(Persona persona) {
         if (persona.getDesignaciones() != null && !persona.getDesignaciones().isEmpty()) {
-        throw new IllegalArgumentException("No se puede eliminar a " + persona.getNombre() + " " + persona.getApellido() + " porque tiene designaciones asociadas. Elimine primero las designaciones.");
-    }
+            throw new IllegalArgumentException(
+                    "No se puede eliminar a " + persona.getNombre() + " " + persona.getApellido()
+                            + " porque tiene designaciones asociadas.");
+        }
     }
 }

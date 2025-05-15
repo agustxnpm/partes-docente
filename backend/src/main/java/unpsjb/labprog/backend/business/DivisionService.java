@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.model.Division;
+import unpsjb.labprog.backend.model.Turno;
 
 @Service
 public class DivisionService {
@@ -82,5 +83,13 @@ public class DivisionService {
                 division.getTurno(),
                 division.getOrientacion()
             ).orElse(null);
+    }
+
+    public Division buscarDivisionExistente(
+        int anio,
+        int numDivision
+    ) {
+        return divisionRepository
+            .findByAnioAndNumDivision(anio, numDivision).orElse(null);
     }
 }
