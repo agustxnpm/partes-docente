@@ -190,13 +190,14 @@
           type="submit"
           class="btn btn-outline-primary px-4"
           [disabled]="cargoForm.invalid || !isValidDateRange"
-          >
+        >
           <i class="bi bi-check-circle me-1"></i>
           {{ isNew ? "Crear Cargo" : "Guardar Cambios" }}
         </button>
       </div>
       <div
         *ngIf="mensaje"
+        id="message-container"
         class="alert mt-4"
         [ngClass]="{ 'alert-danger': isError, 'alert-success': !isError }"
         role="alert"

@@ -134,7 +134,10 @@
                   </span>
 
                   <!-- Información de la división si es un espacio curricular -->
-                  <div *ngIf="designacion.cargo.division" class="col-12 mt-1 w-100">
+                  <div
+                    *ngIf="designacion.cargo.division"
+                    class="col-12 mt-1 w-100"
+                  >
                     <hr class="my-2" />
                     <strong>División:</strong>
                     {{ designacion.cargo.division.anio }}°
@@ -257,6 +260,7 @@
 
       <div
         *ngIf="mensaje"
+        id="message-container"
         class="alert mt-4"
         [ngClass]="{ 'alert-danger': isError, 'alert-success': !isError }"
         role="alert"

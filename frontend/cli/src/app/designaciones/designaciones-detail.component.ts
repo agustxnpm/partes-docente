@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { DesignacionesService } from "./designaciones.service";
@@ -45,7 +45,8 @@ export class DesignacionesDetailComponent {
     private cargoService: CargoService,
     private route: ActivatedRoute,
     private router: Router,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -131,6 +132,8 @@ export class DesignacionesDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
+          this.cdr.detectChanges(); // forzar deteccion de cambios
+          this.scrollToMessage(); // desplazar la vista al mensaje
         },
         error: (err) => {
           this.mensaje = err.error.message || "Error al crear la designación.";
@@ -143,6 +146,8 @@ export class DesignacionesDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
+          this.cdr.detectChanges(); // forzar deteccion de cambios
+          this.scrollToMessage(); // desplazar la vista al mensaje
         },
         error: (err) => {
           this.mensaje =
@@ -245,5 +250,12 @@ export class DesignacionesDetailComponent {
     this.isValidDateRange = true;
     this.minFechaFin = "";
     this.maxFechaInicio = null;
+  }
+
+  scrollToMessage(): void {
+    const messageElement = document.getElementById("message-container");
+    if (messageElement) {
+      messageElement.scrollIntoView({ behavior: "smooth" });
+    }
   }
 }

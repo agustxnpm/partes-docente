@@ -1,33 +1,30 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Division } from './division';
-import { DivisionService } from './division.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Turno } from './turno';
+import { CommonModule } from "@angular/common";
+import { ChangeDetectorRef, Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { Division } from "./division";
+import { DivisionService } from "./division.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Turno } from "./turno";
 
 @Component({
-  selector: 'app-division-detail',
+  selector: "app-division-detail",
   imports: [CommonModule, FormsModule],
-  templateUrl: './division-detail.component.html',
+  templateUrl: "./division-detail.component.html",
   styleUrls: ["../global-styles/detail-styles.css"],
-  standalone: true
+  standalone: true,
 })
 export class DivisionDetailComponent {
-
   division: Division = {
     id: 0,
     anio: null,
     numDivision: null,
-    orientacion: '',
-    turno: Turno.Mañana // Valor por defecto
-
+    orientacion: "",
+    turno: Turno.Mañana, // Valor por defecto
   };
-
 
   turnos = Object.values(Turno);
 
-  mensaje: string = '';
+  mensaje: string = "";
   isNew: boolean = true;
   isError: boolean = false;
   showErrorNumeroAnio: boolean = false;
@@ -36,7 +33,8 @@ export class DivisionDetailComponent {
   constructor(
     private divisionService: DivisionService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -44,12 +42,12 @@ export class DivisionDetailComponent {
   }
 
   getDivision(): void {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get("id");
 
       this.resetForm();
 
-      if (id === 'new') {
+      if (id === "new") {
         this.isNew = true;
       } else {
         this.isNew = false;
@@ -58,9 +56,9 @@ export class DivisionDetailComponent {
             this.division = response.data as Division;
           },
           error: (err) => {
-            console.error('Error al obtener la división:', err);
-            this.mensaje = 'Error al cargar la división.';
-          }
+            console.error("Error al obtener la división:", err);
+            this.mensaje = "Error al cargar la división.";
+          },
         });
       }
     });
@@ -72,15 +70,18 @@ export class DivisionDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
-
-        }
+          this.cdr.detectChanges(); // forzar deteccion de cambios
+          this.scrollToMessage(); // desplazar la vista al mensaje
+        },
       });
     } else {
       this.divisionService.updateDivision(this.division).subscribe({
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
-        }
+          this.cdr.detectChanges(); // forzar deteccion de cambios
+          this.scrollToMessage(); // desplazar la vista al mensaje
+        },
       });
     }
   }
@@ -102,21 +103,27 @@ export class DivisionDetailComponent {
   }
 
   volver(): void {
-    this.router.navigate(['/divisiones']);
+    this.router.navigate(["/divisiones"]);
   }
 
   private resetForm(): void {
-  this.division = {
-    id: 0,
-    anio: null,
-    numDivision: null,
-    orientacion: '',
-    turno: Turno.Mañana // Mantener el valor por defecto
-  };
-  this.mensaje = '';
-  this.isError = false;
-  this.showErrorNumeroAnio = false;
-  this.showErrorNumeroDivision = false;
-}
+    this.division = {
+      id: 0,
+      anio: null,
+      numDivision: null,
+      orientacion: "",
+      turno: Turno.Mañana, // Mantener el valor por defecto
+    };
+    this.mensaje = "";
+    this.isError = false;
+    this.showErrorNumeroAnio = false;
+    this.showErrorNumeroDivision = false;
+  }
 
+  scrollToMessage(): void {
+    const messageElement = document.getElementById("message-container");
+    if (messageElement) {
+      messageElement.scrollIntoView({ behavior: "smooth" });
+    }
+  }
 }

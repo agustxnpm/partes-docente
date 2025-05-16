@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -43,7 +43,8 @@ export class CargoDetailComponent {
     private divisionService: DivisionService,
     private modalService: ModalService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -114,6 +115,8 @@ export class CargoDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
+          this.cdr.detectChanges(); // forzar deteccion de cambios
+          this.scrollToMessage(); // desplazar la vista al mensaje
         },
       });
     } else {
@@ -121,6 +124,8 @@ export class CargoDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
+          this.cdr.detectChanges(); // forzar deteccion de cambios
+          this.scrollToMessage(); // desplazar la vista al mensaje
         },
       });
     }
@@ -199,5 +204,12 @@ export class CargoDetailComponent {
     this.mensaje = "";
     this.isError = false;
     this.isValidDateRange = true;
+  }
+
+  scrollToMessage(): void {
+    const messageElement = document.getElementById("message-container");
+    if (messageElement) {
+      messageElement.scrollIntoView({ behavior: "smooth" });
+    }
   }
 }
