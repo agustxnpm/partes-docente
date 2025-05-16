@@ -36,8 +36,8 @@ export class DesignacionesComponent {
 
   eliminarDesignacion(designacion: any): void {
     const mensaje = designacion.cargo.division
-    ? `¿Está seguro que desea eliminar la designación de ${designacion.persona.nombre} ${designacion.persona.apellido} para el cargo ${designacion.cargo.nombre} de ${designacion.cargo.division.anio}º ${designacion.cargo.division.numDivision}º?`
-    : `¿Está seguro que desea eliminar la designación de ${designacion.persona.nombre} ${designacion.persona.apellido} para el cargo institucional ${designacion.cargo.nombre}?`;
+      ? `¿Está seguro que desea eliminar la designación de ${designacion.persona.nombre} ${designacion.persona.apellido} para el cargo ${designacion.cargo.nombre} de ${designacion.cargo.division.anio}º ${designacion.cargo.division.numDivision}º?`
+      : `¿Está seguro que desea eliminar la designación de ${designacion.persona.nombre} ${designacion.persona.apellido} para el cargo institucional ${designacion.cargo.nombre}?`;
 
     this.modalService
       .confirm(
@@ -51,7 +51,11 @@ export class DesignacionesComponent {
           this.designacionService.delete(designacion).subscribe({
             next: (response) => {
               this.mensaje = response.message;
-              this.modalService.alert("Éxito", this.mensaje);
+              if (response.status === 200) {
+                this.modalService.alert("Éxito", this.mensaje);
+              } else {
+                this.modalService.alert("Error", this.mensaje);
+              }
               this.getDesignaciones();
             },
             error: (err) => {

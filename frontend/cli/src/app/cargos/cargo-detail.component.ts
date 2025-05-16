@@ -24,7 +24,7 @@ export class CargoDetailComponent {
     fechaFin: null,
     division: null,
     horario: [],
-    tipoDesignacion: TipoDesignacion.ESPACIO_CURRICULAR
+    tipoDesignacion: TipoDesignacion.ESPACIO_CURRICULAR,
   };
 
   divisiones: Division[] = [];
@@ -33,10 +33,10 @@ export class CargoDetailComponent {
   mensaje: string = ""; // Para mostrar el mensaje del backend
   isError: boolean = false; // si el dataPackage no es 200
   showErrorNumero: boolean = false; // para mostrar el error de solo números
-  TipoDesignacion = TipoDesignacion; 
-  minFechaFin: string = ''; 
+  TipoDesignacion = TipoDesignacion;
+  minFechaFin: string = "";
   maxFechaInicio: string | null = null;
-  fechaActual: string = new Date().toISOString().split('T')[0];
+  fechaActual: string = new Date().toISOString().split("T")[0];
 
   constructor(
     private cargoService: CargoService,
@@ -52,11 +52,11 @@ export class CargoDetailComponent {
   }
 
   getCargo(): void {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get("id");
       this.resetForm(); // Limpiar el formulario antes de cualquier operación
 
-      if (id === 'new') {
+      if (id === "new") {
         this.isNew = true;
       } else {
         this.isNew = false;
@@ -65,9 +65,9 @@ export class CargoDetailComponent {
             this.cargo = response.data as Cargo;
           },
           error: (err) => {
-            console.error('Error al obtener el cargo:', err);
-            this.modalService.alert('Error', 'Error al cargar el cargo.');
-          }
+            console.error("Error al obtener el cargo:", err);
+            this.modalService.alert("Error", "Error al cargar el cargo.");
+          },
         });
       }
     });
@@ -77,11 +77,13 @@ export class CargoDetailComponent {
     this.divisionService.findAll().subscribe({
       next: (response) => {
         this.divisiones = response.data as Division[];
-        
+
         // Si estamos editando un cargo con división, asegurarse de que la división coincida
         if (!this.isNew && this.cargo.division) {
-          const divisionEncontrada = this.divisiones.find(d => 
-            this.cargo.division?.id !== undefined && d.id === this.cargo.division.id
+          const divisionEncontrada = this.divisiones.find(
+            (d) =>
+              this.cargo.division?.id !== undefined &&
+              d.id === this.cargo.division.id
           );
           if (divisionEncontrada) {
             this.cargo.division = divisionEncontrada;
@@ -89,16 +91,20 @@ export class CargoDetailComponent {
         }
       },
       error: (err) => {
-        console.error('Error al obtener las divisiones:', err);
-        this.modalService.alert('Error', 'Error al cargar las divisiones.');
-      }
+        console.error("Error al obtener las divisiones:", err);
+        this.modalService.alert("Error", "Error al cargar las divisiones.");
+      },
     });
   }
 
   saveCargo(): void {
     // Validar que si es ESPACIO_CURRICULAR tenga una división asignada
-    if (this.cargo.tipoDesignacion === TipoDesignacion.ESPACIO_CURRICULAR && !this.cargo.division) {
-      this.mensaje = 'Debe seleccionar una división para un espacio curricular.';
+    if (
+      this.cargo.tipoDesignacion === TipoDesignacion.ESPACIO_CURRICULAR &&
+      !this.cargo.division
+    ) {
+      this.mensaje =
+        "Debe seleccionar una división para un espacio curricular.";
       this.isError = true;
       return;
     }
@@ -108,14 +114,14 @@ export class CargoDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
-        }
+        },
       });
     } else {
       this.cargoService.updateCargo(this.cargo).subscribe({
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
-        }
+        },
       });
     }
   }
@@ -128,7 +134,7 @@ export class CargoDetailComponent {
   }
 
   volver(): void {
-    this.router.navigate(['/cargos']);
+    this.router.navigate(["/cargos"]);
   }
 
   onlyNumbers(event: KeyboardEvent): boolean {
@@ -146,10 +152,11 @@ export class CargoDetailComponent {
   onFechaInicioChange(): void {
     if (this.cargo.fechaInicio) {
       this.minFechaFin = this.cargo.fechaInicio;
-      
+
       if (this.cargo.fechaFin && this.cargo.fechaFin < this.cargo.fechaInicio) {
         this.cargo.fechaFin = null;
-        this.modalService.alert('Aviso', 'La fecha de fin debe ser posterior a la fecha de inicio');
+        this.mensaje =
+          "La fecha de fin debe ser posterior a la fecha de inicio";
         this.isValidDateRange = false;
       } else {
         this.isValidDateRange = true;
@@ -160,10 +167,14 @@ export class CargoDetailComponent {
   onFechaFinChange(): void {
     if (this.cargo.fechaFin) {
       this.maxFechaInicio = this.cargo.fechaFin;
-      
-      if (this.cargo.fechaInicio && this.cargo.fechaInicio > this.cargo.fechaFin) {
+
+      if (
+        this.cargo.fechaInicio &&
+        this.cargo.fechaInicio > this.cargo.fechaFin
+      ) {
         this.cargo.fechaFin = null;
-        this.modalService.alert('Aviso', 'La fecha de fin no puede ser anterior a la fecha de inicio');
+        this.mensaje =
+          "La fecha de fin no puede ser anterior a la fecha de inicio";
         this.isValidDateRange = false;
       } else {
         this.isValidDateRange = true;
@@ -183,11 +194,10 @@ export class CargoDetailComponent {
       fechaFin: null,
       division: null,
       horario: [],
-      tipoDesignacion: TipoDesignacion.ESPACIO_CURRICULAR
+      tipoDesignacion: TipoDesignacion.ESPACIO_CURRICULAR,
     };
     this.mensaje = "";
     this.isError = false;
     this.isValidDateRange = true;
-
   }
 }

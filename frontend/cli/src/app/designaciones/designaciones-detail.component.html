@@ -1,0 +1,277 @@
+<div class="container mt-5 flashy-form">
+  <div
+    class="bg-light rounded shadow p-4 border border-2 border-primary-subtle animated-border"
+  >
+    <div class="d-flex align-items-center mb-4">
+      <i class="bi bi-clipboard2-check text-primary fs-3 me-2 neon-icon"></i>
+      <h3 class="m-0">
+        {{ isNew ? "Nueva Designación" : "Editar Designación" }}
+      </h3>
+    </div>
+
+    <form #designacionForm="ngForm" (ngSubmit)="saveDesignacion()">
+      <div class="row g-4">
+        <!-- Selección de Persona -->
+        <div class="col-md-6">
+          <label for="persona" class="form-label required-field">Persona</label>
+          <select
+            class="form-select"
+            [ngClass]="{
+              'is-invalid':
+                personaField.invalid &&
+                (personaField.dirty || personaField.touched)
+            }"
+            [(ngModel)]="designacion.persona"
+            [compareWith]="comparePersonas"
+            name="persona"
+            #personaField="ngModel"
+            required
+          >
+            <option [ngValue]="null">Seleccione una persona</option>
+            <option *ngFor="let persona of personas" [ngValue]="persona">
+              {{ persona.apellido }}, {{ persona.nombre }} ({{ persona.dni }})
+            </option>
+          </select>
+          <!-- Información de la persona seleccionada -->
+          <div class="col-12 mt-1" *ngIf="designacion.persona">
+            <div class="alert alert-info mb-0 d-flex align-items-center">
+              <div class="d-flex align-items-center me-3">
+                <i class="bi bi-person-badge-fill me-2 fs-4"></i>
+              </div>
+              <div>
+                <h6 class="mb-1">
+                  {{ designacion.persona.apellido }},
+                  {{ designacion.persona.nombre }}
+                </h6>
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-primary me-2"
+                    >DNI: {{ designacion.persona.dni }}</span
+                  >
+                  <span
+                    *ngIf="designacion.persona.email"
+                    class="badge bg-secondary me-2"
+                  >
+                    <i class="bi bi-envelope-fill me-1"></i>
+                    {{ designacion.persona.email }}
+                  </span>
+                  <span
+                    *ngIf="designacion.persona.telefono"
+                    class="badge bg-secondary"
+                  >
+                    <i class="bi bi-telephone-fill me-1"></i>
+                    {{ designacion.persona.telefono }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <small
+            class="error-message"
+            *ngIf="
+              personaField.invalid &&
+              (personaField.dirty || personaField.touched)
+            "
+          >
+            Debe seleccionar una persona
+          </small>
+        </div>
+
+        <!-- Selección de Cargo -->
+        <div class="col-md-6">
+          <label for="cargo" class="form-label required-field">Cargo</label>
+          <select
+            class="form-select"
+            [ngClass]="{
+              'is-invalid':
+                cargoField.invalid && (cargoField.dirty || cargoField.touched)
+            }"
+            [(ngModel)]="designacion.cargo"
+            [compareWith]="compareCargos"
+            name="cargo"
+            #cargoField="ngModel"
+            required
+          >
+            <option [ngValue]="null">Seleccione un cargo</option>
+            <option *ngFor="let cargo of cargos" [ngValue]="cargo">
+              {{ cargo.nombre }}
+              <span *ngIf="cargo.division">
+                ({{ cargo.division.anio }}° {{ cargo.division.numDivision }} -
+                {{ cargo.division.orientacion }})
+              </span>
+              <span *ngIf="!cargo.division">(Cargo Institucional)</span>
+            </option>
+          </select>
+          <!-- Información del cargo seleccionado -->
+          <div class="col-12 mt-1" *ngIf="designacion.cargo">
+            <div class="alert alert-info mb-0 d-flex align-items-start">
+              <div class="d-flex align-items-center me-3">
+                <i
+                  [class]="
+                    isCargoInstitucional()
+                      ? 'bi bi-building-fill me-2 fs-4'
+                      : 'bi bi-book-fill me-2 fs-4'
+                  "
+                  [ngClass]="{
+                    'text-primary': isCargoInstitucional(),
+                    'text-success': !isCargoInstitucional()
+                  }"
+                >
+                </i>
+              </div>
+              <div>
+                <h6 class="mb-1">{{ designacion.cargo.nombre }}</h6>
+                <div class="d-flex flex-wrap align-items-center">
+                  <span class="badge bg-primary me-2">
+                    {{
+                      isCargoInstitucional()
+                        ? "CARGO INSTITUCIONAL"
+                        : "ESPACIO CURRICULAR"
+                    }}
+                  </span>
+                  <span class="badge bg-secondary me-2">
+                    <i class="bi bi-clock-fill me-1"></i>
+                    {{ designacion.cargo.cargaHoraria }} hs
+                  </span>
+
+                  <!-- Información de la división si es un espacio curricular -->
+                  <div *ngIf="designacion.cargo.division" class="col-12 mt-1 w-100">
+                    <hr class="my-2" />
+                    <strong>División:</strong>
+                    {{ designacion.cargo.division.anio }}°
+                    {{ designacion.cargo.division.numDivision }}
+                    {{
+                      designacion.cargo.division.orientacion
+                        ? "- " + designacion.cargo.division.orientacion
+                        : ""
+                    }}
+                    <span class="ms-2 badge bg-info">{{
+                      designacion.cargo.division.turno
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <small
+            class="error-message"
+            *ngIf="
+              cargoField.invalid && (cargoField.dirty || cargoField.touched)
+            "
+          >
+            Debe seleccionar un cargo
+          </small>
+        </div>
+
+        <!-- Situación de Revista -->
+        <div class="col-md-4">
+          <label for="situacionRevista" class="form-label required-field"
+            >Situación de Revista</label
+          >
+          <select
+            class="form-select"
+            [ngClass]="{
+              'is-invalid':
+                situacionField.invalid &&
+                (situacionField.dirty || situacionField.touched)
+            }"
+            [(ngModel)]="designacion.situacionRevista"
+            name="situacionRevista"
+            #situacionField="ngModel"
+            required
+          >
+            <option value="">Seleccione una situación</option>
+            <option
+              *ngFor="let situacion of situacionesRevista"
+              [value]="situacion"
+            >
+              {{ situacion }}
+            </option>
+          </select>
+          <small
+            class="error-message"
+            *ngIf="
+              situacionField.invalid &&
+              (situacionField.dirty || situacionField.touched)
+            "
+          >
+            Debe seleccionar una situación
+          </small>
+        </div>
+
+        <!-- Fecha de Inicio -->
+        <div class="col-md-4">
+          <label for="fechaInicio" class="form-label required-field"
+            >Fecha de Inicio</label
+          >
+          <input
+            type="date"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                fechaInicioField.invalid &&
+                (fechaInicioField.dirty || fechaInicioField.touched)
+            }"
+            [(ngModel)]="designacion.fechaInicio"
+            name="fechaInicio"
+            #fechaInicioField="ngModel"
+            [max]="maxFechaInicio || '9999-12-31'"
+            (change)="onFechaInicioChange()"
+            required
+          />
+          <small
+            class="error-message"
+            *ngIf="
+              fechaInicioField.invalid &&
+              (fechaInicioField.dirty || fechaInicioField.touched)
+            "
+          >
+            La fecha de inicio es obligatoria
+          </small>
+        </div>
+
+        <!-- Fecha de Fin (opcional) -->
+        <div class="col-md-4">
+          <label for="fechaFin" class="form-label">Fecha de Fin</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="designacion.fechaFin"
+            name="fechaFin"
+            [min]="minFechaFin"
+            (change)="onFechaFinChange()"
+          />
+          <small class="text-muted">Este campo es opcional.</small>
+        </div>
+      </div>
+
+      <div class="mt-4 text-end">
+        <button
+          type="submit"
+          class="btn btn-outline-primary px-4"
+          [disabled]="designacionForm.invalid || !isValidDateRange"
+        >
+          <i class="bi bi-check-circle me-1"></i>
+          {{ isNew ? "Crear Designación" : "Guardar Cambios" }}
+        </button>
+      </div>
+
+      <div
+        *ngIf="mensaje"
+        class="alert mt-4"
+        [ngClass]="{ 'alert-danger': isError, 'alert-success': !isError }"
+        role="alert"
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <span>{{ mensaje }}</span>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            (click)="volver()"
+          >
+            <i class="bi bi-arrow-left me-1"></i>Volver
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

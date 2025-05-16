@@ -46,6 +46,9 @@ export class DivisionDetailComponent {
   getDivision(): void {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
+
+      this.resetForm();
+
       if (id === 'new') {
         this.isNew = true;
       } else {
@@ -101,5 +104,19 @@ export class DivisionDetailComponent {
   volver(): void {
     this.router.navigate(['/divisiones']);
   }
+
+  private resetForm(): void {
+  this.division = {
+    id: 0,
+    anio: null,
+    numDivision: null,
+    orientacion: '',
+    turno: Turno.Mañana // Mantener el valor por defecto
+  };
+  this.mensaje = '';
+  this.isError = false;
+  this.showErrorNumeroAnio = false;
+  this.showErrorNumeroDivision = false;
+}
 
 }

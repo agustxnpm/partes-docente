@@ -68,6 +68,8 @@ public class CargoPresenter {
             return Response.ok(cargo, cargoService.getMensajeExitoBorrado(cargo));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(e, e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            return Response.duplicateError(e, "No se puede eliminar el cargo porque esta asociado a una designación");
         }
     }
 

@@ -45,7 +45,11 @@ export class CargoComponent {
           this.cargoService.delete(cargo).subscribe({
             next: (response) => {
               this.mensaje = response.message;
-              this.modalService.alert("Éxito", this.mensaje);
+              if (response.status === 200) {
+                this.modalService.alert("Éxito", this.mensaje);
+              } else {
+                this.modalService.alert("Error", this.mensaje);
+              }
               this.getCargos();
             },
             error: (err) => {

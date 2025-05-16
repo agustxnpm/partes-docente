@@ -47,7 +47,11 @@ export class PersonaComponent {
           this.personaService.delete(persona).subscribe({
             next: (response) => {
               this.mensaje = response.message;
+              if (response.status === 200) {
               this.modalService.alert("Éxito", this.mensaje);
+              } else {
+              this.modalService.alert("Error", this.mensaje);
+              }
               this.getPersonas();
             },
             error: (err) => {

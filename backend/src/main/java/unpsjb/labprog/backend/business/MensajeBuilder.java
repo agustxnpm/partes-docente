@@ -140,19 +140,8 @@ public class MensajeBuilder {
     }
 
     public String generarMensajeExitoDesignacionActualizada(Designacion designacion) {
-        if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
-            return designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " ha sido designado/a como " + designacion.getCargo().getNombre() + " exitosamente";
-        }
-
-        if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR) {
-            return designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " ha sido designado/a a la asignatura " + designacion.getCargo().getNombre()
-                            + " a la división " + designacion.getCargo().getDivision().getAnio() + "º "
-                            + designacion.getCargo().getDivision().getNumDivision() + "º turno " + designacion.getCargo().getDivision().getTurno() + " exitosamente";
-        }
-
-        throw new IllegalArgumentException("Tipo de designación no válido");
+         return "Designacion de " + designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
+                            + " actualizada correctamente";
     }
     
     public String generarMensajeExitoDesignacionBorrada(Designacion designacion) {

@@ -46,23 +46,12 @@ export class PersonasDetailComponent {
   getPersona(): void {
     this.route.paramMap.subscribe((params) => {
       const id = params.get("id");
+
+      this.resetForm();
+
       if (id === "new") {
         // Persona nueva
         this.isNew = true;
-        this.persona = {
-          id: 0,
-          dni: null,
-          cuil: "",
-          nombre: "",
-          apellido: "",
-          sexo: "M",
-          titulo: null,
-          domicilio: "",
-          telefono: "",
-          designaciones: [],
-        };
-        this.cuilPrefix = "";
-        this.cuilSuffix = "";
       } else {
         // Editar persona existente
         this.isNew = false;
@@ -145,4 +134,28 @@ export class PersonasDetailComponent {
     }
     return true;
   }
+
+  private resetForm(): void {
+  this.persona = {
+    id: 0,
+    dni: null,
+    cuil: "",
+    nombre: "",
+    apellido: "",
+    sexo: "M",
+    titulo: null,
+    domicilio: "",
+    telefono: "",
+    designaciones: [],
+  };
+  
+  this.cuilPrefix = "";
+  this.cuilSuffix = "";
+  this.cuilInvalid = false;
+  
+  this.mensaje = "";
+  this.isError = false;
+  this.showErrorDni = false;
+  this.showErrorCuil = false;
+}
 }
