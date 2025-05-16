@@ -7,6 +7,7 @@ import { PersonaService } from "../personas/persona.service";
 import { CargoService } from "../cargos/cargo.service";
 import { Persona } from "../personas/persona";
 import { Cargo } from "../cargos/cargo";
+import { ModalService } from "../modal/modal.service";
 
 @Component({
   selector: "app-designaciones-detail",
@@ -43,7 +44,8 @@ export class DesignacionesDetailComponent {
     private personaService: PersonaService,
     private cargoService: CargoService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +56,7 @@ export class DesignacionesDetailComponent {
   getDesignacion(): void {
     this.route.paramMap.subscribe((params) => {
       const id = params.get("id");
-      
+
       this.resetForm();
 
       if (id === "new") {
@@ -113,44 +115,53 @@ export class DesignacionesDetailComponent {
   }
 
   saveDesignacion(): void {
-  // crear una copia de la designacion para evitar alterar el objeto original y afectar la interfaz
-  const designacionCopia = {...this.designacion};
-  
-  if (designacionCopia.fechaInicio) {
-    designacionCopia.fechaInicio = new Date(designacionCopia.fechaInicio);
-  }
-  
-  if (designacionCopia.fechaFin) {
-    designacionCopia.fechaFin = new Date(designacionCopia.fechaFin);
-  }
+    // crear una copia de la designacion para evitar alterar el objeto original y afectar la interfaz
+    const designacionCopia = { ...this.designacion };
 
-  if (this.isNew) {
-    this.designacionesService.createDesignacion(designacionCopia).subscribe({
-      next: (response) => {
-        this.mensaje = response.message;
-        this.isError = response.status !== 200;
-      },
-      error: (err) => {
-        this.mensaje = err.error.message || "Error al crear la designación.";
-        this.isError = true;
-        console.error(err);
-      },
-    });
-  } else {
-    this.designacionesService.updateDesignacion(designacionCopia).subscribe({
-      next: (response) => {
-        this.mensaje = response.message;
-        this.isError = response.status !== 200;
-      },
-      error: (err) => {
-        this.mensaje =
-          err.error.message || "Error al actualizar la designación.";
-        this.isError = true;
-        console.error(err);
-      },
-    });
+    if (designacionCopia.fechaInicio) {
+      designacionCopia.fechaInicio = new Date(designacionCopia.fechaInicio);
+    }
+
+    if (designacionCopia.fechaFin) {
+      designacionCopia.fechaFin = new Date(designacionCopia.fechaFin);
+    }
+
+    if (this.isNew) {
+      this.designacionesService.createDesignacion(designacionCopia).subscribe({
+        next: (response) => {
+          this.mensaje = response.message;
+          this.isError = response.status !== 200;
+          if (response.status === 200) {
+            this.modalService.alert("Éxito", response.message);
+          } else {
+            this.modalService.alert("Error", response.message);
+          }
+        },
+        error: (err) => {
+          this.mensaje = err.error.message || "Error al crear la designación.";
+          this.isError = true;
+          console.error(err);
+        },
+      });
+    } else {
+      this.designacionesService.updateDesignacion(designacionCopia).subscribe({
+        next: (response) => {
+          this.isError = response.status !== 200;
+          if (response.status === 200) {
+            this.modalService.alert("Éxito", response.message);
+          } else {
+            this.modalService.alert("Error", response.message);
+          }
+        },
+        error: (err) => {
+          this.mensaje =
+            err.error.message || "Error al actualizar la designación.";
+          this.isError = true;
+          console.error(err);
+        },
+      });
+    }
   }
-}
 
   formatDateForInput(date: Date): string {
     const d = new Date(date);
@@ -220,26 +231,28 @@ export class DesignacionesDetailComponent {
   }
 
   comparePersonas(persona1: any, persona2: any): boolean {
-  return persona1 && persona2 ? persona1.id === persona2.id : persona1 === persona2;
-}
+    return persona1 && persona2
+      ? persona1.id === persona2.id
+      : persona1 === persona2;
+  }
 
-compareCargos(cargo1: any, cargo2: any): boolean {
-  return cargo1 && cargo2 ? cargo1.id === cargo2.id : cargo1 === cargo2;
-}
+  compareCargos(cargo1: any, cargo2: any): boolean {
+    return cargo1 && cargo2 ? cargo1.id === cargo2.id : cargo1 === cargo2;
+  }
 
-private resetForm(): void {
-  this.designacion = {
-    id: 0,
-    persona: null,
-    cargo: null,
-    situacionRevista: "",
-    fechaInicio: null,
-    fechaFin: null
-  };
-  this.mensaje = "";
-  this.isError = false;
-  this.isValidDateRange = true;
-  this.minFechaFin = "";
-  this.maxFechaInicio = null;
-}
+  private resetForm(): void {
+    this.designacion = {
+      id: 0,
+      persona: null,
+      cargo: null,
+      situacionRevista: "",
+      fechaInicio: null,
+      fechaFin: null,
+    };
+    this.mensaje = "";
+    this.isError = false;
+    this.isValidDateRange = true;
+    this.minFechaFin = "";
+    this.maxFechaInicio = null;
+  }
 }

@@ -28,7 +28,7 @@ public class DesignacionPresenter {
             return Response.ok(designacion,
                     designacionService.getMensajeExito(designacion));
         } catch (IllegalArgumentException e) {
-            return Response.badRequest(designacion, e.getMessage());
+            return Response.internalServerError(designacion, e.getMessage());
         }
     }
 

@@ -1,5 +1,6 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,11 @@ public class DesignacionService {
     public Designacion findById(Long id) {
         return designacionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Designacion no encontrada"));
+    }
+
+    public List<Designacion> findDesignacionesSuperpuestas(Long cargoId, LocalDate fechaInicio, LocalDate fechaFin,
+            Long designacionId) {
+        return designacionRepository.findDesignacionesSuperpuestas(cargoId, fechaInicio, fechaFin, designacionId);
     }
 
     public Page<Designacion> findByPage(int page, int size) {

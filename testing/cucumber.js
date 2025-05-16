@@ -5,6 +5,8 @@ module.exports = {
       'features/divisiones_features/create_division.feature',
       'features/cargos_features/nuevo_cargo.feature',
       'features/designacion_features/nueva_designacion.feature',
+      'features/designacion_features/designacion_invalida.feature',
+
     ],
     require: [
       'features/**/*.js',

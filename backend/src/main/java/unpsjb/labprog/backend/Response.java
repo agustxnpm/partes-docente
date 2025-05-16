@@ -38,6 +38,10 @@ public class Response {
         return response(HttpStatus.BAD_REQUEST, msj, responseObj);
     }
 
+	public static ResponseEntity<Object> internalServerError(Object responseObj, String msj) {
+        return response(HttpStatus.INTERNAL_SERVER_ERROR, msj, responseObj);
+    }
+
 	public static ResponseEntity<Object> duplicateError(Object responseObj, String msj) {
         return response(HttpStatus.CONFLICT, msj, responseObj);
     }
