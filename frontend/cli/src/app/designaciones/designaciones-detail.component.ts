@@ -131,11 +131,6 @@ export class DesignacionesDetailComponent {
         next: (response) => {
           this.mensaje = response.message;
           this.isError = response.status !== 200;
-          if (response.status === 200) {
-            this.modalService.alert("Éxito", response.message);
-          } else {
-            this.modalService.alert("Error", response.message);
-          }
         },
         error: (err) => {
           this.mensaje = err.error.message || "Error al crear la designación.";
@@ -146,12 +141,8 @@ export class DesignacionesDetailComponent {
     } else {
       this.designacionesService.updateDesignacion(designacionCopia).subscribe({
         next: (response) => {
+          this.mensaje = response.message;
           this.isError = response.status !== 200;
-          if (response.status === 200) {
-            this.modalService.alert("Éxito", response.message);
-          } else {
-            this.modalService.alert("Error", response.message);
-          }
         },
         error: (err) => {
           this.mensaje =
