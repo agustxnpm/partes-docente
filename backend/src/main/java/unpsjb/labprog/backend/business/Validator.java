@@ -3,6 +3,7 @@ package unpsjb.labprog.backend.business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import unpsjb.labprog.backend.model.ArticuloLicencia;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
@@ -26,6 +27,9 @@ public class Validator {
 
     @Autowired
     private HorarioValidator horarioValidator;
+
+    @Autowired
+    private ArticuloLicenciaValidator articuloLicenciaValidator;
 
     public void validarCargo(Cargo cargo) {
         cargoValidator.validar(cargo);
@@ -57,5 +61,17 @@ public class Validator {
 
      public void validarHorario(Horario horario) {
         horarioValidator.validarHorario(horario);
+    }
+
+    public void validarBorradoHorario(Horario horario) {
+        horarioValidator.validarBorrado(horario);
+    }
+
+    public void validarArticuloLicencia(ArticuloLicencia articuloLicencia) {
+        articuloLicenciaValidator.validarArticuloLicencia(articuloLicencia);
+    }
+
+    public void validarBorradoArticuloLicencia(ArticuloLicencia articuloLicencia) {
+        articuloLicenciaValidator.validarBorrado(articuloLicencia);
     }
 }

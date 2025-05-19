@@ -2,6 +2,7 @@ package unpsjb.labprog.backend.business;
 
 import org.springframework.stereotype.Component;
 
+import unpsjb.labprog.backend.model.ArticuloLicencia;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
@@ -173,6 +174,18 @@ public class MensajeBuilder {
     }
     public String generarMensajeExitoHorarioBorrado(Horario horario) {
         return "Horario de " + horario.getDia() + " a las " + horario.getHora() + " hs. borrado exitosamente";
+    }
+    /*-------------------------------------------------------------------------------------- */
+
+    /* ---------------------------MENSAJES PARA LA ENTIDAD ARTICULO LICENCIA --------------------------- */
+    public String generarMensajeExitoArticuloLicenciaCreado(ArticuloLicencia articuloLicencia) {
+        return "Artículo de licencia " + articuloLicencia.getArticulo() + " creado exitosamente";
+    }
+    public String generarMensajeExitoArticuloLicenciaActualizado(ArticuloLicencia articuloLicencia) {
+        return "Artículo de licencia " + articuloLicencia.getArticulo() + " actualizado exitosamente";
+    }
+    public String generarMensajeExitoArticuloLicenciaBorrado(ArticuloLicencia articuloLicencia) {
+        return "Artículo de licencia " + articuloLicencia.getArticulo() + " borrado exitosamente";
     }
     /*-------------------------------------------------------------------------------------- */
 

@@ -28,6 +28,7 @@ public class HorarioService {
 
     @Transactional
     public void delete(Horario horario) {
+        validator.validarBorradoHorario(horario);
         horarioRepository.delete(horario);
     }
 
@@ -39,6 +40,10 @@ public class HorarioService {
     public Horario findByDiaAndHora(String dia, int hora) {
         return horarioRepository.findByDiaAndHora(dia, hora)
                 .orElseThrow(() -> new IllegalArgumentException("Horario no encontrado"));
+    }
+
+    public boolean isHorarioAsignadoACargo(Long horarioId) {
+        return horarioRepository.isHorarioAsignadoACargo(horarioId);
     }
 
     public List<Horario> findAll() {
