@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
+import unpsjb.labprog.backend.model.Horario;
 import unpsjb.labprog.backend.model.Persona;
 import unpsjb.labprog.backend.model.TipoDesignacion;
 
@@ -161,6 +162,18 @@ public class MensajeBuilder {
     }
 
  
+    /*-------------------------------------------------------------------------------------- */
+
+    /* ---------------------------MENSAJES PARA LA ENTIDAD HORARIO --------------------------- */
+    public String generarMensajeExitoHorarioCreado(Horario horario) {
+        return "Horario de " + horario.getDia() + " a las " + horario.getHora() + " hs. creado exitosamente";
+    }
+    public String generarMensajeExitoHorarioActualizado(Horario horario) {
+        return "Horario de " + horario.getDia() + " a las " + horario.getHora() + " hs. actualizado exitosamente";
+    }
+    public String generarMensajeExitoHorarioBorrado(Horario horario) {
+        return "Horario de " + horario.getDia() + " a las " + horario.getHora() + " hs. borrado exitosamente";
+    }
     /*-------------------------------------------------------------------------------------- */
 
 }

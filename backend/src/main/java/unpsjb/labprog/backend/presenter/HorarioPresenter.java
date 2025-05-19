@@ -1,0 +1,69 @@
+package unpsjb.labprog.backend.presenter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.HorarioService;
+import unpsjb.labprog.backend.model.Horario;
+
+@RestController
+@RequestMapping("horarios")
+public class HorarioPresenter {
+
+    @Autowired
+    private HorarioService horarioService;
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Object> createHorario(@RequestBody Horario horario) {
+        try {
+            horarioService.save(horario);
+            return Response.ok(horario, horarioService.getMensajeExito(horario));
+        } catch (DataIntegrityViolationException e) {
+            return Response.duplicateError(horario, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return Response.notImplemented(horario, e.getMessage());
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Object> listarHorarios() {
+        return Response.ok(horarioService.findAll());
+
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> updateHorario(@RequestBody Horario horario) {
+        try {
+            horarioService.save(horario);
+            return Response.ok(horario, horarioService.getMensajeExitoActualizacion(horario));
+        } catch (IllegalArgumentException e) {
+            return Response.badRequest(horario, e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteHorario(@RequestBody Horario horario) {
+        try {
+            horarioService.delete(horario);
+            return Response.ok(horario, horarioService.getMensajeExitoBorrado(horario));
+        } catch (IllegalArgumentException e) {
+            return Response.badRequest(horario, e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Object> findById(@RequestBody Long id) {
+        try {
+            Horario horario = horarioService.findById(id);
+            return Response.ok(horario);
+        } catch (IllegalArgumentException e) {
+            return Response.badRequest(id, e.getMessage());
+        }
+    }
+}

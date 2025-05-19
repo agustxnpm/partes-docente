@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
+import unpsjb.labprog.backend.model.Horario;
 import unpsjb.labprog.backend.model.Persona;
 
 @Component
@@ -22,6 +23,9 @@ public class Validator {
 
     @Autowired
     private DesignacionValidator designacionValidator;
+
+    @Autowired
+    private HorarioValidator horarioValidator;
 
     public void validarCargo(Cargo cargo) {
         cargoValidator.validar(cargo);
@@ -49,5 +53,9 @@ public class Validator {
 
     public void validarDesignacion(Designacion designacion) {
         designacionValidator.validarDesignacion(designacion);
+    }
+
+     public void validarHorario(Horario horario) {
+        horarioValidator.validarHorario(horario);
     }
 }
