@@ -6,6 +6,7 @@ module.exports = {
       'features/cargos_features/nuevo_cargo.feature',
       'features/designacion_features/nueva_designacion.feature',
       'features/designacion_features/designacion_invalida.feature',
+      'features/licencias_features/otorgar_licencia.feature',
 
     ],
     require: [

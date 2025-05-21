@@ -23,3 +23,4 @@ Característica: Gestión de cargos institucionales
       | Tecnología     | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   4 |      3 | Informática | Mañana |    200 | Espacio curricular Tecnología para la división 4º 3º Turno Mañana ingresado correctamente|
       | Matemática     | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   1 |      2 | Informática | Tarde  |    200 | Espacio curricular Matemática para la división 1º 2º Turno Tarde ingresado correctamente|
       | Matemática     | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   1 |      1 | Informática | Tarde  |    200 | Espacio curricular Matemática para la división 1º 1º Turno Tarde ingresado correctamente|
+    

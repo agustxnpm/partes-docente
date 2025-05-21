@@ -7,7 +7,9 @@ TRUNCATE TABLE
   designacion,
   division,
   horario,
-  persona
+  persona,
+  licencia,
+  licencia_designacion
 RESTART IDENTITY CASCADE;
 
 -- Restaura las restricciones

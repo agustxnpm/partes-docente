@@ -21,3 +21,5 @@ Módulo responsable de administrar a las personas del sistema
       | 99100000 | Ermenegildo   | Sabat        | 27-99100000-9 | M    | ""                        | "Mitre 32"     | "+54 (280) 477-4721" |    200 | "Ermenegildo Sabat con DNI 99100000 ingresado/a correctamente"   |
       | 99200000 | María Rosa    | Gallo        | 20-99200000-9 | F    | "Maestra de grado"        | "Maiz 512"     | "+54 (280) 420-5124" |    200 | "María Rosa Gallo con DNI 99200000 ingresado/a correctamente"    |
       | 99300000 | Homero        | Manzi        | 20-99300000-9 | M    | "Técnico superior"        | "Rosa 123"     | "+54 (280) 488-4231" |    200 | "Homero Manzi con DNI 99300000 ingresado/a correctamente"        |
+      | 88888888 | Marisa        | Balaguer     | 20-88888888-9 | F    | "Profesora de Literatura" | "Rawson 123"   | "+54 (280) 444-8888" |    200 | "Marisa Balaguer con DNI 88888888 ingresado/a correctamente"     |
+      | 99999999 | Raúl          | Guitierrez   | 20-99999999-9 | M    | "Profesor de Química"     | "San Martín 456"| "+54 (280) 499-9999"|    200 | "Raúl Guitierrez con DNI 99999999 ingresado/a correctamente"     |
