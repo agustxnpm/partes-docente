@@ -10,11 +10,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Division;
 
 @Service
 public class DivisionService {
-    
+
     @Autowired
     private DivisionRepository divisionRepository;
 
@@ -23,7 +25,6 @@ public class DivisionService {
 
     @Autowired
     private Validator validator;
-
 
     @Transactional
     public Division save(Division division) {
@@ -39,11 +40,10 @@ public class DivisionService {
 
     public Page<Division> findByPage(int page, int size) {
         return divisionRepository.findAll(
-            PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"))
-        );
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
     }
 
-      public List<Division> findAll() {
+    public List<Division> findAll() {
         List<Division> result = new ArrayList<>();
         divisionRepository.findAll().forEach(e -> result.add(e));
         return result;
@@ -51,7 +51,7 @@ public class DivisionService {
 
     public Division findById(Long id) {
         return divisionRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Division no encontrada"));
+                .orElseThrow(() -> new IllegalArgumentException("Division no encontrada"));
     }
 
     public String getMensajeExito(Division division) {
@@ -76,19 +76,18 @@ public class DivisionService {
 
     public Division buscarDivisionExistente(Division division) {
         return divisionRepository
-            .findByAnioAndNumDivisionAndTurnoAndOrientacion(
-                division.getAnio(),
-                division.getNumDivision(),
-                division.getTurno(),
-                division.getOrientacion()
-            ).orElse(null);
+                .findByAnioAndNumDivisionAndTurnoAndOrientacion(
+                        division.getAnio(),
+                        division.getNumDivision(),
+                        division.getTurno(),
+                        division.getOrientacion())
+                .orElse(null);
     }
 
     public Division buscarDivisionExistente(
-        int anio,
-        int numDivision
-    ) {
+            int anio,
+            int numDivision) {
         return divisionRepository
-            .findByAnioAndNumDivision(anio, numDivision).orElse(null);
+                .findByAnioAndNumDivision(anio, numDivision).orElse(null);
     }
 }

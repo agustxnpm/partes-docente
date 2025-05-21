@@ -1,10 +1,12 @@
-package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.business.validaciones;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
+import unpsjb.labprog.backend.business.CargoService;
+import unpsjb.labprog.backend.business.DivisionService;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.TipoDesignacion;
@@ -54,10 +56,9 @@ public class CargoValidator {
                 // Solo lanzar excepción si es un cargo diferente (ID diferente)
                 if (c.getId() != (cargo.getId())) {
                     throw new DataIntegrityViolationException(
-                        "El espacio curricular " + cargo.getNombre() + 
-                        " en la division " + cargo.getDivision().getAnio() + "º" + 
-                        cargo.getDivision().getNumDivision() + "º" + " ya existe."
-                    );
+                            "El espacio curricular " + cargo.getNombre() +
+                                    " en la division " + cargo.getDivision().getAnio() + "º" +
+                                    cargo.getDivision().getNumDivision() + "º" + " ya existe.");
                 }
             });
         }

@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Division;
 
@@ -63,11 +65,10 @@ public class CargoService {
 
     public Optional<Cargo> findByNombreAndDivisionExacta(String nombre, Division division) {
         return cargoRepository.findByNombreAndDivisionDetalle(
-            nombre,
-            division.getAnio(),
-            division.getNumDivision(),
-            division.getTurno()
-        );
+                nombre,
+                division.getAnio(),
+                division.getNumDivision(),
+                division.getTurno());
     }
 
     public String getMensajeExito(Cargo cargo) {

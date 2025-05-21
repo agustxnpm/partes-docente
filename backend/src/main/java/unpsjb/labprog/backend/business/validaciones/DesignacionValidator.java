@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.business.validaciones;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import unpsjb.labprog.backend.business.CargoService;
+import unpsjb.labprog.backend.business.DesignacionService;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;

@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Persona;
 
 @Service
@@ -24,11 +26,9 @@ public class PersonaService {
     @Autowired
     private Validator validator;
 
-
     public Page<Persona> findByPage(int page, int size) {
         return personaRepository.findAll(
-            PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"))
-        );
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
     }
 
     public List<Persona> findAll() {
@@ -45,25 +45,25 @@ public class PersonaService {
 
     @Transactional
     public Persona update(Persona personaActualizada) {
-    validator.validarPersona(personaActualizada);
-    // Obtener la persona existente con todas sus designaciones
-    Persona personaExistente = findById(personaActualizada.getId());
-    
-    // Actualizar los campos simples 
-    personaExistente.setNombre(personaActualizada.getNombre());
-    personaExistente.setApellido(personaActualizada.getApellido());
-    personaExistente.setDni(personaActualizada.getDni());
-    personaExistente.setCuil(personaActualizada.getCuil());
-    personaExistente.setTitulo(personaActualizada.getTitulo());
-    personaExistente.setSexo(personaActualizada.getSexo());
-    personaExistente.setDomicilio(personaActualizada.getDomicilio());
-    personaExistente.setTelefono(personaActualizada.getTelefono());
-    
-    // sin modificar las designaciones
-    // personaExistente.setDesignaciones(...)
-    
-    return personaRepository.save(personaExistente);
-}
+        validator.validarPersona(personaActualizada);
+        // Obtener la persona existente con todas sus designaciones
+        Persona personaExistente = findById(personaActualizada.getId());
+
+        // Actualizar los campos simples
+        personaExistente.setNombre(personaActualizada.getNombre());
+        personaExistente.setApellido(personaActualizada.getApellido());
+        personaExistente.setDni(personaActualizada.getDni());
+        personaExistente.setCuil(personaActualizada.getCuil());
+        personaExistente.setTitulo(personaActualizada.getTitulo());
+        personaExistente.setSexo(personaActualizada.getSexo());
+        personaExistente.setDomicilio(personaActualizada.getDomicilio());
+        personaExistente.setTelefono(personaActualizada.getTelefono());
+
+        // sin modificar las designaciones
+        // personaExistente.setDesignaciones(...)
+
+        return personaRepository.save(personaExistente);
+    }
 
     @Transactional
     public void delete(Persona persona) {
@@ -73,7 +73,7 @@ public class PersonaService {
 
     public Persona findById(Long id) {
         return personaRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Persona no encontrada"));
+                .orElseThrow(() -> new IllegalArgumentException("Persona no encontrada"));
     }
 
     public String getMensajeExito(Persona persona) {
@@ -84,9 +84,8 @@ public class PersonaService {
         return mensajeBuilder.generarMensajeExitoPersonaActualizada(persona);
     }
 
-    public String getMensajeExitoBorrado (Persona persona) {
+    public String getMensajeExitoBorrado(Persona persona) {
         return mensajeBuilder.generarMensajeExitoPersonaBorrada(persona);
     }
-
 
 }

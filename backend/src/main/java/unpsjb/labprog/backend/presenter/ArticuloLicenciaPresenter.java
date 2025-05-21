@@ -20,44 +20,55 @@ public class ArticuloLicenciaPresenter {
     @Autowired
     private ArticuloLicenciaService articuloLicenciaService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Object> createArticuloLicencia(@RequestBody ArticuloLicencia articuloLicencia) {
-        try {
-            articuloLicenciaService.save(articuloLicencia);
-            return Response.ok(articuloLicencia, articuloLicenciaService.getMensajeExito(articuloLicencia));
-        } catch (DataIntegrityViolationException e) {
-            return Response.duplicateError(articuloLicencia, e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return Response.notImplemented(articuloLicencia, e.getMessage());
-        }
-    }
+    /*
+     * @RequestMapping(method = RequestMethod.POST)
+     * public ResponseEntity<Object> createArticuloLicencia(@RequestBody
+     * ArticuloLicencia articuloLicencia) {
+     * try {
+     * articuloLicenciaService.save(articuloLicencia);
+     * return Response.ok(articuloLicencia,
+     * articuloLicenciaService.getMensajeExito(articuloLicencia));
+     * } catch (DataIntegrityViolationException e) {
+     * return Response.duplicateError(articuloLicencia, e.getMessage());
+     * } catch (IllegalArgumentException e) {
+     * return Response.notImplemented(articuloLicencia, e.getMessage());
+     * }
+     * }
+     */
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Object> listarArticulosLicencias() {
         return Response.ok(articuloLicenciaService.findAll());
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> updateArticuloLicencia(@RequestBody ArticuloLicencia articuloLicencia) {
-        try {
-            articuloLicenciaService.save(articuloLicencia);
-            return Response.ok(articuloLicencia,
-                    articuloLicenciaService.getMensajeExitoActualizacion(articuloLicencia));
-        } catch (IllegalArgumentException e) {
-            return Response.badRequest(articuloLicencia, e.getMessage());
-        }
-    }
+    /*
+     * @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+     * public ResponseEntity<Object> updateArticuloLicencia(@RequestBody
+     * ArticuloLicencia articuloLicencia) {
+     * try {
+     * articuloLicenciaService.save(articuloLicencia);
+     * return Response.ok(articuloLicencia,
+     * articuloLicenciaService.getMensajeExitoActualizacion(articuloLicencia));
+     * } catch (IllegalArgumentException e) {
+     * return Response.badRequest(articuloLicencia, e.getMessage());
+     * }
+     * }
+     */
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteArticuloLicencia(@PathVariable("id") Long id) {
-        try {
-            ArticuloLicencia articuloLicencia = articuloLicenciaService.findById(id);
-            articuloLicenciaService.delete(articuloLicencia);
-            return Response.ok(articuloLicencia, articuloLicenciaService.getMensajeExitoBorrado(articuloLicencia));
-        } catch (IllegalArgumentException e) {
-            return Response.badRequest(e, e.getMessage());
-        }
-    }
+    /*
+     * @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+     * public ResponseEntity<Object> deleteArticuloLicencia(@PathVariable("id") Long
+     * id) {
+     * try {
+     * ArticuloLicencia articuloLicencia = articuloLicenciaService.findById(id);
+     * articuloLicenciaService.delete(articuloLicencia);
+     * return Response.ok(articuloLicencia,
+     * articuloLicenciaService.getMensajeExitoBorrado(articuloLicencia));
+     * } catch (IllegalArgumentException e) {
+     * return Response.badRequest(e, e.getMessage());
+     * }
+     * }
+     */
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getArticuloLicenciaById(@PathVariable("id") Long id) {

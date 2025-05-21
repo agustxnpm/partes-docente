@@ -1,9 +1,11 @@
-package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.business.validaciones;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import unpsjb.labprog.backend.business.CargoService;
+import unpsjb.labprog.backend.business.DivisionService;
 import unpsjb.labprog.backend.model.Division;
 
 @Component
@@ -33,7 +35,6 @@ public class DivisionValidator {
                 .buscarDivisionExistente(
                         division.getAnio(),
                         division.getNumDivision());
-
 
         if (divisionExistente != null)
             throw new IllegalArgumentException("Ya existe la división " + division.getAnio() + "º "

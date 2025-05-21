@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.business.utilidades;
 
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,10 @@ import unpsjb.labprog.backend.model.TipoDesignacion;
 @Component
 public class MensajeBuilder {
 
-    /* ---------------------------MENSAJES PARA LA ENTIDAD CARGO --------------------------- */
+    /*
+     * ---------------------------MENSAJES PARA LA ENTIDAD CARGO
+     * ---------------------------
+     */
 
     public String generarMensajeExitoCargoCreado(Cargo cargo) {
         if (cargo.getTipoDesignacion() == TipoDesignacion.CARGO) {
@@ -57,13 +60,15 @@ public class MensajeBuilder {
         throw new IllegalArgumentException("Tipo de designación no válido");
     }
 
-     /* -------------------------------------------------------------------------------------- */
+    /*
+     * -----------------------------------------------------------------------------
+     * ---------
+     */
 
-
-
-
-
-    /* ---------------------------MENSAJES PARA LA ENTIDAD DIVISION --------------------------- */
+    /*
+     * ---------------------------MENSAJES PARA LA ENTIDAD DIVISION
+     * ---------------------------
+     */
 
     public String generarMensajeExitoDivisionCreada(Division division) {
         return "División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
@@ -85,18 +90,19 @@ public class MensajeBuilder {
     }
 
     public String generarMensajeFalloBorrado(Division division) {
-        return "No se puede borrar la división " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
+        return "No se puede borrar la división " + division.getAnio() + "º" + " " + division.getNumDivision()
+                + "º turno "
                 + division.getTurno() + " porque tiene cargos asignados";
     }
-     /* -------------------------------------------------------------------------------------- */
+    /*
+     * -----------------------------------------------------------------------------
+     * ---------
+     */
 
-
-
-
-
-
-
-    /* ---------------------------MENSAJES PARA LA ENTIDAD PERSONA --------------------------- */
+    /*
+     * ---------------------------MENSAJES PARA LA ENTIDAD PERSONA
+     * ---------------------------
+     */
     public String generarMensajeExitoPersonaActualizada(Persona persona) {
         return persona.getNombre() + " " + persona.getApellido() + " con DNI " + persona.getDni()
                 + " actualizado/a correctamente";
@@ -112,29 +118,30 @@ public class MensajeBuilder {
                 + " ingresado/a correctamente";
     }
 
-    
-     /* -------------------------------------------------------------------------------------- */
+    /*
+     * -----------------------------------------------------------------------------
+     * ---------
+     */
 
-    
-
-
-    /* ---------------------------MENSAJES PARA LA ENTIDAD DESIGNACION --------------------------- */
+    /*
+     * ---------------------------MENSAJES PARA LA ENTIDAD DESIGNACION
+     * ---------------------------
+     */
 
     public String generarMensajeExitoDesignacionCreada(Designacion designacion) {
-        
 
         if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
 
-            
             return designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " ha sido designado/a como " + designacion.getCargo().getNombre() + " exitosamente";
+                    + " ha sido designado/a como " + designacion.getCargo().getNombre() + " exitosamente";
         }
 
         if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR) {
             return designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " ha sido designado/a a la asignatura " + designacion.getCargo().getNombre()
-                            + " a la división " + designacion.getCargo().getDivision().getAnio() + "º "
-                            + designacion.getCargo().getDivision().getNumDivision() + "º turno " + designacion.getCargo().getDivision().getTurno() + " exitosamente";
+                    + " ha sido designado/a a la asignatura " + designacion.getCargo().getNombre()
+                    + " a la división " + designacion.getCargo().getDivision().getAnio() + "º "
+                    + designacion.getCargo().getDivision().getNumDivision() + "º turno "
+                    + designacion.getCargo().getDivision().getTurno() + " exitosamente";
         }
 
         throw new IllegalArgumentException("Tipo de designación no válido");
@@ -142,48 +149,58 @@ public class MensajeBuilder {
     }
 
     public String generarMensajeExitoDesignacionActualizada(Designacion designacion) {
-         return "Designacion de " + designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " actualizada correctamente";
+        return "Designacion de " + designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
+                + " actualizada correctamente";
     }
-    
+
     public String generarMensajeExitoDesignacionBorrada(Designacion designacion) {
         if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
             return designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " ha sido removido/a del cargo " + designacion.getCargo().getNombre() + " exitosamente";
+                    + " ha sido removido/a del cargo " + designacion.getCargo().getNombre() + " exitosamente";
         }
 
         if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR) {
             return designacion.getPersona().getNombre() + " " + designacion.getPersona().getApellido()
-                            + " ha sido removido/a de la asignatura " + designacion.getCargo().getNombre()
-                            + " de " + designacion.getCargo().getDivision().getAnio() + "º "
-                            + designacion.getCargo().getDivision().getNumDivision() + "º turno " + designacion.getCargo().getDivision().getTurno() + " exitosamente";
+                    + " ha sido removido/a de la asignatura " + designacion.getCargo().getNombre()
+                    + " de " + designacion.getCargo().getDivision().getAnio() + "º "
+                    + designacion.getCargo().getDivision().getNumDivision() + "º turno "
+                    + designacion.getCargo().getDivision().getTurno() + " exitosamente";
         }
 
         throw new IllegalArgumentException("Tipo de designación no válido");
     }
 
- 
     /*-------------------------------------------------------------------------------------- */
 
-    /* ---------------------------MENSAJES PARA LA ENTIDAD HORARIO --------------------------- */
+    /*
+     * ---------------------------MENSAJES PARA LA ENTIDAD HORARIO
+     * ---------------------------
+     */
     public String generarMensajeExitoHorarioCreado(Horario horario) {
         return "Horario de " + horario.getDia() + " a las " + horario.getHora() + " hs. creado exitosamente";
     }
+
     public String generarMensajeExitoHorarioActualizado(Horario horario) {
         return "Horario de " + horario.getDia() + " a las " + horario.getHora() + " hs. actualizado exitosamente";
     }
+
     public String generarMensajeExitoHorarioBorrado(Horario horario) {
         return "Horario de " + horario.getDia() + " a las " + horario.getHora() + " hs. borrado exitosamente";
     }
     /*-------------------------------------------------------------------------------------- */
 
-    /* ---------------------------MENSAJES PARA LA ENTIDAD ARTICULO LICENCIA --------------------------- */
+    /*
+     * ---------------------------MENSAJES PARA LA ENTIDAD ARTICULO LICENCIA
+     * ---------------------------
+     */
     public String generarMensajeExitoArticuloLicenciaCreado(ArticuloLicencia articuloLicencia) {
         return "Artículo de licencia " + articuloLicencia.getArticulo() + " creado exitosamente";
     }
+
     public String generarMensajeExitoArticuloLicenciaActualizado(ArticuloLicencia articuloLicencia) {
         return "Artículo de licencia " + articuloLicencia.getArticulo() + " actualizado exitosamente";
     }
+
     public String generarMensajeExitoArticuloLicenciaBorrado(ArticuloLicencia articuloLicencia) {
         return "Artículo de licencia " + articuloLicencia.getArticulo() + " borrado exitosamente";
     }

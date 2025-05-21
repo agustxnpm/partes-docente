@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.business.validaciones;
 
 import java.util.Set;
 
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import unpsjb.labprog.backend.business.HorarioService;
 import unpsjb.labprog.backend.model.Horario;
 
 @Component
@@ -14,7 +15,7 @@ public class HorarioValidator {
     @Autowired
     @Lazy
     private HorarioService horarioService;
-    
+
     private static final Set<String> DIAS_SEMANA_VALIDOS = Set.of(
             "Lunes", "Martes", "Miércoles", "Jueves", "Viernes");
 
@@ -29,7 +30,6 @@ public class HorarioValidator {
         validarDia(horario.getDia());
         validarHora(horario.getHora());
 
-        
     }
 
     private void validarDia(String dia) {
@@ -49,7 +49,7 @@ public class HorarioValidator {
         }
     }
 
-     public void validarBorrado(Horario horario) {
+    public void validarBorrado(Horario horario) {
         if (horario == null || horario.getId() == 0) {
             throw new IllegalArgumentException("El horario a validar para borrado no puede ser nulo o no tener ID.");
         }

@@ -1,10 +1,11 @@
-package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.business.validaciones;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import unpsjb.labprog.backend.business.PersonaRepository;
 import unpsjb.labprog.backend.model.Persona;
 
 @Component
