@@ -41,8 +41,7 @@ public class Licencia {
     private Persona persona;
 
     @ManyToMany
-    @JoinTable(name = "licencia_designacion", // Nombre más conciso
-            joinColumns = @JoinColumn(name = "licencia_id"), inverseJoinColumns = @JoinColumn(name = "designacion_id"))
+    @JoinTable(name = "licencia_designacion", joinColumns = @JoinColumn(name = "licencia_id"), inverseJoinColumns = @JoinColumn(name = "designacion_id"))
     private List<Designacion> designaciones;
 
 }
