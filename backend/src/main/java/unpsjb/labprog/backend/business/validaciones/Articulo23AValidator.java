@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import unpsjb.labprog.backend.model.Licencia;
 
-public class Articulo23AValidator implements ArticuloValidator {
+public class Articulo23AValidator implements ArticuloLicenciaValidator {
 
     private static final int MAX_DAYS_PER_YEAR = 30;
 

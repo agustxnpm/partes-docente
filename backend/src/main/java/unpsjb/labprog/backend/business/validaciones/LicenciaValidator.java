@@ -65,14 +65,8 @@ public class LicenciaValidator {
                 reglaEspecifica = new Articulo36AValidator();
                 break;
             default:
-                // Considerar si se debe lanzar un error o si hay una regla por defecto.
-                // Por ahora, si no es un artículo conocido con reglas específicas, no se aplica
-                // validación adicional aquí.
-                // O podrías tener una regla "DefaultLicenciaRule" que no haga nada o valide
-                // aspectos comunes.
-                // throw new IllegalArgumentException("Artículo de licencia desconocido o sin
-                // reglas de validación específicas: " + codigoArticulo);
-                return; // O simplemente no aplicar reglas específicas si no hay una definida.
+
+                return;
         }
 
         reglaEspecifica.validate(licencia, licenciasExistentesAnioPersona);
