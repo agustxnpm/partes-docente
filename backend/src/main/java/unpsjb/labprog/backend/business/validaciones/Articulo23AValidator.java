@@ -4,11 +4,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import unpsjb.labprog.backend.business.utilidades.ValidadorArticulo;
 import unpsjb.labprog.backend.model.Licencia;
 
+@ValidadorArticulo(codigoArticulo = "23A")
 public class Articulo23AValidator implements ArticuloLicenciaValidator {
 
-    private static final int MAX_DAYS_PER_YEAR = 30;
+    private static final int MAX_DIAS_POR_ANIO= 30;
 
     @Override
     public void validate(Licencia nuevaLicencia, List<Licencia> licenciasExistentesAnioPersona)
@@ -23,11 +25,9 @@ public class Articulo23AValidator implements ArticuloLicenciaValidator {
                     !nuevaLicencia.getPedidoHasta().isBefore(existente.getPedidoDesde());
             if (haySuperposicion) {
                 throw new IllegalArgumentException(
-                        "NO se otorga Licencia artículo 23A a " + nuevaLicencia.getPersona().getNombre() +
-                                " debido a que ya posee una licencia (" + existente.getArticuloLicencia().getArticulo()
-                                +
-                                " del " + existente.getPedidoDesde() + " al " + existente.getPedidoHasta() +
-                                ") en el mismo período.");
+                        "NO se otorga Licencia artículo 23A a " + nuevaLicencia.getPersona().getNombre() + " " +
+                                nuevaLicencia.getPersona().getApellido() + " debido a que ya posee una licencia en el mismo período"
+                                );
             }
         }
 
@@ -44,12 +44,12 @@ public class Articulo23AValidator implements ArticuloLicenciaValidator {
                 .mapToLong(l -> ChronoUnit.DAYS.between(l.getPedidoDesde(), l.getPedidoHasta()) + 1)
                 .sum();
 
-        if (diasYaTomados23A + diasSolicitados > MAX_DAYS_PER_YEAR) {
+        if (diasYaTomados23A + diasSolicitados > MAX_DIAS_POR_ANIO) {
             throw new IllegalArgumentException(
-                    "NO se otorga Licencia artículo 23A a " + nuevaLicencia.getPersona().getNombre() +
-                            " debido a que supera el tope de " + MAX_DAYS_PER_YEAR + " días de licencia. " +
-                            "Días ya tomados (Art. 23A): " + diasYaTomados23A + ", Días solicitados: " + diasSolicitados
-                            + ".");
+                    "NO se otorga Licencia artículo 23A a " + nuevaLicencia.getPersona().getNombre() + " " +
+                            nuevaLicencia.getPersona().getApellido() + " debido a que supera el tope de " +
+                            MAX_DIAS_POR_ANIO+ " días de licencia"
+                            );
         }
     }
 }

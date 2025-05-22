@@ -1,5 +1,7 @@
 package unpsjb.labprog.backend.business;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,4 +27,13 @@ public class LicenciaService {
         validator.validarLicencia(licencia);
         return licenciaRepository.save(licencia);
     }
+
+    public List<Licencia> getAllLicencias() {
+        return licenciaRepository.findAll();
+    }
+
+    public String getMensajeExitoLicenciaOtorgada(Licencia licencia) {
+        return mensajeBuilder.generarMensajeExitoLicenciaOtorgada(licencia);
+    }
+
 }

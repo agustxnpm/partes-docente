@@ -7,6 +7,7 @@ import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Horario;
+import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
 import unpsjb.labprog.backend.model.TipoDesignacion;
 
@@ -206,4 +207,13 @@ public class MensajeBuilder {
     }
     /*-------------------------------------------------------------------------------------- */
 
+    /*
+     * ---------------------------MENSAJES PARA LA ENTIDAD LICENCIA
+     * ---------------------------
+     */
+
+     public String generarMensajeExitoLicenciaOtorgada (Licencia licencia) {
+        return "Se otorga Licencia artículo " + licencia.getArticuloLicencia().getArticulo() + " a "
+                + licencia.getPersona().getNombre()  + " " + licencia.getPersona().getApellido();
+     }
 }

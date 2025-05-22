@@ -6,6 +6,7 @@ import unpsjb.labprog.backend.model.Licencia;
 // Asegúrate de que Designacion y Persona estén importados si usas getNombreCompleto o accedes a sus propiedades.
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.business.LicenciaRepository;
+import unpsjb.labprog.backend.business.utilidades.ValidadorArticuloRegistry;
 import unpsjb.labprog.backend.business.validaciones.LicenciaValidator;
 import java.util.List;
 
@@ -15,6 +16,9 @@ public class LicenciaValidator {
     @Autowired
     private LicenciaRepository licenciaRepository; // Para buscar licencias existentes
 
+    @Autowired
+    private ValidadorArticuloRegistry validadorRegistry;
+    
     public void validateLicencia(Licencia licencia) throws IllegalArgumentException {
         // Validaciones básicas y generales
         if (licencia == null) {
@@ -33,43 +37,37 @@ public class LicenciaValidator {
         if (licencia.getPedidoDesde().isAfter(licencia.getPedidoHasta())) {
             throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.");
         }
+          // Verificar si la persona tiene algún cargo en la institución
+        if (licencia.getPersona().getDesignaciones() == null || licencia.getPersona().getDesignaciones().isEmpty()) {
+            throw new IllegalArgumentException("NO se otorga Licencia artículo " +
+                    licencia.getArticuloLicencia().getArticulo() + " a " +
+                    licencia.getPersona().getNombre() + " " +
+                    licencia.getPersona().getApellido() +
+                    " debido a que el agente no posee ningún cargo en la institución");
+        }
+
         if (licencia.getDesignaciones() == null || licencia.getDesignaciones().isEmpty()) {
             throw new IllegalArgumentException("La licencia debe estar asociada al menos a una designación.");
         }
+
+      
 
         // Validación: Docente debe tener designación activa que cubra el período
         // solicitado.
         validarDesignacionesActivasParaLicencia(licencia);
 
         // Obtener licencias existentes para la persona en el año de la solicitud
-        // Es importante que LicenciaRepository tenga un método para esto.
-        // Ejemplo: findByPersonaAndYear(Persona persona, int year)
         List<Licencia> licenciasExistentesAnioPersona = licenciaRepository.findByPersonaAndYear(
                 licencia.getPersona(),
                 licencia.getPedidoDesde().getYear());
-        // Si la licencia que se valida ya existe (es una actualización), hay que
-        // excluirla de la lista para ciertos cálculos.
-        // Las reglas individuales lo manejan verificando el ID.
+ 
 
         String codigoArticulo = licencia.getArticuloLicencia().getArticulo();
-        ArticuloLicenciaValidator reglaEspecifica;
-
-        switch (codigoArticulo) {
-            case "5A":
-                reglaEspecifica = new Articulo5AValidator();
-                break;
-            case "23A":
-                reglaEspecifica = new Articulo23AValidator();
-                break;
-            case "36A":
-                reglaEspecifica = new Articulo36AValidator();
-                break;
-            default:
-
-                return;
+        
+         if (validadorRegistry.existeValidador(codigoArticulo)) {
+            ArticuloLicenciaValidator validador = validadorRegistry.getValidador(codigoArticulo);
+            validador.validate(licencia, licenciasExistentesAnioPersona);
         }
-
-        reglaEspecifica.validate(licencia, licenciasExistentesAnioPersona);
     }
 
     private void validarDesignacionesActivasParaLicencia(Licencia licencia) {
@@ -91,13 +89,12 @@ public class LicenciaValidator {
             // Mensaje de ejemplo del feature: "NO se otorga Licencia artículo 36A a Marisa
             // Balaguer debido a que el agente no tiene designación ese día en la
             // institución"
-            throw new IllegalArgumentException(
-                    "NO se otorga Licencia artículo " + licencia.getArticuloLicencia().getArticulo() +
-                            " a " + licencia.getPersona().getNombre() +
-                            " debido a que el agente no tiene una designación activa que cubra completamente el período solicitado ("
-                            +
-                            licencia.getPedidoDesde() + " al " + licencia.getPedidoHasta()
-                            + ") para las designaciones especificadas.");
+            throw new IllegalArgumentException("NO se otorga Licencia artículo " +
+                    licencia.getArticuloLicencia().getArticulo() + " a " +
+                    licencia.getPersona().getNombre() + " " +
+                    licencia.getPersona().getApellido() +
+                    " debido a que el agente no tiene designación ese día en la institución"
+                    );
         }
 
     }
