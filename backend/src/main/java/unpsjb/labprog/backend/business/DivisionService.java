@@ -58,20 +58,12 @@ public class DivisionService {
         return mensajeBuilder.generarMensajeExitoDivisionCreada(division);
     }
 
-    public String getMensajeDivisionDuplicada(Division division) {
-        return mensajeBuilder.generarMensajeDivisionDuplicada(division);
-    }
-
     public String getMensajeExitoActualizacion(Division division) {
         return mensajeBuilder.generarMensajeExitoDivisionActualizada(division);
     }
 
     public String getMensajeExitoBorrado(Division division) {
         return mensajeBuilder.generarMensajeExitoDivisionBorrada(division);
-    }
-
-    public String getMensajeFalloBorrado(Division division) {
-        return mensajeBuilder.generarMensajeFalloBorrado(division);
     }
 
     public Division buscarDivisionExistente(Division division) {

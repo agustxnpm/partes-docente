@@ -2,6 +2,7 @@ package unpsjb.labprog.backend.business.validaciones;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import unpsjb.labprog.backend.business.CargoService;
@@ -37,7 +38,7 @@ public class DivisionValidator {
                         division.getNumDivision());
 
         if (divisionExistente != null)
-            throw new IllegalArgumentException("Ya existe la división " + division.getAnio() + "º "
+            throw new DataIntegrityViolationException("Ya existe la división " + division.getAnio() + "º "
                     + division.getNumDivision() + "º");
     }
 

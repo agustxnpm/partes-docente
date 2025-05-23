@@ -76,10 +76,6 @@ public class MensajeBuilder {
                 + division.getTurno() + " ingresada correctamente";
     }
 
-    public String generarMensajeDivisionDuplicada(Division division) {
-        return "Ya existe la division " + division.getAnio() + "º" + " " + division.getNumDivision() + "º";
-    }
-
     public String generarMensajeExitoDivisionActualizada(Division division) {
         return "División " + division.getAnio() + "º" + " " + division.getNumDivision() + "º turno "
                 + division.getTurno() + " actualizada correctamente";
@@ -90,11 +86,6 @@ public class MensajeBuilder {
                 + division.getTurno() + " borrada correctamente";
     }
 
-    public String generarMensajeFalloBorrado(Division division) {
-        return "No se puede borrar la división " + division.getAnio() + "º" + " " + division.getNumDivision()
-                + "º turno "
-                + division.getTurno() + " porque tiene cargos asignados";
-    }
     /*
      * -----------------------------------------------------------------------------
      * ---------

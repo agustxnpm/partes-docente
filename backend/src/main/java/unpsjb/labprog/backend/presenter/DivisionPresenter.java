@@ -27,7 +27,9 @@ public class DivisionPresenter {
             divisionService.save(division);
             return Response.ok(division, divisionService.getMensajeExito(division));
         } catch (DataIntegrityViolationException e) {
-            return Response.duplicateError(division, divisionService.getMensajeDivisionDuplicada(division));
+            return Response.duplicateError(division, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return Response.badRequest(division, e.getMessage());
         }
     }
 
