@@ -17,6 +17,6 @@ public interface LicenciaRepository extends JpaRepository<Licencia, Long> {
      * Busca todas las licencias de una persona en un año específico.
      * El año se determina por la fecha de inicio de la licencia (pedidoDesde).
      */
-    @Query("SELECT l FROM Licencia l WHERE l.persona = :persona AND FUNCTION('YEAR', l.pedidoDesde) = :year")
+    @Query("SELECT l FROM Licencia l WHERE l.persona = :persona AND EXTRACT(YEAR FROM l.pedidoDesde) = :year")
     List<Licencia> findByPersonaAndYear(@Param("persona") Persona persona, @Param("year") int year);
 }

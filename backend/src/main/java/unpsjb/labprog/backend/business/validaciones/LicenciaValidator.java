@@ -3,11 +3,16 @@ package unpsjb.labprog.backend.business.validaciones;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import unpsjb.labprog.backend.model.Licencia;
+import unpsjb.labprog.backend.model.Persona;
 // Asegúrate de que Designacion y Persona estén importados si usas getNombreCompleto o accedes a sus propiedades.
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.business.LicenciaRepository;
+import unpsjb.labprog.backend.business.PersonaRepository;
 import unpsjb.labprog.backend.business.utilidades.ValidadorArticuloRegistry;
 import unpsjb.labprog.backend.business.validaciones.LicenciaValidator;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -17,9 +22,13 @@ public class LicenciaValidator {
     private LicenciaRepository licenciaRepository; // Para buscar licencias existentes
 
     @Autowired
+    private PersonaRepository personaRepository; // Para cargar la persona completa
+
+    @Autowired
     private ValidadorArticuloRegistry validadorRegistry;
-    
+
     public void validateLicencia(Licencia licencia) throws IllegalArgumentException {
+
         // Validaciones básicas y generales
         if (licencia == null) {
             throw new IllegalArgumentException("La licencia no puede ser nula.");
@@ -37,8 +46,12 @@ public class LicenciaValidator {
         if (licencia.getPedidoDesde().isAfter(licencia.getPedidoHasta())) {
             throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.");
         }
-          // Verificar si la persona tiene algún cargo en la institución
-        if (licencia.getPersona().getDesignaciones() == null || licencia.getPersona().getDesignaciones().isEmpty()) {
+        // Cargar la persona completa desde la BD para verificar designaciones
+        Persona personaCompleta = personaRepository.findById(licencia.getPersona().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Persona no encontrada"));
+
+        // Verificar si la persona tiene algún cargo en la institución
+        if (personaCompleta.getDesignaciones() == null || personaCompleta.getDesignaciones().isEmpty()) {
             throw new IllegalArgumentException("NO se otorga Licencia artículo " +
                     licencia.getArticuloLicencia().getArticulo() + " a " +
                     licencia.getPersona().getNombre() + " " +
@@ -50,8 +63,6 @@ public class LicenciaValidator {
             throw new IllegalArgumentException("La licencia debe estar asociada al menos a una designación.");
         }
 
-      
-
         // Validación: Docente debe tener designación activa que cubra el período
         // solicitado.
         validarDesignacionesActivasParaLicencia(licencia);
@@ -60,42 +71,35 @@ public class LicenciaValidator {
         List<Licencia> licenciasExistentesAnioPersona = licenciaRepository.findByPersonaAndYear(
                 licencia.getPersona(),
                 licencia.getPedidoDesde().getYear());
- 
 
         String codigoArticulo = licencia.getArticuloLicencia().getArticulo();
-        
-         if (validadorRegistry.existeValidador(codigoArticulo)) {
+
+        if (validadorRegistry.existeValidador(codigoArticulo)) {
             ArticuloLicenciaValidator validador = validadorRegistry.getValidador(codigoArticulo);
             validador.validate(licencia, licenciasExistentesAnioPersona);
         }
     }
 
     private void validarDesignacionesActivasParaLicencia(Licencia licencia) {
-        boolean designacionValidaEncontrada = false;
-        for (Designacion designacion : licencia.getDesignaciones()) {
-            // Asumimos que 'designacion' tiene fechaInicio y fechaFin (puede ser null)
-            // La licencia debe estar completamente contenida dentro del período de la
-            // designación.
-            if (designacion.getFechaInicio() != null &&
-                    !licencia.getPedidoDesde().isBefore(designacion.getFechaInicio()) &&
-                    (designacion.getFechaFin() == null
-                            || !licencia.getPedidoHasta().isAfter(designacion.getFechaFin()))) {
-                designacionValidaEncontrada = true;
-                break;
+        // Verificar que cada día del período de licencia esté cubierto por al menos una
+        // designación
+        LocalDate currentDate = licencia.getPedidoDesde();
+
+        while (!currentDate.isAfter(licencia.getPedidoHasta())) {
+            final LocalDate date = currentDate;
+            boolean isDayCovered = licencia.getDesignaciones().stream()
+                    .anyMatch(d -> !date.isBefore(d.getFechaInicio()) &&
+                            (d.getFechaFin() == null || !date.isAfter(d.getFechaFin())));
+
+            if (!isDayCovered) {
+                throw new IllegalArgumentException("NO se otorga Licencia artículo " +
+                        licencia.getArticuloLicencia().getArticulo() + " a " +
+                        licencia.getPersona().getNombre() + " " +
+                        licencia.getPersona().getApellido() +
+                        " debido a que el agente no tiene designación ese día en la institución");
             }
-        }
 
-        if (!designacionValidaEncontrada) {
-            // Mensaje de ejemplo del feature: "NO se otorga Licencia artículo 36A a Marisa
-            // Balaguer debido a que el agente no tiene designación ese día en la
-            // institución"
-            throw new IllegalArgumentException("NO se otorga Licencia artículo " +
-                    licencia.getArticuloLicencia().getArticulo() + " a " +
-                    licencia.getPersona().getNombre() + " " +
-                    licencia.getPersona().getApellido() +
-                    " debido a que el agente no tiene designación ese día en la institución"
-                    );
+            currentDate = currentDate.plusDays(1);
         }
-
     }
 }

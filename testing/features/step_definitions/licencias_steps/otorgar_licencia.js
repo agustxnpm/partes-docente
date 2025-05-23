@@ -3,6 +3,8 @@ const PersonaExistente = require("../../../support/PersonaExistente");
 const CargoExistente = require("../../../support/CargoExistente");
 const HttpRequestPost = require("../../../support/HttpRequestPost");
 const ResponseValidator = require("../../../support/ResponseValidator");
+const HttpRequestGet = require("../../../support/HttpRequestGet");
+
 
 // Paso para definir el docente que solicita licencia
 Given(
@@ -21,16 +23,22 @@ Given(
 When(
   "solicita una licencia artículo {string} con descripción {string} para el período {string} {string}",
   function (articulo, descripcion, fechaDesde, fechaHasta) {
-    // Configurar la solicitud de licencia en el contexto
+
+    const articuloResponse = HttpRequestGet.get(`articulos-licencias/codigo/${articulo}`);
+    
+    if (!articuloResponse || articuloResponse.status != 200 || !articuloResponse.data) {
+      console.warn(`No se encontró el artículo ${articulo} en la base de datos.`);
+      console.warn(`Respuesta: ${JSON.stringify(articuloResponse)}`);
+      throw new Error(`No se pudo obtener el artículo de licencia con código ${articulo}`);
+    }
+    
+    // Configurar la solicitud con el artículo real de la base de datos
     this.currentLicencia = {
       persona: this.currentPersona,
-      articuloLicencia: {
-        articulo: articulo,
-        descripcion: descripcion,
-      },
+      articuloLicencia: articuloResponse.data,
       pedidoDesde: fechaDesde,
       pedidoHasta: fechaHasta,
-      certificadoMedico: articulo.startsWith("5"), // Asumimos certificado médico para artículos de enfermedad
+      certificadoMedico: articulo.startsWith("5") // Asumimos certificado médico para artículos de enfermedad
     };
 
     // Si hay designaciones en el contexto, las asociamos a la licencia
@@ -40,7 +48,9 @@ When(
 
     // Realizar la solicitud HTTP para otorgar la licencia
     const endpoint = "licencias";
+    console.log("Licencia a otorgar:", this.currentLicencia);
     this.apiResponse = HttpRequestPost.post(endpoint, this.currentLicencia);
+    console.log("Respuesta de la API:", this.apiResponse);
   }
 );
 
@@ -151,6 +161,7 @@ When(
     };
 
     const endpoint = "designaciones";
+    
     this.apiResponse = HttpRequestPost.post(endpoint, designacionPayload);
   }
 );
