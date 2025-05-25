@@ -15,23 +15,9 @@ public class Articulo23AValidator implements ArticuloLicenciaValidator {
     @Override
     public void validate(Licencia nuevaLicencia, List<Licencia> licenciasExistentesAnioPersona)
             throws IllegalArgumentException {
-        // 1. Validar superposición con CUALQUIER licencia existente
-        for (Licencia existente : licenciasExistentesAnioPersona) {
-            if (nuevaLicencia.getId() != 0 && existente.getId() == nuevaLicencia.getId()) {
-                continue; // No compararse consigo misma en caso de actualización
-            }
-            // Verifica si hay superposición: (InicioA <= FinB) y (FinA >= InicioB)
-            boolean haySuperposicion = !nuevaLicencia.getPedidoDesde().isAfter(existente.getPedidoHasta()) &&
-                    !nuevaLicencia.getPedidoHasta().isBefore(existente.getPedidoDesde());
-            if (haySuperposicion) {
-                throw new IllegalArgumentException(
-                        "NO se otorga Licencia artículo 23A a " + nuevaLicencia.getPersona().getNombre() + " " +
-                                nuevaLicencia.getPersona().getApellido() + " debido a que ya posee una licencia en el mismo período"
-                                );
-            }
-        }
+        
 
-        // 2. Validar tope anual de 30 días para el artículo 23A
+        // Validar tope anual de 30 días para el artículo 23A
         List<Licencia> licencias23AExistentes = licenciasExistentesAnioPersona.stream()
                 .filter(l -> "23A".equals(l.getArticuloLicencia().getArticulo()) &&
                         (nuevaLicencia.getId() == 0 || l.getId() != nuevaLicencia.getId()))

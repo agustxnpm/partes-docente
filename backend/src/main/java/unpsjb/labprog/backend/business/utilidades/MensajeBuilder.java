@@ -162,6 +162,18 @@ public class MensajeBuilder {
         throw new IllegalArgumentException("Tipo de designación no válido");
     }
 
+    public String generarMensajeExitoDesignacionSuplencia(Designacion suplente, Persona reemplazado) {
+        String tipoCargoStr = suplente.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO ? "al cargo" : "a la asignatura";
+    
+        return String.format("%s %s ha sido designado/a %s %s exitosamente, en reemplazo de %s %s",
+                suplente.getPersona().getNombre(),
+                suplente.getPersona().getApellido(),
+                tipoCargoStr,
+                suplente.getCargo().getNombre().toLowerCase(),
+                reemplazado.getNombre(),
+                reemplazado.getApellido());
+    }
+
     /*-------------------------------------------------------------------------------------- */
 
     /*

@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 
 import unpsjb.labprog.backend.business.CargoService;
 import unpsjb.labprog.backend.business.DesignacionService;
+import unpsjb.labprog.backend.business.LicenciaRepository;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
+import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.TipoDesignacion;
 
 @Component
@@ -24,6 +26,9 @@ public class DesignacionValidator {
     @Autowired
     @Lazy
     private DesignacionService designacionService;
+
+    @Autowired
+    LicenciaRepository licenciaRepository;
 
     public void validarDesignacion(Designacion designacion) {
 
@@ -77,44 +82,61 @@ public class DesignacionValidator {
             throw new IllegalArgumentException("La fecha fin no puede ser anterior a la fecha inicio");
         }
 
-        // Validar superposición de fechas
-        Long designacionId = designacion.getId() == 0 ? null : designacion.getId(); // Si es nuevo, id es null
+         Long designacionIdParaExcluir = designacion.getId() == 0 ? null : designacion.getId();
 
         List<Designacion> superpuestas = designacionService.findDesignacionesSuperpuestas(
                 designacion.getCargo().getId(),
                 designacion.getFechaInicio(),
                 designacion.getFechaFin(),
-                designacionId);
+                designacionIdParaExcluir);
 
         if (!superpuestas.isEmpty()) {
-            Designacion designacionExistente = superpuestas.get(0);
-            String mensaje;
+            boolean esSuplenciaValida = false;
 
-            if (designacion.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
-                // Formato para cargos institucionales
-                mensaje = String.format(
-                        "%s %s NO ha sido designado/a como %s. pues el cargo solicitado lo ocupa %s %s para el período",
-                        designacion.getPersona().getNombre(),
-                        designacion.getPersona().getApellido(),
-                        designacion.getCargo().getNombre().toLowerCase(),
-                        designacionExistente.getPersona().getNombre(),
-                        designacionExistente.getPersona().getApellido());
-            } else {
-                // Formato para espacios curriculares
-                Division division = designacion.getCargo().getDivision();
-                mensaje = String.format(
-                        "%s %s NO ha sido designado/a debido a que la asignatura %s de la división %dº %dº turno %s lo ocupa %s %s para el período",
-                        designacion.getPersona().getNombre(),
-                        designacion.getPersona().getApellido(),
-                        designacion.getCargo().getNombre(),
-                        division.getAnio(),
-                        division.getNumDivision(),
-                        division.getTurno(),
-                        designacionExistente.getPersona().getNombre(),
-                        designacionExistente.getPersona().getApellido());
+            if ("Suplente".equalsIgnoreCase(designacion.getSituacionRevista())) {
+                for (Designacion designacionExistente : superpuestas) {
+                    List<Licencia> licenciasCubriendo = licenciaRepository.findLicenciasActivasCubriendoDesignacionEnPeriodo(
+                        designacionExistente.getPersona(),
+                        designacionExistente,
+                        designacion.getFechaInicio(),
+                        designacion.getFechaFin()
+                    );
+
+                    if (!licenciasCubriendo.isEmpty()) {
+                        // Se encontró una licencia que cubre esta designación existente para el período de suplencia.
+                        esSuplenciaValida = true;
+                        break; 
+                    }
+                }
             }
 
-            throw new IllegalArgumentException(mensaje);
+            if (!esSuplenciaValida) {
+                Designacion designacionConflictiva = superpuestas.get(0);
+                String mensaje;
+                if (designacionConflictiva.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
+                    mensaje = String.format(
+                            "%s %s NO ha sido designado/a como %s. pues el cargo solicitado lo ocupa %s %s para el período",
+                            designacion.getPersona().getNombre(),
+                            designacion.getPersona().getApellido(),
+                            designacionConflictiva.getCargo().getNombre().toLowerCase(),
+                            designacionConflictiva.getPersona().getNombre(),
+                            designacionConflictiva.getPersona().getApellido());
+                } else {
+                    Division division = designacionConflictiva.getCargo().getDivision();
+                    mensaje = String.format(
+                            "%s %s NO ha sido designado/a debido a que la asignatura %s de la división %dº %dº turno %s lo ocupa %s %s para el período",
+                            designacion.getPersona().getNombre(),
+                            designacion.getPersona().getApellido(),
+                            designacionConflictiva.getCargo().getNombre(),
+                            division.getAnio(),
+                            division.getNumDivision(),
+                            division.getTurno(),
+                            designacionConflictiva.getPersona().getNombre(),
+                            designacionConflictiva.getPersona().getApellido());
+                }
+                throw new IllegalArgumentException(mensaje);
+            }
+            // Si esSuplenciaValida es true, no se lanza la excepción, permitiendo la designación.
         }
     }
 }

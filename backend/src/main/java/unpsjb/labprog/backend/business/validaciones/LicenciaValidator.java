@@ -4,15 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
-// Asegúrate de que Designacion y Persona estén importados si usas getNombreCompleto o accedes a sus propiedades.
-import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.business.LicenciaRepository;
 import unpsjb.labprog.backend.business.PersonaRepository;
 import unpsjb.labprog.backend.business.utilidades.ValidadorArticuloRegistry;
 import unpsjb.labprog.backend.business.validaciones.LicenciaValidator;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -59,8 +57,8 @@ public class LicenciaValidator {
                     " debido a que el agente no posee ningún cargo en la institución");
         }
 
-        if (licencia.getDesignaciones() == null || licencia.getDesignaciones().isEmpty()) {
-            throw new IllegalArgumentException("La licencia debe estar asociada al menos a una designación.");
+        if (licencia.getDesignaciones() == null) {
+            licencia.setDesignaciones(Collections.emptyList()); // para evitar NullPointerException
         }
 
         // Validación: Docente debe tener designación activa que cubra el período
@@ -71,6 +69,22 @@ public class LicenciaValidator {
         List<Licencia> licenciasExistentesAnioPersona = licenciaRepository.findByPersonaAndYear(
                 licencia.getPersona(),
                 licencia.getPedidoDesde().getYear());
+
+        // 1. Validar superposición con CUALQUIER licencia existente
+        for (Licencia existente : licenciasExistentesAnioPersona) {
+            if (licencia.getId() != 0 && existente.getId() == licencia.getId()) {
+                continue; // No compararse consigo misma en caso de actualización
+            }
+            // Verifica si hay superposición: (InicioA <= FinB) y (FinA >= InicioB)
+            boolean haySuperposicion = !licencia.getPedidoDesde().isAfter(existente.getPedidoHasta()) &&
+                    !licencia.getPedidoHasta().isBefore(existente.getPedidoDesde());
+            if (haySuperposicion) {
+                throw new IllegalArgumentException(
+                        "NO se otorga Licencia artículo " + existente.getArticuloLicencia().getArticulo() + " a " +  licencia.getPersona().getNombre() + " " +
+                                licencia.getPersona().getApellido()
+                                + " debido a que ya posee una licencia en el mismo período");
+            }
+        }
 
         String codigoArticulo = licencia.getArticuloLicencia().getArticulo();
 

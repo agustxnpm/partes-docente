@@ -1,5 +1,6 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,4 +52,7 @@ public class LicenciaService {
         return mensajeBuilder.generarMensajeExitoLicenciaOtorgada(licencia);
     }
 
+    public List<Licencia> buscarLicenciasPorDni(Long personaDni, String codigoArticulo, LocalDate desde, LocalDate hasta) {
+        return licenciaRepository.findByPersonaDniArticuloYFechas(personaDni, codigoArticulo, desde, hasta);
+    }
 }

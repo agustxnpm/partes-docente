@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
 import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Designacion;
+import unpsjb.labprog.backend.model.Persona;
 
 @Service
 public class DesignacionService {
@@ -67,6 +68,10 @@ public class DesignacionService {
 
     public String getMensajeExito(Designacion designacion) {
         return mensajeBuilder.generarMensajeExitoDesignacionCreada(designacion);
+    }
+
+    public String getMensajeExitoDesignacionSuplencia(Designacion designacionSuplantada, Persona personaSuplantada ) {
+        return mensajeBuilder.generarMensajeExitoDesignacionSuplencia(designacionSuplantada, personaSuplantada);
     }
 
 }
