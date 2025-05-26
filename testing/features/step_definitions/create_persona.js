@@ -14,5 +14,7 @@ Given(
       domicilio: domicilio,
       telefono: telefono,
     };
-  } 
+  }
 );
+
+// pasos when y then en common_steps.js

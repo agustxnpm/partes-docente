@@ -1,9 +1,9 @@
 const { Given, When, Then } = require("@cucumber/cucumber");
-const PersonaExistente = require("../../../support/PersonaExistente");
-const CargoExistente = require("../../../support/CargoExistente");
-const HttpRequestPost = require("../../../support/HttpRequestPost");
-const ResponseValidator = require("../../../support/ResponseValidator");
-const HttpRequestGet = require("../../../support/HttpRequestGet");
+const PersonaExistente = require("../../support/PersonaExistente");
+const CargoExistente = require("../../support/CargoExistente");
+const HttpRequestPost = require("../../support/HttpRequestPost");
+const ResponseValidator = require("../../support/ResponseValidator");
+const HttpRequestGet = require("../../support/HttpRequestGet");
 
 // Paso para definir el docente que solicita licencia
 Given(
@@ -56,9 +56,10 @@ When(
 
     // Realizar la solicitud HTTP para otorgar la licencia
     const endpoint = "licencias";
-    console.log("Licencia a otorgar:", this.currentLicencia);
-    this.apiResponse = HttpRequestPost.post(endpoint, this.currentLicencia);
-    console.log("Respuesta de la API:", this.apiResponse);
+    /*     console.log("Licencia a otorgar:", this.currentLicencia);
+     */ this.apiResponse = HttpRequestPost.post(endpoint, this.currentLicencia);
+    /*     console.log("Respuesta de la API:", this.apiResponse);
+     */
   }
 );
 
@@ -160,7 +161,8 @@ Given(
       );
     } else {
       this.currentLicencia = licenciasResponse.data[0];
-      console.log("Licencia existente encontrada:", this.currentLicencia);
+      /*       console.log("Licencia existente encontrada:", this.currentLicencia);
+       */
     }
   }
 );
@@ -168,8 +170,6 @@ Given(
 When(
   "se solicita el servicio de designación de la persona al cargo en el período comprendido desde {string} hasta {string}",
   function (fechaDesde, fechaHasta) {
-
-
     // this.currentPersona es el suplente (Jorge Dismal / Analía Rojas)
     // this.currentCargoParaDesignar es el cargo existente (Preceptor/a / Auxiliar ADM)
     if (!this.currentPersona || !this.currentPersona.id) {
@@ -188,13 +188,14 @@ When(
       cargo: this.currentCargoParaDesignar, // Enviar solo el ID del cargo existente
       fechaInicio: fechaDesde,
       fechaFin: fechaHasta || null,
-      situacionRevista: "Suplente", 
+      situacionRevista: "Suplente",
     };
 
     const endpoint = "designaciones";
-    console.log("Payload de designación:", designacionPayload);
-    this.apiResponse = HttpRequestPost.post(endpoint, designacionPayload);
-    console.log("Respuesta de la API de designación:", this.apiResponse);
+    /*     console.log("Payload de designación:", designacionPayload);
+     */ this.apiResponse = HttpRequestPost.post(endpoint, designacionPayload);
+    /*     console.log("Respuesta de la API de designación:", this.apiResponse);
+     */
   }
 );
 

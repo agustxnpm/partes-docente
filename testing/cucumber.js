@@ -1,20 +1,16 @@
 module.exports = {
   default: {
     paths: [
-      'features/personas_features/create_persona.feature', // Asegúrate de que exista
-      'features/divisiones_features/create_division.feature',
-      'features/cargos_features/nuevo_cargo.feature',
-      'features/designacion_features/nueva_designacion.feature',
-      'features/designacion_features/designacion_invalida.feature',
-      'features/licencias_features/otorgar_licencia.feature',
-
+      "features/create_persona.feature",
+      "features/create_division.feature",
+      "features/nuevo_cargo.feature",
+      "features/nueva_designacion.feature",
+      "features/designacion_invalida.feature",
+      "features/otorgar_licencia.feature",
     ],
-    require: [
-      'features/**/*.js',
-      'features/step_definitions/**/*.js'
-    ],
+    require: ["features/**/*.js", "features/step_definitions/*.js"],
     formatOptions: {
-      snippetInterface: "synchronous"
-    }
-  }
+      snippetInterface: "synchronous",
+    },
+  },
 };

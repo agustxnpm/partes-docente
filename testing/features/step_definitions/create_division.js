@@ -12,3 +12,5 @@ Given(
     };
   }
 );
+
+// pasos when y then en common_steps.js

@@ -1,8 +1,7 @@
 const { When, Then } = require("@cucumber/cucumber");
-const HttpRequestPost = require("../../../support/HttpRequestPost");
-const ResponseValidator = require("../../../support/ResponseValidator");
-const EndpointStrategy = require("../../../support/EndpointStrategy");
-
+const HttpRequestPost = require("../../support/HttpRequestPost");
+const ResponseValidator = require("../../support/ResponseValidator");
+const EndpointStrategy = require("../../support/EndpointStrategy");
 
 // Paso común: Cuando se presiona el botón de guardar
 When("se presiona el botón de guardar", function () {
