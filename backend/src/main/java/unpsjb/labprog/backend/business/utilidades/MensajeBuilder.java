@@ -208,6 +208,12 @@ public class MensajeBuilder {
     public String generarMensajeExitoArticuloLicenciaBorrado(ArticuloLicencia articuloLicencia) {
         return "Artículo de licencia " + articuloLicencia.getArticulo() + " borrado exitosamente";
     }
+
+    public String generarMensajeExitoLicenciaActualizada(Licencia licencia) {
+        return "Licencia artículo " + licencia.getArticuloLicencia().getArticulo() + " a "
+                + licencia.getPersona().getNombre()  + " " + licencia.getPersona().getApellido()
+                + " actualizada correctamente";
+    }
     /*-------------------------------------------------------------------------------------- */
 
     /*

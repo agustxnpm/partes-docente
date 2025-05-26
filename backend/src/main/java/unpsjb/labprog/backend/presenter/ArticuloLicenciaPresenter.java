@@ -70,7 +70,7 @@ public class ArticuloLicenciaPresenter {
      * }
      */
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  /*   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getArticuloLicenciaById(@PathVariable("id") Long id) {
         try {
             ArticuloLicencia articuloLicencia = articuloLicenciaService.findById(id);
@@ -78,7 +78,7 @@ public class ArticuloLicenciaPresenter {
         } catch (IllegalArgumentException e) {
             return Response.badRequest(e, e.getMessage());
         }
-    }
+    } */
 
     @RequestMapping(value = "/codigo/{codigo}", method = RequestMethod.GET)
     public ResponseEntity<Object> getArticuloLicenciaByCodigo(@PathVariable("codigo") String codigo) {

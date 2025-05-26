@@ -29,7 +29,7 @@ public class LicenciaService {
 
     @Transactional
     public Licencia createLicencia(Licencia licencia) {
-        
+
         // Buscar todas las designaciones vigentes para la persona en el período de la
         // licencia
         List<Designacion> designacionesVigentes = designacionRepository.findAllByPersonaAndPeriodoVigente(
@@ -39,9 +39,39 @@ public class LicenciaService {
 
         // Asociar estas designaciones a la licencia
         licencia.setDesignaciones(designacionesVigentes);
-        
+
         validator.validarLicencia(licencia);
         return licenciaRepository.save(licencia);
+    }
+
+    @Transactional
+    public Licencia updateLicencia(Long id, Licencia licenciaActualizar) {
+        // 1. Verificar si la licencia existe
+        Licencia licenciaExistente = licenciaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Licencia con ID " + id + " no encontrada."));
+
+        // 2. Actualizar los campos de licenciaExistente con los de licenciaActualizar
+        // Evita cambiar el ID.
+        licenciaExistente.setPedidoDesde(licenciaActualizar.getPedidoDesde());
+        licenciaExistente.setPedidoHasta(licenciaActualizar.getPedidoHasta());
+        licenciaExistente.setDomicilio(licenciaActualizar.getDomicilio());
+        licenciaExistente.setCertificadoMedico(licenciaActualizar.isCertificadoMedico());
+        licenciaExistente.setArticuloLicencia(licenciaActualizar.getArticuloLicencia());
+        licenciaExistente.setPersona(licenciaActualizar.getPersona()); // Cuidado si la persona no debería cambiar
+
+        // Re-asociar designaciones si es necesario y validar
+        List<Designacion> designacionesVigentes = designacionRepository.findAllByPersonaAndPeriodoVigente(
+                licenciaExistente.getPersona(), // Usar la persona de la licencia existente
+                licenciaExistente.getPedidoDesde(),
+                licenciaExistente.getPedidoHasta());
+        licenciaExistente.setDesignaciones(designacionesVigentes);
+
+        // 3. Validar la licencia actualizada (excluyendo la validación de superposición
+        // consigo misma si es necesario)
+        validator.validarLicencia(licenciaExistente);
+
+        // 4. Guardar
+        return licenciaRepository.save(licenciaExistente);
     }
 
     public List<Licencia> getAllLicencias() {
@@ -52,7 +82,11 @@ public class LicenciaService {
         return mensajeBuilder.generarMensajeExitoLicenciaOtorgada(licencia);
     }
 
-    public List<Licencia> buscarLicenciasPorDni(Long personaDni, String codigoArticulo, LocalDate desde, LocalDate hasta) {
+    public String getMensajeExitoLicenciaActualizada(Licencia licencia) {
+        return mensajeBuilder.generarMensajeExitoLicenciaActualizada(licencia);
+    }
+    public List<Licencia> buscarLicenciasPorDni(Long personaDni, String codigoArticulo, LocalDate desde,
+            LocalDate hasta) {
         return licenciaRepository.findByPersonaDniArticuloYFechas(personaDni, codigoArticulo, desde, hasta);
     }
 }

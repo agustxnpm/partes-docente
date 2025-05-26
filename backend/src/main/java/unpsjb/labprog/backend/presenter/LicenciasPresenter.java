@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,6 +34,17 @@ public class LicenciasPresenter {
         }
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> updateLicencia(@PathVariable("id") Long id, @RequestBody Licencia licencia) {
+        try {
+            Licencia licenciaActualizada = licenciaService.updateLicencia(id, licencia); 
+            return Response.ok(licenciaActualizada, licenciaService.getMensajeExitoLicenciaActualizada(licencia));
+        } catch (IllegalArgumentException e) { 
+            return Response.badRequest(licencia, e.getMessage());
+        }
+    }
+
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Object> listarLicencias() {
         return Response.ok(licenciaService.getAllLicencias());
@@ -55,4 +67,6 @@ public class LicenciasPresenter {
             return Response.internalServerError(null, "Error al buscar licencias: " + e.getMessage());
         }
     }
+
+    
 }
