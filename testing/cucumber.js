@@ -3,7 +3,7 @@ module.exports = {
     paths: [
       "features/create_persona.feature",
       "features/create_division.feature",
-      "features/nuevo_cargo.feature",
+      "features/create_cargo.feature",
       "features/nueva_designacion.feature",
       "features/designacion_invalida.feature",
       "features/otorgar_licencia.feature",
