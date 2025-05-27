@@ -4,7 +4,7 @@
     >
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="d-flex align-items-center">
-          <i class="bi bi-list-ul text-dark fs-3 me-2"></i>
+          <i class="bi bi-backpack2 text-dark fs-3 me-2"></i>
           <h3 class="m-0">Lista de Divisiones</h3>
         </div>
         <span class="badge bg-dark text-white fs-6">
@@ -50,12 +50,19 @@
                 </div>
               </td>
             </tr>
+            <tr *ngIf="!resultsPage.content || resultsPage.content.length === 0">
+              <td colspan="6" class="text-center fst-italic text-muted">
+                No hay divisiones para mostrar.
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
   
       <!-- Componente de paginación -->
-      <div class="d-flex justify-content-center mt-4">
+      <div class="d-flex justify-content-center mt-4"
+            *ngIf="resultsPage.totalPages > 1"
+>
         <app-pagination
           [totalPages]="resultsPage.totalPages"
           [currentPage]="currentPage"

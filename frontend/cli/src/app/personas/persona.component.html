@@ -60,12 +60,20 @@
               </div>
             </td>
           </tr>
+          <tr *ngIf="!resultsPage.content || resultsPage.content.length === 0">
+            <td colspan="10" class="text-center fst-italic text-muted">
+              No hay personas para mostrar.
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
 
     <!-- Componente de paginación -->
-    <div class="d-flex justify-content-center mt-4">
+    <div
+      class="d-flex justify-content-center mt-4"
+      *ngIf="resultsPage.totalPages > 1"
+    >
       <app-pagination
         [totalPages]="resultsPage.totalPages"
         [currentPage]="currentPage"

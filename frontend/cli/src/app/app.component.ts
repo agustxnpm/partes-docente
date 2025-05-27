@@ -10,4 +10,14 @@ import { NgbDropdownModule } from "@ng-bootstrap/ng-bootstrap"; // Añadir esta 
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
-export class AppComponent {}
+export class AppComponent {
+  isNavbarCollapsed = true;
+
+  toggleNavbar(): void {
+    this.isNavbarCollapsed = !this.isNavbarCollapsed;
+  }
+
+  collapseNavbar(): void {
+    this.isNavbarCollapsed = true;
+  }
+}

@@ -4,12 +4,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
 import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Designacion;
+import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Licencia;
 
 @Service
@@ -74,6 +78,21 @@ public class LicenciaService {
         return licenciaRepository.save(licenciaExistente);
     }
 
+    public Page<Licencia> findByPage(int page, int size) {
+        return licenciaRepository.findAll(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
+    }
+
+     public List<Licencia> buscarLicenciasPorDni(Long personaDni, String codigoArticulo, LocalDate desde,
+            LocalDate hasta) {
+        return licenciaRepository.findByPersonaDniArticuloYFechas(personaDni, codigoArticulo, desde, hasta);
+    }
+
+    public Licencia findById (Long id) {
+        return licenciaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Licencia con ID " + id + " no encontrada."));
+    }
+
     public List<Licencia> getAllLicencias() {
         return licenciaRepository.findAll();
     }
@@ -85,8 +104,5 @@ public class LicenciaService {
     public String getMensajeExitoLicenciaActualizada(Licencia licencia) {
         return mensajeBuilder.generarMensajeExitoLicenciaActualizada(licencia);
     }
-    public List<Licencia> buscarLicenciasPorDni(Long personaDni, String codigoArticulo, LocalDate desde,
-            LocalDate hasta) {
-        return licenciaRepository.findByPersonaDniArticuloYFechas(personaDni, codigoArticulo, desde, hasta);
-    }
+   
 }

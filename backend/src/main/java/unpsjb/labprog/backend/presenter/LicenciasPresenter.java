@@ -68,5 +68,20 @@ public class LicenciasPresenter {
         }
     }
 
-    
+     @RequestMapping(value = "/page", method = RequestMethod.GET)
+    public ResponseEntity<Object> findByPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(licenciaService.findByPage(page, size));
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Object> findById(@PathVariable("id") Long id) {
+        try {
+            Licencia licencia = licenciaService.findById(id);
+            return Response.ok(licencia);
+        } catch (IllegalArgumentException e) {
+            return Response.notFound("Licencia con ID " + id + " no encontrada.");
+        }
+    }
 }

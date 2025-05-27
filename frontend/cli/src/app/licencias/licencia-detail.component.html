@@ -1,0 +1,264 @@
+<div class="container mt-5 flashy-form">
+  <div
+    class="bg-light rounded shadow p-4 border border-2 border-primary-subtle animated-border"
+  >
+    <!-- Título -->
+    <div class="d-flex align-items-center mb-4">
+      <i class="bi bi-journal-medical text-primary fs-3 me-2 neon-icon"></i>
+      <h3 class="m-0">{{ isNew ? "Nueva Licencia" : "Editar Licencia" }}</h3>
+    </div>
+
+    <form #licenciaForm="ngForm" (ngSubmit)="saveLicencia()">
+      <div class="row g-4">
+        <!-- Selección de Persona -->
+        <div class="col-md-6">
+          <label for="persona" class="form-label required-field">Agente</label>
+          <select
+            class="form-select"
+            [ngClass]="{
+              'is-invalid':
+                personaField.invalid &&
+                (personaField.dirty || personaField.touched)
+            }"
+            [(ngModel)]="licencia.persona"
+            [compareWith]="comparePersonas"
+            name="persona"
+            #personaField="ngModel"
+            required
+          >
+            <option [ngValue]="null">Seleccione una persona</option>
+            <option *ngFor="let p of personas" [ngValue]="p">
+              {{ p.apellido }}, {{ p.nombre }} ({{ p.dni }})
+            </option>
+          </select>
+          <small
+            class="error-message"
+            *ngIf="
+              personaField.invalid &&
+              (personaField.dirty || personaField.touched)
+            "
+          >
+            Debe seleccionar un agente.
+          </small>
+          <!-- Información de la persona seleccionada -->
+          <div
+            class="mt-2"
+            *ngIf="licencia.persona && licencia.persona.id !== 0"
+          >
+            <div class="alert alert-info mb-0 d-flex align-items-center">
+              <div class="d-flex align-items-center me-3">
+                <i class="bi bi-person-badge-fill me-2 fs-4"></i>
+              </div>
+              <div>
+                <h6 class="mb-1">
+                  {{ licencia.persona.apellido }}, {{ licencia.persona.nombre }}
+                </h6>
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-primary me-2"
+                    >DNI: {{ licencia.persona.dni }}</span
+                  >
+                  <span class="badge bg-secondary"
+                    >CUIL: {{ licencia.persona.cuil }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selección de Artículo de Licencia -->
+        <div class="col-md-6">
+          <label for="articuloLicencia" class="form-label required-field"
+            >Artículo de Licencia</label
+          >
+          <select
+            class="form-select"
+            [ngClass]="{
+              'is-invalid':
+                articuloField.invalid &&
+                (articuloField.dirty || articuloField.touched)
+            }"
+            [(ngModel)]="licencia.articuloLicencia"
+            [compareWith]="compareArticulos"
+            name="articuloLicencia"
+            #articuloField="ngModel"
+            required
+          >
+            <option [ngValue]="null">Seleccione un artículo</option>
+            <option *ngFor="let art of articulosLicencia" [ngValue]="art">
+              {{ art.articulo }} - {{ art.descripcion }}
+            </option>
+          </select>
+          <small
+            class="error-message"
+            *ngIf="
+              articuloField.invalid &&
+              (articuloField.dirty || articuloField.touched)
+            "
+          >
+            Debe seleccionar un artículo de licencia.
+          </small>
+          <!-- Información del artículo seleccionado -->
+          <div
+            class="mt-2"
+            *ngIf="
+              licencia.articuloLicencia && licencia.articuloLicencia.id !== 0
+            "
+          >
+            <div class="alert alert-secondary mb-0">
+              <div>
+                <strong>Código:</strong>
+                {{ licencia.articuloLicencia.articulo }}
+              </div>
+              <div>
+                <strong>Descripción:</strong>
+                {{ licencia.articuloLicencia.descripcion }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Fecha de Inicio -->
+        <div class="col-md-6">
+          <label for="pedidoDesde" class="form-label required-field"
+            >Fecha de Inicio</label
+          >
+          <input
+            type="date"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                (pedidoDesdeField.invalid &&
+                  (pedidoDesdeField.dirty || pedidoDesdeField.touched)) ||
+                (!isValidDateRange && pedidoDesdeField.dirty)
+            }"
+            [(ngModel)]="licencia.pedidoDesde"
+            name="pedidoDesde"
+            #pedidoDesdeField="ngModel"
+            [max]="maxFechaInicio"
+            (change)="onFechaInicioChange()"
+            required
+          />
+          <small
+            class="error-message"
+            *ngIf="
+              pedidoDesdeField.invalid &&
+              (pedidoDesdeField.dirty || pedidoDesdeField.touched)
+            "
+          >
+            La fecha de inicio es obligatoria.
+          </small>
+        </div>
+
+        <!-- Fecha de Fin -->
+        <div class="col-md-6">
+          <label for="pedidoHasta" class="form-label required-field"
+            >Fecha de Fin</label
+          >
+          <input
+            type="date"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                (pedidoHastaField.invalid &&
+                  (pedidoHastaField.dirty || pedidoHastaField.touched)) ||
+                (!isValidDateRange && pedidoHastaField.dirty)
+            }"
+            [(ngModel)]="licencia.pedidoHasta"
+            name="pedidoHasta"
+            #pedidoHastaField="ngModel"
+            [min]="minFechaFin"
+            (change)="onFechaFinChange()"
+            required
+          />
+          <small
+            class="error-message"
+            *ngIf="
+              pedidoHastaField.invalid &&
+              (pedidoHastaField.dirty || pedidoHastaField.touched)
+            "
+          >
+            La fecha de fin es obligatoria.
+          </small>
+          <small
+            class="error-message"
+            *ngIf="
+              !isValidDateRange &&
+              (pedidoDesdeField.dirty || pedidoHastaField.dirty)
+            "
+          >
+            La fecha de fin debe ser posterior o igual a la fecha de inicio.
+          </small>
+        </div>
+
+        <!-- Domicilio (Opcional) -->
+        <div class="col-md-12">
+          <label for="domicilio" class="form-label"
+            >Domicilio durante la licencia</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="licencia.domicilio"
+            name="domicilio"
+            #domicilio="ngModel"
+          />
+          <small class="text-muted">Este campo es opcional.</small>
+        </div>
+
+        <!-- Certificado Médico -->
+        <div class="col-12">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              [(ngModel)]="licencia.certificadoMedico"
+              name="certificadoMedico"
+              id="certificadoMedico"
+            />
+            <label class="form-check-label" for="certificadoMedico">
+              Presenta Certificado Médico
+            </label>
+          </div>
+        </div>
+      </div>
+      <!-- Fin .row -->
+
+      <!-- Botones y Mensajes -->
+      <div class="mt-4 d-flex justify-content-between align-items-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4"
+          (click)="volver()"
+        >
+          <i class="bi bi-arrow-left-circle me-1"></i> Volver
+        </button>
+        <button
+          type="submit"
+          class="btn btn-outline-primary px-4"
+          [disabled]="licenciaForm.invalid || !isValidDateRange"
+        >
+          <i class="bi bi-check-circle me-1"></i>
+          {{ isNew ? "Crear Licencia" : "Guardar Cambios" }}
+        </button>
+      </div>
+
+      <div
+        *ngIf="mensaje"
+        id="message-container"
+        class="alert mt-4"
+        [ngClass]="{ 'alert-danger': isError, 'alert-success': !isError }"
+        role="alert"
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <span>{{ mensaje }}</span>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="mensaje = ''"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

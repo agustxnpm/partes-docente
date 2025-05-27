@@ -1,5 +1,6 @@
 package unpsjb.labprog.backend.business.validaciones;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,7 +83,7 @@ public class DesignacionValidator {
             throw new IllegalArgumentException("La fecha fin no puede ser anterior a la fecha inicio");
         }
 
-         Long designacionIdParaExcluir = designacion.getId() == 0 ? null : designacion.getId();
+        Long designacionIdParaExcluir = designacion.getId() == 0 ? null : designacion.getId();
 
         List<Designacion> superpuestas = designacionService.findDesignacionesSuperpuestas(
                 designacion.getCargo().getId(),
@@ -95,17 +96,56 @@ public class DesignacionValidator {
 
             if ("Suplente".equalsIgnoreCase(designacion.getSituacionRevista())) {
                 for (Designacion designacionExistente : superpuestas) {
-                    List<Licencia> licenciasCubriendo = licenciaRepository.findLicenciasActivasCubriendoDesignacionEnPeriodo(
-                        designacionExistente.getPersona(),
-                        designacionExistente,
-                        designacion.getFechaInicio(),
-                        designacion.getFechaFin()
-                    );
+                    // Verificar si es un suplente que tiene licencia
+                    boolean esSuplente = "Suplente".equalsIgnoreCase(designacionExistente.getSituacionRevista());
+
+                    // Calcular período de superposición exacto
+                    LocalDate inicioSuperposicion = designacion.getFechaInicio()
+                            .isAfter(designacionExistente.getFechaInicio())
+                                    ? designacion.getFechaInicio()
+                                    : designacionExistente.getFechaInicio();
+
+                    LocalDate finSuperposicion = designacion.getFechaFin() == null
+                            ? (designacionExistente.getFechaFin() == null ? designacion.getFechaFin()
+                                    : designacionExistente.getFechaFin())
+                            : (designacionExistente.getFechaFin() == null ? designacion.getFechaFin()
+                                    : (designacion.getFechaFin().isBefore(designacionExistente.getFechaFin())
+                                            ? designacion.getFechaFin()
+                                            : designacionExistente.getFechaFin()));
+
+                    List<Licencia> licenciasCubriendo = licenciaRepository
+                            .findLicenciasActivasCubriendoDesignacionEnPeriodo(
+                                    designacionExistente.getPersona(),
+                                    designacionExistente,
+                                    inicioSuperposicion,
+                                    finSuperposicion);
 
                     if (!licenciasCubriendo.isEmpty()) {
-                        // Se encontró una licencia que cubre esta designación existente para el período de suplencia.
-                        esSuplenciaValida = true;
-                        break; 
+                        //  Tratamiento diferente según sea suplente o titular
+                        if (esSuplente) {
+                            // Si es un suplente con licencia, la nueva designación
+                            // DEBE estar dentro del período de la licencia del suplente
+                            boolean cubreExactamente = licenciasCubriendo.stream()
+                                    .anyMatch(licencia -> designacion.getFechaInicio().equals(licencia.getPedidoDesde())
+                                            &&
+                                            designacion.getFechaFin().equals(licencia.getPedidoHasta()));
+
+                            if (cubreExactamente) {
+                                esSuplenciaValida = true;
+                                break;
+                            }
+                        } else {
+                            // Caso original: designación normal (titular) con licencia
+                            boolean cubreCompletamente = licenciasCubriendo.stream()
+                                    .anyMatch(licencia -> !licencia.getPedidoDesde().isAfter(inicioSuperposicion) &&
+                                            !licencia.getPedidoHasta().isBefore(
+                                                    finSuperposicion != null ? finSuperposicion : inicioSuperposicion));
+
+                            if (cubreCompletamente) {
+                                esSuplenciaValida = true;
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -136,7 +176,8 @@ public class DesignacionValidator {
                 }
                 throw new IllegalArgumentException(mensaje);
             }
-            // Si esSuplenciaValida es true, no se lanza la excepción, permitiendo la designación.
+            // Si esSuplenciaValida es true, no se lanza la excepción, permitiendo la
+            // designación.
         }
     }
 }
