@@ -1,8 +1,10 @@
 package unpsjb.labprog.backend.presenter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.DesignacionService;
 import unpsjb.labprog.backend.model.Designacion;
+import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
 
 @RestController
@@ -22,6 +25,62 @@ public class DesignacionPresenter {
 
     @Autowired
     private DesignacionService designacionService;
+
+
+    // ...existing code...
+
+@RequestMapping(method = RequestMethod.POST)
+public ResponseEntity<Object> designarCargo(@RequestBody Designacion designacion) {
+    try {
+        Designacion designacionGuardada = designacionService.save(designacion);
+        String mensajeExito;
+
+        if ("Suplente".equalsIgnoreCase(designacionGuardada.getSituacionRevista())) {
+            // Buscar designaciones que se solapan con la nueva
+            List<Designacion> posiblesOriginales = designacionService.findDesignacionesSuperpuestas(
+                designacionGuardada.getCargo().getId(),
+                designacionGuardada.getFechaInicio(),
+                designacionGuardada.getFechaFin(),
+                designacionGuardada.getId()
+            );
+
+            Persona personaReemplazada = null;
+            
+            // Buscar la persona que tiene licencia en este período específico
+            for (Designacion designacionExistente : posiblesOriginales) {
+                // Verificar si esta persona tiene licencia que cubra el período de la suplencia
+                List<Licencia> licenciasQueCubren = licenciaRepository.findLicenciasQueCubrenPeriodoCompleto(
+                    designacionGuardada.getCargo(),
+                    designacionExistente.getPersona(),
+                    designacionGuardada.getFechaInicio(),
+                    designacionGuardada.getFechaFin() != null ? 
+                        designacionGuardada.getFechaFin() : 
+                        LocalDate.now().plusYears(100)
+                );
+                
+                if (!licenciasQueCubren.isEmpty()) {
+                    personaReemplazada = designacionExistente.getPersona();
+                    break;
+                }
+            }
+
+            if (personaReemplazada != null) {
+                mensajeExito = designacionService.getMensajeExitoDesignacionSuplencia(designacionGuardada, personaReemplazada);
+            } else {
+                mensajeExito = designacionService.getMensajeExito(designacionGuardada);
+            }
+        } else {
+            mensajeExito = designacionService.getMensajeExito(designacionGuardada);
+        }
+
+        return ResponseEntity.ok(new Respuesta(Codigo.OK, mensajeExito));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new Respuesta(Codigo.ERROR, e.getMessage()));
+    }
+}
+
+// ...existing code...
 
      @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> designarCargo(@RequestBody Designacion designacion) {
