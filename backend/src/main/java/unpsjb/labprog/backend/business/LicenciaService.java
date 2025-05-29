@@ -12,9 +12,10 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
 import unpsjb.labprog.backend.business.validaciones.Validator;
+import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
-import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Licencia;
+import unpsjb.labprog.backend.model.Persona;
 
 @Service
 public class LicenciaService {
@@ -55,13 +56,11 @@ public class LicenciaService {
                 .orElseThrow(() -> new IllegalArgumentException("Licencia con ID " + id + " no encontrada."));
 
         // 2. Actualizar los campos de licenciaExistente con los de licenciaActualizar
-        // Evita cambiar el ID.
         licenciaExistente.setPedidoDesde(licenciaActualizar.getPedidoDesde());
         licenciaExistente.setPedidoHasta(licenciaActualizar.getPedidoHasta());
         licenciaExistente.setDomicilio(licenciaActualizar.getDomicilio());
         licenciaExistente.setCertificadoMedico(licenciaActualizar.isCertificadoMedico());
         licenciaExistente.setArticuloLicencia(licenciaActualizar.getArticuloLicencia());
-        licenciaExistente.setPersona(licenciaActualizar.getPersona()); // Cuidado si la persona no debería cambiar
 
         // Re-asociar designaciones si es necesario y validar
         List<Designacion> designacionesVigentes = designacionRepository.findAllByPersonaAndPeriodoVigente(
@@ -70,11 +69,8 @@ public class LicenciaService {
                 licenciaExistente.getPedidoHasta());
         licenciaExistente.setDesignaciones(designacionesVigentes);
 
-        // 3. Validar la licencia actualizada (excluyendo la validación de superposición
-        // consigo misma si es necesario)
         validator.validarLicencia(licenciaExistente);
 
-        // 4. Guardar
         return licenciaRepository.save(licenciaExistente);
     }
 
@@ -103,6 +99,11 @@ public class LicenciaService {
 
     public String getMensajeExitoLicenciaActualizada(Licencia licencia) {
         return mensajeBuilder.generarMensajeExitoLicenciaActualizada(licencia);
+    }
+
+    public List<Licencia> findLicenciasQueCubrenPeriodoCompleto(Cargo cargo, Persona persona, LocalDate fechaInicio,
+            LocalDate fechaFin) {
+        return licenciaRepository.findLicenciasQueCubrenPeriodoCompleto(cargo, persona, fechaInicio, fechaFin);
     }
    
 }

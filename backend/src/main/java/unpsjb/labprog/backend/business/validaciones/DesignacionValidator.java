@@ -56,7 +56,7 @@ public class DesignacionValidator {
             if (division == null) {
                 throw new IllegalArgumentException("Un ESPACIO_CURRICULAR requiere una división");
             }
-
+            
             // Buscar el cargo específico que coincida con nombre y división
             Optional<Cargo> cargoExacto = cargoService.findByNombreAndDivisionExacta(
                     designacion.getCargo().getNombre(),

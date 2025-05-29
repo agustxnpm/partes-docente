@@ -96,16 +96,21 @@ public interface LicenciaRepository extends JpaRepository<Licencia, Long> {
          * @Param("licenciaId") Integer licenciaId);
          */
 
+
+
         /**
          * Verifica si un período está completamente cubierto por licencias de una
          * persona
          * para un cargo específico.
+         * Se asume que el parámetro :fechaFin siempre será una fecha concreta,
+         * incluso si representa una designación "abierta" (en cuyo caso será una fecha muy lejana).
+         * Las licencias siempre tienen una fecha de fin (pedidoHasta).
          */
         @Query("SELECT l FROM Licencia l JOIN l.designaciones d " +
                         "WHERE d.cargo = :cargo " +
                         "AND l.persona = :persona " +
                         "AND l.pedidoDesde <= :fechaInicio " +
-                        "AND (:fechaFin IS NULL OR l.pedidoHasta >= :fechaFin)")
+                        "AND l.pedidoHasta >= :fechaFin")
         List<Licencia> findLicenciasQueCubrenPeriodoCompleto(
                         @Param("cargo") Cargo cargo,
                         @Param("persona") Persona persona,
@@ -113,3 +118,4 @@ public interface LicenciaRepository extends JpaRepository<Licencia, Long> {
                         @Param("fechaFin") LocalDate fechaFin);
 
 }
+
