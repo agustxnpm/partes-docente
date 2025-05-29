@@ -58,6 +58,12 @@ public class DesignacionService {
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
     }
 
+    public List<Designacion> findSuplenciasEnPeriodo(Long cargoId, LocalDate fechaInicio, LocalDate fechaFin,
+            Persona personaTitular, Long designacionId) {
+        return designacionRepository.findSuplenciasEnPeriodo(cargoId, fechaInicio, fechaFin, personaTitular,
+                designacionId);
+    }
+
     public String getMensajeExitoActualizacion(Designacion designacion) {
         return mensajeBuilder.generarMensajeExitoDesignacionActualizada(designacion);
     }
@@ -70,7 +76,7 @@ public class DesignacionService {
         return mensajeBuilder.generarMensajeExitoDesignacionCreada(designacion);
     }
 
-    public String getMensajeExitoDesignacionSuplencia(Designacion designacionSuplantada, Persona personaSuplantada ) {
+    public String getMensajeExitoDesignacionSuplencia(Designacion designacionSuplantada, Persona personaSuplantada) {
         return mensajeBuilder.generarMensajeExitoDesignacionSuplencia(designacionSuplantada, personaSuplantada);
     }
 

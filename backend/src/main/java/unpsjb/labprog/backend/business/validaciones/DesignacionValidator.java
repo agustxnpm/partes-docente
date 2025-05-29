@@ -15,6 +15,7 @@ import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Licencia;
+import unpsjb.labprog.backend.model.Persona;
 import unpsjb.labprog.backend.model.TipoDesignacion;
 
 @Component
@@ -83,101 +84,66 @@ public class DesignacionValidator {
             throw new IllegalArgumentException("La fecha fin no puede ser anterior a la fecha inicio");
         }
 
-        Long designacionIdParaExcluir = designacion.getId() == 0 ? null : designacion.getId();
+        validarConflictosDesignacion(designacion);
 
-        List<Designacion> superpuestas = designacionService.findDesignacionesSuperpuestas(
-                designacion.getCargo().getId(),
-                designacion.getFechaInicio(),
-                designacion.getFechaFin(),
-                designacionIdParaExcluir);
+    }
 
-        if (!superpuestas.isEmpty()) {
-            boolean esSuplenciaValida = false;
+    private void validarConflictosDesignacion(Designacion nuevaDesignacion) {
+        // Buscar designaciones existentes que se solapen con la nueva
+        List<Designacion> designacionesConflictivas = designacionService
+                .findDesignacionesSuperpuestas(
+                        nuevaDesignacion.getCargo().getId(),
+                        nuevaDesignacion.getFechaInicio(),
+                        nuevaDesignacion.getFechaFin(),
+                        nuevaDesignacion.getId());
 
-            if ("Suplente".equalsIgnoreCase(designacion.getSituacionRevista())) {
-                for (Designacion designacionExistente : superpuestas) {
-                    // Verificar si es un suplente que tiene licencia
-                    boolean esSuplente = "Suplente".equalsIgnoreCase(designacionExistente.getSituacionRevista());
+        if (designacionesConflictivas.isEmpty()) {
+            return; // No hay conflictos
+        }
 
-                    // Calcular período de superposición exacto
-                    LocalDate inicioSuperposicion = designacion.getFechaInicio()
-                            .isAfter(designacionExistente.getFechaInicio())
-                                    ? designacion.getFechaInicio()
-                                    : designacionExistente.getFechaInicio();
+        // Verificar cada designación conflictiva
+        for (Designacion existente : designacionesConflictivas) {
+            LocalDate fechaFinNueva = nuevaDesignacion.getFechaFin() != null ? nuevaDesignacion.getFechaFin()
+                    : LocalDate.now().plusYears(100);
 
-                    LocalDate finSuperposicion = designacion.getFechaFin() == null
-                            ? (designacionExistente.getFechaFin() == null ? designacion.getFechaFin()
-                                    : designacionExistente.getFechaFin())
-                            : (designacionExistente.getFechaFin() == null ? designacion.getFechaFin()
-                                    : (designacion.getFechaFin().isBefore(designacionExistente.getFechaFin())
-                                            ? designacion.getFechaFin()
-                                            : designacionExistente.getFechaFin()));
+            // Verificar si la persona de la designación existente tiene licencias
+            // que cubran COMPLETAMENTE el período de la nueva designación
+            List<Licencia> licenciasQueCubrenCompleto = licenciaRepository
+                    .findLicenciasQueCubrenPeriodoCompleto(
+                            nuevaDesignacion.getCargo(),
+                            existente.getPersona(),
+                            nuevaDesignacion.getFechaInicio(),
+                            fechaFinNueva);
 
-                    List<Licencia> licenciasCubriendo = licenciaRepository
-                            .findLicenciasActivasCubriendoDesignacionEnPeriodo(
-                                    designacionExistente.getPersona(),
-                                    designacionExistente,
-                                    inicioSuperposicion,
-                                    finSuperposicion);
-
-                    if (!licenciasCubriendo.isEmpty()) {
-                        //  Tratamiento diferente según sea suplente o titular
-                        if (esSuplente) {
-                            // Si es un suplente con licencia, la nueva designación
-                            // DEBE estar dentro del período de la licencia del suplente
-                            boolean cubreExactamente = licenciasCubriendo.stream()
-                                    .anyMatch(licencia -> designacion.getFechaInicio().equals(licencia.getPedidoDesde())
-                                            &&
-                                            designacion.getFechaFin().equals(licencia.getPedidoHasta()));
-
-                            if (cubreExactamente) {
-                                esSuplenciaValida = true;
-                                break;
-                            }
-                        } else {
-                            // Caso original: designación normal (titular) con licencia
-                            boolean cubreCompletamente = licenciasCubriendo.stream()
-                                    .anyMatch(licencia -> !licencia.getPedidoDesde().isAfter(inicioSuperposicion) &&
-                                            !licencia.getPedidoHasta().isBefore(
-                                                    finSuperposicion != null ? finSuperposicion : inicioSuperposicion));
-
-                            if (cubreCompletamente) {
-                                esSuplenciaValida = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!esSuplenciaValida) {
-                Designacion designacionConflictiva = superpuestas.get(0);
+            if (licenciasQueCubrenCompleto.isEmpty()) {
+                // No hay licencia que cubra completamente el período, es un conflicto real
                 String mensaje;
-                if (designacionConflictiva.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
+                if (existente.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
                     mensaje = String.format(
                             "%s %s NO ha sido designado/a como %s. pues el cargo solicitado lo ocupa %s %s para el período",
-                            designacion.getPersona().getNombre(),
-                            designacion.getPersona().getApellido(),
-                            designacionConflictiva.getCargo().getNombre().toLowerCase(),
-                            designacionConflictiva.getPersona().getNombre(),
-                            designacionConflictiva.getPersona().getApellido());
+                            nuevaDesignacion.getPersona().getNombre(),
+                            nuevaDesignacion.getPersona().getApellido(),
+                            existente.getCargo().getNombre().toLowerCase(),
+                            existente.getPersona().getNombre(),
+                            existente.getPersona().getApellido());
                 } else {
-                    Division division = designacionConflictiva.getCargo().getDivision();
+                    Division division = existente.getCargo().getDivision();
                     mensaje = String.format(
                             "%s %s NO ha sido designado/a debido a que la asignatura %s de la división %dº %dº turno %s lo ocupa %s %s para el período",
-                            designacion.getPersona().getNombre(),
-                            designacion.getPersona().getApellido(),
-                            designacionConflictiva.getCargo().getNombre(),
+                            nuevaDesignacion.getPersona().getNombre(),
+                            nuevaDesignacion.getPersona().getApellido(),
+                            existente.getCargo().getNombre(),
                             division.getAnio(),
                             division.getNumDivision(),
                             division.getTurno(),
-                            designacionConflictiva.getPersona().getNombre(),
-                            designacionConflictiva.getPersona().getApellido());
+                            existente.getPersona().getNombre(),
+                            existente.getPersona().getApellido());
                 }
                 throw new IllegalArgumentException(mensaje);
             }
-            // Si esSuplenciaValida es true, no se lanza la excepción, permitiendo la
-            // designación.
         }
+
+        // Si llegamos aquí, todas las designaciones conflictivas están completamente
+        // cubiertas por licencias, por lo que la nueva designación es válida
     }
 }
