@@ -15,7 +15,6 @@ import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Licencia;
-import unpsjb.labprog.backend.model.Persona;
 import unpsjb.labprog.backend.model.TipoDesignacion;
 
 @Component
@@ -56,7 +55,7 @@ public class DesignacionValidator {
             if (division == null) {
                 throw new IllegalArgumentException("Un ESPACIO_CURRICULAR requiere una división");
             }
-            
+
             // Buscar el cargo específico que coincida con nombre y división
             Optional<Cargo> cargoExacto = cargoService.findByNombreAndDivisionExacta(
                     designacion.getCargo().getNombre(),
@@ -143,7 +142,6 @@ public class DesignacionValidator {
             }
         }
 
-        // Si llegamos aquí, todas las designaciones conflictivas están completamente
-        // cubiertas por licencias, por lo que la nueva designación es válida
+
     }
 }

@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.LicenciaService;
+import unpsjb.labprog.backend.business.LogLicenciaService;
+import unpsjb.labprog.backend.model.EstadoLicencia;
 import unpsjb.labprog.backend.model.Licencia;
+import unpsjb.labprog.backend.model.LogLicencia;
 
 @RestController
 @RequestMapping("licencias")
@@ -24,23 +27,40 @@ public class LicenciasPresenter {
     @Autowired
     private LicenciaService licenciaService;
 
+    @Autowired
+    private LogLicenciaService logLicenciaService;
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createLicencia(@RequestBody Licencia licencia) {
         try {
             licenciaService.createLicencia(licencia);
-            return Response.ok(licencia, licenciaService.getMensajeExitoLicenciaOtorgada(licencia));
-        } catch (IllegalArgumentException e) {
-            return Response.internalServerError(licencia, e.getMessage());
+
+            if (licencia.getEstado() == EstadoLicencia.VALIDA){
+                return Response.ok(licencia, logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+            } else {
+                return Response.internalServerError(licencia, logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+            }
+
+        } catch (Exception e) {
+            return Response.internalServerError(licencia, "Error al procesar la licencia: " +e.getMessage());
         }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> updateLicencia(@PathVariable("id") Long id, @RequestBody Licencia licencia) {
         try {
-            Licencia licenciaActualizada = licenciaService.updateLicencia(id, licencia); 
-            return Response.ok(licenciaActualizada, licenciaService.getMensajeExitoLicenciaActualizada(licencia));
-        } catch (IllegalArgumentException e) { 
-            return Response.badRequest(licencia, e.getMessage());
+            licenciaService.updateLicencia(id, licencia);
+            
+            if (licencia.getEstado() == EstadoLicencia.VALIDA) {
+                return Response.ok(licencia, logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+            } else {
+                return Response.internalServerError(licencia, logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+            }
+
+
+
+        } catch (Exception e) { 
+            return Response.internalServerError(licencia, "Error al procesar la licencia: " +e.getMessage());
         }
     }
 
@@ -68,6 +88,26 @@ public class LicenciasPresenter {
         }
     }
 
+     @RequestMapping(value = "/estado/{estado}", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerLicenciasPorEstado(@PathVariable EstadoLicencia estado) {
+        try {
+            List<Licencia> licencias = licenciaService.findByEstado(estado);
+            return Response.ok(licencias);
+        } catch (Exception e) {
+            return Response.badRequest(null, "Error al obtener licencias por estado: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/{id}/logs", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerLogsLicencia(@PathVariable Long id) {
+        try {
+            List<LogLicencia> logs = logLicenciaService.obtenerLicenciasEnOrdenPorFechaDesc(id);
+            return Response.ok(logs);
+        } catch (Exception e) {
+            return Response.badRequest(null, "Error al obtener logs: " + e.getMessage());
+        }
+    }
+
      @RequestMapping(value = "/page", method = RequestMethod.GET)
     public ResponseEntity<Object> findByPage(
             @RequestParam(defaultValue = "0") int page,
@@ -84,4 +124,5 @@ public class LicenciasPresenter {
             return Response.notFound("Licencia con ID " + id + " no encontrada.");
         }
     }
+
 }

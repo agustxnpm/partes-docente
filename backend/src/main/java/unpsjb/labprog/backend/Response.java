@@ -35,7 +35,7 @@ public class Response {
     }
 
 	public static ResponseEntity<Object> badRequest(Object responseObj, String msj) {
-        return response(HttpStatus.OK, msj, responseObj);
+        return response(HttpStatus.BAD_REQUEST, msj, responseObj);
     }
 
 	public static ResponseEntity<Object> internalServerError(Object responseObj, String msj) {

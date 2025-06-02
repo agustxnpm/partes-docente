@@ -14,7 +14,9 @@ import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
 import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
+import unpsjb.labprog.backend.model.EstadoLicencia;
 import unpsjb.labprog.backend.model.Licencia;
+import unpsjb.labprog.backend.model.LogLicencia;
 import unpsjb.labprog.backend.model.Persona;
 
 @Service
@@ -27,10 +29,20 @@ public class LicenciaService {
     private DesignacionRepository designacionRepository;
 
     @Autowired
+    private LogLicenciaService logLicenciaService;
+
+    @Autowired
     private MensajeBuilder mensajeBuilder;
 
     @Autowired
     private Validator validator;
+
+    @Transactional
+    public LogLicencia agregarLog(Licencia licencia, EstadoLicencia estado, String mensaje) {
+        LogLicencia log = logLicenciaService.crearLog(licencia, estado, mensaje);
+        licencia.getLogs().add(log);
+        return log;
+    }
 
     @Transactional
     public Licencia createLicencia(Licencia licencia) {
@@ -45,8 +57,25 @@ public class LicenciaService {
         // Asociar estas designaciones a la licencia
         licencia.setDesignaciones(designacionesVigentes);
 
-        validator.validarLicencia(licencia);
-        return licenciaRepository.save(licencia);
+        return validarLicencia(licencia);
+
+    }
+
+    private Licencia validarLicencia(Licencia licencia) {
+
+        try {
+            validator.validarLicencia(licencia);
+
+            licencia.setEstado(EstadoLicencia.VALIDA);
+            licenciaRepository.save(licencia);
+            agregarLog(licencia, EstadoLicencia.VALIDA, getMensajeExitoLicenciaOtorgada(licencia));
+            return licencia;
+        } catch (IllegalArgumentException e) {
+            licencia.setEstado(EstadoLicencia.INVALIDA);
+            licenciaRepository.save(licencia);
+            agregarLog(licencia, EstadoLicencia.INVALIDA, e.getMessage());
+            return licencia;
+        }
     }
 
     @Transactional
@@ -69,9 +98,8 @@ public class LicenciaService {
                 licenciaExistente.getPedidoHasta());
         licenciaExistente.setDesignaciones(designacionesVigentes);
 
-        validator.validarLicencia(licenciaExistente);
+        return validarLicencia(licenciaExistente);
 
-        return licenciaRepository.save(licenciaExistente);
     }
 
     public Page<Licencia> findByPage(int page, int size) {
@@ -79,15 +107,19 @@ public class LicenciaService {
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
     }
 
-     public List<Licencia> buscarLicenciasPorDni(Long personaDni, String codigoArticulo, LocalDate desde,
+    public List<Licencia> buscarLicenciasPorDni(Long personaDni, String codigoArticulo, LocalDate desde,
             LocalDate hasta) {
         return licenciaRepository.findByPersonaDniArticuloYFechas(personaDni, codigoArticulo, desde, hasta);
     }
 
-    public Licencia findById (Long id) {
+    public Licencia findById(Long id) {
         return licenciaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Licencia con ID " + id + " no encontrada."));
     }
+
+    public List<Licencia> findByEstado(EstadoLicencia estado) {
+    return licenciaRepository.findByEstado(estado);
+}
 
     public List<Licencia> getAllLicencias() {
         return licenciaRepository.findAll();
@@ -105,5 +137,5 @@ public class LicenciaService {
             LocalDate fechaFin) {
         return licenciaRepository.findLicenciasQueCubrenPeriodoCompleto(cargo, persona, fechaInicio, fechaFin);
     }
-   
+
 }
