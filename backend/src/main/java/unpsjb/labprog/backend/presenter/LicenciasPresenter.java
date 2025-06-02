@@ -33,37 +33,38 @@ public class LicenciasPresenter {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createLicencia(@RequestBody Licencia licencia) {
         try {
-            licenciaService.createLicencia(licencia);
+            Licencia licenciaGuardada = licenciaService.createLicencia(licencia);
 
-            if (licencia.getEstado() == EstadoLicencia.VALIDA){
-                return Response.ok(licencia, logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+            if (licenciaGuardada.getEstado() == EstadoLicencia.VALIDA) {
+                return Response.ok(licenciaGuardada,
+                        logLicenciaService.obtenerUltimoLog(licenciaGuardada).getMensaje());
             } else {
-                return Response.internalServerError(licencia, logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+                return Response.internalServerError(licenciaGuardada,
+                        logLicenciaService.obtenerUltimoLog(licenciaGuardada).getMensaje());
             }
 
         } catch (Exception e) {
-            return Response.internalServerError(licencia, "Error al procesar la licencia: " +e.getMessage());
+            return Response.internalServerError(licencia, "Error al procesar la licencia: " + e.getMessage());
         }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> updateLicencia(@PathVariable("id") Long id, @RequestBody Licencia licencia) {
         try {
-            licenciaService.updateLicencia(id, licencia);
-            
-            if (licencia.getEstado() == EstadoLicencia.VALIDA) {
-                return Response.ok(licencia, logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+            Licencia licenciaActualizada = licenciaService.updateLicencia(id, licencia);
+
+            if (licenciaActualizada.getEstado() == EstadoLicencia.VALIDA) {
+                return Response.ok(licenciaActualizada,
+                        logLicenciaService.obtenerUltimoLog(licenciaActualizada).getMensaje());
             } else {
-                return Response.internalServerError(licencia, logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+                return Response.internalServerError(licenciaActualizada,
+                        logLicenciaService.obtenerUltimoLog(licenciaActualizada).getMensaje());
             }
 
-
-
-        } catch (Exception e) { 
-            return Response.internalServerError(licencia, "Error al procesar la licencia: " +e.getMessage());
+        } catch (Exception e) {
+            return Response.internalServerError(licencia, "Error al procesar la licencia: " + e.getMessage());
         }
     }
-
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Object> listarLicencias() {
@@ -88,7 +89,7 @@ public class LicenciasPresenter {
         }
     }
 
-     @RequestMapping(value = "/estado/{estado}", method = RequestMethod.GET)
+    @RequestMapping(value = "/estado/{estado}", method = RequestMethod.GET)
     public ResponseEntity<Object> obtenerLicenciasPorEstado(@PathVariable EstadoLicencia estado) {
         try {
             List<Licencia> licencias = licenciaService.findByEstado(estado);
@@ -108,7 +109,7 @@ public class LicenciasPresenter {
         }
     }
 
-     @RequestMapping(value = "/page", method = RequestMethod.GET)
+    @RequestMapping(value = "/page", method = RequestMethod.GET)
     public ResponseEntity<Object> findByPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

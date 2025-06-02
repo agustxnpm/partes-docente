@@ -40,6 +40,7 @@ export class LicenciaDetailComponent {
       designaciones: [],
     },
     designaciones: [],
+    estado: "INVALIDA",
   };
 
   mensaje: string = "";
@@ -157,28 +158,37 @@ export class LicenciaDetailComponent {
     }
   }
 
- private resetForm(): void {
+  private resetForm(): void {
     const defaultPersona = {
-      id: 0, dni: null, cuil: "", nombre: "", apellido: "",
-      titulo: null, sexo: "", domicilio: "", telefono: "", designaciones: []
+      id: 0,
+      dni: null,
+      cuil: "",
+      nombre: "",
+      apellido: "",
+      titulo: null,
+      sexo: "",
+      domicilio: "",
+      telefono: "",
+      designaciones: [],
     };
     const defaultArticulo = { id: 0, articulo: "", descripcion: "" };
 
     this.licencia = {
       id: 0,
-      pedidoDesde: "", 
-      pedidoHasta: "", 
+      pedidoDesde: "",
+      pedidoHasta: "",
       domicilio: "",
       certificadoMedico: false,
       articuloLicencia: defaultArticulo,
       persona: defaultPersona,
       designaciones: [],
+      estado: "INVALIDA",
     };
     this.mensaje = "";
     this.isError = false;
-    this.isValidDateRange = true; // Añadido
-    this.minFechaFin = ""; // Añadido
-    this.maxFechaInicio = null; // Añadido
+    this.isValidDateRange = true;
+    this.minFechaFin = "";
+    this.maxFechaInicio = null;
   }
 
   scrollToMessage(): void {
@@ -188,50 +198,60 @@ export class LicenciaDetailComponent {
     }
   }
 
-  comparePersonas(p1: Persona, p2: Persona): boolean { // Añadido
+  comparePersonas(p1: Persona, p2: Persona): boolean {
+    // Añadido
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
-  compareArticulos(a1: ArticuloLicencia, a2: ArticuloLicencia): boolean { // Añadido
+  compareArticulos(a1: ArticuloLicencia, a2: ArticuloLicencia): boolean {
+    // Añadido
     return a1 && a2 ? a1.id === a2.id : a1 === a2;
   }
 
-  onFechaInicioChange(): void { // Añadido
+  onFechaInicioChange(): void {
+    // Añadido
     if (this.licencia.pedidoDesde) {
       this.minFechaFin = this.licencia.pedidoDesde;
       this.validateDateRange();
     }
   }
 
-  onFechaFinChange(): void { // Añadido
+  onFechaFinChange(): void {
+    // Añadido
     if (this.licencia.pedidoHasta) {
       this.maxFechaInicio = this.licencia.pedidoHasta;
       this.validateDateRange();
     }
   }
 
-    private validateDateRange(): void { // Añadido
+  private validateDateRange(): void {
+    // Añadido
     if (this.licencia.pedidoDesde && this.licencia.pedidoHasta) {
       this.isValidDateRange =
         new Date(this.licencia.pedidoHasta) >=
         new Date(this.licencia.pedidoDesde);
       if (!this.isValidDateRange) {
-        this.mensaje = "La fecha de fin debe ser posterior o igual a la fecha de inicio.";
+        this.mensaje =
+          "La fecha de fin debe ser posterior o igual a la fecha de inicio.";
         this.isError = true;
       } else {
-        if (this.mensaje === "La fecha de fin debe ser posterior o igual a la fecha de inicio.") {
+        if (
+          this.mensaje ===
+          "La fecha de fin debe ser posterior o igual a la fecha de inicio."
+        ) {
           this.mensaje = "";
           this.isError = false;
-        }  
+        }
       }
     } else {
       this.isValidDateRange = true; // Si una de las fechas no está, no se considera inválido el rango aún
     }
   }
 
-    formatDateForInput(date: Date | string): string { // Añadido
+  formatDateForInput(date: Date | string): string {
+    // Añadido
     const d = new Date(date);
-    let month = "" + (d.getMonth());  
+    let month = "" + d.getMonth();
     let day = "" + d.getDate();
     const year = d.getFullYear();
 
@@ -241,7 +261,8 @@ export class LicenciaDetailComponent {
     return [year, month, day].join("-");
   }
 
-  volver(): void { // Añadido
+  volver(): void {
+    // Añadido
     this.router.navigate(["/licencias"]);
   }
 }

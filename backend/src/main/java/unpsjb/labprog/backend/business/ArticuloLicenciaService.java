@@ -5,9 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
-import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.ArticuloLicencia;
 
 @Service
@@ -18,25 +16,6 @@ public class ArticuloLicenciaService {
 
     @Autowired
     private MensajeBuilder mensajeBuilder;
-
-    @Autowired
-    private Validator validator;
-
-    /*
-     * @Transactional
-     * public ArticuloLicencia save(ArticuloLicencia articuloLicencia) {
-     * validator.validarArticuloLicencia(articuloLicencia);
-     * return articuloLicenciaRepository.save(articuloLicencia);
-     * }
-     */
-
-    /*
-     * @Transactional
-     * public void delete(ArticuloLicencia articuloLicencia) {
-     * validator.validarBorradoArticuloLicencia(articuloLicencia);
-     * articuloLicenciaRepository.delete(articuloLicencia);
-     * }
-     */
 
     public ArticuloLicencia findById(Long id) {
         return articuloLicenciaRepository.findById(id)

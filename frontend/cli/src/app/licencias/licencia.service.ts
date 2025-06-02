@@ -7,7 +7,6 @@ import { Licencia } from "./licencia";
 @Injectable({
   providedIn: "root",
 })
-
 export class LicenciaService {
   private url = "rest/licencias";
   constructor(private http: HttpClient) {}
@@ -48,7 +47,7 @@ export class LicenciaService {
     return this.http.get<DataPackage>(url, { params });
   }
 
-   byPage(page: number, size: number): Observable<DataPackage> {
+  byPage(page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(
       `${this.url}/page?page=${page - 1}&size=${size}`
     );
@@ -56,5 +55,9 @@ export class LicenciaService {
 
   findById(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.url}/${id}`);
+  }
+
+  getLogsByLicenciaId(licenciaId: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.url}/${licenciaId}/logs`);
   }
 }

@@ -21,16 +21,13 @@
             <th>Artículo</th>
             <th>Fecha Inicio</th>
             <th>Fecha Fin</th>
-            <th></th>
+            <th>Estado</th>
+            <th>Logs</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            *ngFor="
-              let licencia of resultsPage.content;
-              let i = index
-            "
-          >
+          <tr *ngFor="let licencia of resultsPage.content; let i = index">
             <td class="text-center">
               {{ (currentPage - 1) * resultsPage.size + i + 1 }}
             </td>
@@ -49,6 +46,26 @@
               {{ licencia.pedidoHasta | date : "dd/MM/yyyy" }}
             </td>
             <td class="text-center">
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': licencia.estado === 'VALIDA',
+                  'bg-danger': licencia.estado === 'INVALIDA'
+                }"
+              >
+                {{ licencia.estado === "VALIDA" ? "Válida" : "Inválida" }}
+              </span>
+            </td>
+            <td class="text-center">
+              <button
+                class="btn btn-outline-info btn-sm"
+                (click)="verLogs(licencia)"
+                title="Ver Logs"
+              >
+                <i class="bi bi-journal-text"></i>
+              </button>
+            </td>
+            <td class="text-center">
               <div class="btn-group btn-group-sm" role="group">
                 <button
                   class="btn btn-outline-primary"
@@ -61,7 +78,7 @@
             </td>
           </tr>
           <tr *ngIf="!resultsPage.content || resultsPage.content.length === 0">
-            <td colspan="6" class="text-center fst-italic text-muted">
+            <td colspan="8" class="text-center fst-italic text-muted">
               No hay licencias para mostrar.
             </td>
           </tr>
@@ -82,6 +99,75 @@
         (pageChangeRequested)="onPageChangeRequested($event)"
       >
       </app-pagination>
+    </div>
+  </div>
+</div>
+
+<!-- Modal personalizado para mostrar logs -->
+<div
+  *ngIf="showLogsModal"
+  class="modal fade show d-block"
+  tabindex="-1"
+  style="background-color: rgba(0, 0, 0, 0.5)"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content custom-modal-content animate-fade-slide">
+      <div class="modal-header custom-modal-header">
+        <div class="w-100 d-flex flex-column align-items-start">
+          <h4 class="modal-title mb-1">Logs de Licencia</h4>
+          <small class="modal-subtitle" *ngIf="licenciaSeleccionada">
+            {{ licenciaSeleccionada.persona?.apellido }},
+            {{ licenciaSeleccionada.persona?.nombre }}
+          </small>
+        </div>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="cerrarModalLogs()"
+        ></button>
+      </div>
+
+      <div
+        class="modal-body custom-modal-body"
+        style="max-height: 500px; overflow-y: auto"
+      >
+        <div *ngIf="logsLicencia.length === 0" class="text-center text-muted">
+          <i class="bi bi-journal-x fs-1"></i>
+          <p class="mt-2">No hay logs disponibles para esta licencia.</p>
+        </div>
+
+        <div *ngIf="logsLicencia.length > 0" class="timeline">
+          <div
+            *ngFor="let log of logsLicencia; let i = index"
+            class="timeline-item mb-3"
+          >
+            <div class="card border-0 shadow-sm">
+              <div
+                class="card-header d-flex justify-content-between align-items-center py-2"
+              >
+                <small class="text-muted">
+                  <i class="bi bi-clock me-1"></i>
+                  {{ log.fecha | date : "dd/MM/yyyy HH:mm:ss" }}
+                </small>
+              </div>
+              <div class="card-body py-2">
+                <p class="mb-0">{{ log.mensaje }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer custom-modal-footer">
+        <button
+          type="button"
+          class="btn btn-custom-accept"
+          (click)="cerrarModalLogs()"
+        >
+          Cerrar
+        </button>
+      </div>
     </div>
   </div>
 </div>
