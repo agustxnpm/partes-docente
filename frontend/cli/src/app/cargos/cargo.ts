@@ -10,5 +10,5 @@ export interface Cargo {
     fechaFin?: string | null; // Opcional, puede ser null
     division?: Division | null; // Relación ManyToOne con Division, puede ser null
     horario: Horario[]; // Relación OneToMany con Horario
-    tipoDesignacion: TipoDesignacion; // Enum TipoDesignacion
+    tipoDesignacion: TipoDesignacion | null; // Enum TipoDesignacion
   }

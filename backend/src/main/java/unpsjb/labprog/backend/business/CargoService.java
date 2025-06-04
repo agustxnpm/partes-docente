@@ -30,8 +30,32 @@ public class CargoService {
 
     @Transactional
     public Cargo save(Cargo cargo) {
-        validator.validarCargo(cargo);
-        return cargoRepository.save(cargo);
+        if (cargo.getId() != 0) { // Es una actualización
+            // Obtener el cargo existente
+            Cargo cargoExistente = findById(cargo.getId());
+
+            cargoExistente.setNombre(cargo.getNombre());
+            cargoExistente.setCargaHoraria(cargo.getCargaHoraria());
+            cargoExistente.setFechaInicio(cargo.getFechaInicio());
+            cargoExistente.setFechaFin(cargo.getFechaFin());
+            cargoExistente.setTipoDesignacion(cargo.getTipoDesignacion());
+            cargoExistente.setDivision(cargo.getDivision());
+
+            // Manejar la colección horario correctamente
+            if (cargo.getHorario() != null) {
+                // Limpiar la lista existente
+                cargoExistente.getHorario().clear();
+                // Agregar los nuevos elementos
+                cargoExistente.getHorario().addAll(cargo.getHorario());
+            }
+
+            validator.validarCargo(cargoExistente);
+            return cargoRepository.save(cargoExistente);
+        } else {
+            // Es una creación nueva
+            validator.validarCargo(cargo);
+            return cargoRepository.save(cargo);
+        }
     }
 
     @Transactional

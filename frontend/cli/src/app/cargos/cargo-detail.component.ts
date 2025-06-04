@@ -8,10 +8,11 @@ import { Cargo } from "./cargo";
 import { TipoDesignacion } from "./tipoDesignacion";
 import { Division } from "../divisiones/division";
 import { ModalService } from "../modal/modal.service";
+import { TipoDesignacionFormatPipe } from "../shared/pipes/tipo-designacion-format.pipe";
 
 @Component({
   selector: "app-cargo-detail",
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TipoDesignacionFormatPipe],
   templateUrl: "./cargo-detail.component.html",
   styleUrls: ["../global-styles/detail-styles.css"],
 })
@@ -24,7 +25,7 @@ export class CargoDetailComponent {
     fechaFin: null,
     division: null,
     horario: [],
-    tipoDesignacion: TipoDesignacion.ESPACIO_CURRICULAR,
+    tipoDesignacion: null,
   };
 
   divisiones: Division[] = [];
@@ -163,8 +164,12 @@ export class CargoDetailComponent {
         this.mensaje =
           "La fecha de fin debe ser posterior a la fecha de inicio";
         this.isValidDateRange = false;
+        this.isError = true;
+        this.scrollToMessage(); // desplazar la vista al mensaje
       } else {
+        // Limpiar mensaje cuando las fechas son válidas
         this.isValidDateRange = true;
+        this.clearErrorMessage();
       }
     }
   }
@@ -181,12 +186,26 @@ export class CargoDetailComponent {
         this.mensaje =
           "La fecha de fin no puede ser anterior a la fecha de inicio";
         this.isValidDateRange = false;
+        this.isError = true;
+        this.scrollToMessage(); // desplazar la vista al mensaje
       } else {
+        // Limpiar mensaje cuando las fechas son válidas
         this.isValidDateRange = true;
+        this.clearErrorMessage();
       }
     } else {
       this.maxFechaInicio = null;
       this.isValidDateRange = true;
+      this.clearErrorMessage();
+    }
+  }
+
+  // método para limpiar mensajes de error de fechas, para que no queden luego de poner la fecha valida
+  private clearErrorMessage(): void {
+    // Solo limpiar si el mensaje actual es de validación de fechas
+    if (this.mensaje.includes("fecha") && this.isError) {
+      this.mensaje = "";
+      this.isError = false;
     }
   }
 
@@ -199,7 +218,7 @@ export class CargoDetailComponent {
       fechaFin: null,
       division: null,
       horario: [],
-      tipoDesignacion: TipoDesignacion.ESPACIO_CURRICULAR,
+      tipoDesignacion: null,
     };
     this.mensaje = "";
     this.isError = false;

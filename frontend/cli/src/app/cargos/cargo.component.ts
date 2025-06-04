@@ -6,10 +6,12 @@ import { ResultsPage } from "../results-page";
 import { CargoService } from "./cargo.service";
 import { ModalService } from "../modal/modal.service";
 import { Cargo } from "./cargo";
+import { TipoDesignacionFormatPipe } from '../shared/pipes/tipo-designacion-format.pipe';
+
 
 @Component({
   selector: "app-cargo",
-  imports: [CommonModule, RouterModule, PaginationComponent],
+  imports: [CommonModule, RouterModule, PaginationComponent, TipoDesignacionFormatPipe],
   templateUrl: "./cargo.component.html",
   styleUrls: ["../global-styles/table-styles.css"],
 })

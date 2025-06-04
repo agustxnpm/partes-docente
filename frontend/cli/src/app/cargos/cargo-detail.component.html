@@ -11,46 +11,95 @@
       <div class="row g-4">
         <!-- Nombre -->
         <div class="col-md-6">
-          <label for="nombre" class="form-label required-field">Nombre</label>
+          <label for="nombre" class="form-label required-field">
+            <i class="bi bi-briefcase-fill text-primary me-1"></i>
+            Nombre del Cargo / Espacio curricular
+          </label>
           <input
             type="text"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid': nombre.invalid && (nombre.dirty || nombre.touched)
             }"
             [(ngModel)]="cargo.nombre"
             name="nombre"
             #nombre="ngModel"
+            placeholder="Ingrese el nombre del cargo"
             required
+            minlength="3"
+            maxlength="100"
           />
-          <small
-            class="error-message"
-            *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
-          >
-            Campo obligatorio
-          </small>
+
+          <!-- Preview del nombre y contador siempre en la misma línea -->
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="flex-grow-1">
+              <span
+                class="badge bg-info text-dark fs-6"
+                *ngIf="cargo.nombre && cargo.nombre.length >= 3"
+              >
+                <i class="bi bi-tag-fill me-1"></i>
+                {{ cargo.nombre }}
+              </span>
+            </div>
+            <div class="text-end ms-2" *ngIf="cargo.nombre">
+              <small class="text-muted"> {{ cargo.nombre.length }}/100 </small>
+            </div>
+          </div>
+
+          <!-- Mensajes de error -->
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
+            >
+              <span *ngIf="nombre.errors?.['required']">Campo obligatorio</span>
+              <span *ngIf="nombre.errors?.['minlength']"
+                >Mínimo 3 caracteres</span
+              >
+              <span *ngIf="nombre.errors?.['maxlength']"
+                >Máximo 100 caracteres</span
+              >
+            </small>
+          </div>
         </div>
 
         <!-- Carga Horaria -->
         <div class="col-md-6">
-          <label for="cargaHoraria" class="form-label required-field"
-            >Carga Horaria</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            [ngClass]="{
-              'is-invalid':
-                cargaHoraria.invalid &&
-                (cargaHoraria.dirty || cargaHoraria.touched)
-            }"
-            [(ngModel)]="cargo.cargaHoraria"
-            name="cargaHoraria"
-            #cargaHoraria="ngModel"
-            pattern="[0-9]*"
-            (keypress)="onlyNumbers($event)"
-            required
-          />
+          <label for="cargaHoraria" class="form-label required-field">
+            <i class="bi bi-clock-fill text-primary me-1"></i>
+            Carga Horaria
+          </label>
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control enhanced-input"
+              [ngClass]="{
+                'is-invalid':
+                  cargaHoraria.invalid &&
+                  (cargaHoraria.dirty || cargaHoraria.touched)
+              }"
+              [(ngModel)]="cargo.cargaHoraria"
+              name="cargaHoraria"
+              #cargaHoraria="ngModel"
+              placeholder="Ingrese la carga horaria semanal"
+              pattern="[0-9]*"
+              (keypress)="onlyNumbers($event)"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-hourglass-split"></i>
+              hs
+            </span>
+          </div>
+
+          <!-- Preview de carga horaria -->
+          <div class="mt-2" *ngIf="cargo.cargaHoraria">
+            <span class="badge bg-secondary fs-6">
+              <i class="bi bi-clock-fill me-1"></i>
+              {{ cargo.cargaHoraria }} horas semanales
+            </span>
+          </div>
+
           <div class="d-flex mt-1">
             <div class="flex-grow-1">
               <small
@@ -77,7 +126,7 @@
             >Tipo de Designación</label
           >
           <select
-            class="form-select"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid':
                 tipoDesignacion.invalid &&
@@ -91,9 +140,10 @@
           >
             <option [ngValue]="null">Seleccione un tipo</option>
             <option *ngFor="let tipo of tiposDesignacionArray" [ngValue]="tipo">
-              {{ tipo }}
+              {{ tipo | tipoDesignacionFormat }}
             </option>
           </select>
+
           <small
             class="error-message"
             *ngIf="
@@ -114,7 +164,7 @@
             >División</label
           >
           <select
-            class="form-select"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid':
                 division.invalid && (division.dirty || division.touched)
@@ -129,6 +179,20 @@
               {{ div.anio }}° {{ div.numDivision }}º - {{ div.turno }}
             </option>
           </select>
+
+          <!-- Preview de la división seleccionada -->
+          <div class="mt-2" *ngIf="cargo.division">
+            <div class="division-preview d-flex align-items-center">
+              <i class="bi bi-mortarboard-fill text-success me-2"></i>
+              <span class="fw-bold me-2">
+                {{ cargo.division.anio }}° {{ cargo.division.numDivision }}º
+              </span>
+              <span class="badge bg-secondary">
+                {{ cargo.division.turno }}
+              </span>
+            </div>
+          </div>
+
           <small
             class="error-message"
             *ngIf="division.invalid && (division.dirty || division.touched)"
@@ -139,12 +203,13 @@
 
         <!-- Fecha de Inicio -->
         <div class="col-md-6">
-          <label for="fechaInicio" class="form-label required-field"
-            >Vigencia desde</label
-          >
+          <label for="fechaInicio" class="form-label required-field">
+            <i class="bi bi-calendar-check text-success me-1"></i>
+            Vigencia desde
+          </label>
           <input
             type="date"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid':
                 fechaInicio.invalid &&
@@ -170,22 +235,144 @@
 
         <!-- Fecha de Fin (opcional) -->
         <div class="col-md-6">
-          <label for="fechaFin" class="form-label">Vigencia hasta</label>
-          <input
-            type="date"
-            class="form-control"
-            [(ngModel)]="cargo.fechaFin"
-            name="fechaFin"
-            #fechaFin="ngModel"
-            [min]="minFechaFin"
-            [max]="'9999-12-31'"
-            (change)="onFechaFinChange()"
-          />
-          <small class="text-muted">Este campo es opcional</small>
+          <label for="fechaFin" class="form-label">
+            <i class="bi bi-calendar-x text-warning me-1"></i>
+            Vigencia hasta
+          </label>
+          <div class="input-group">
+            <input
+              type="date"
+              class="form-control enhanced-input"
+              [(ngModel)]="cargo.fechaFin"
+              name="fechaFin"
+              #fechaFin="ngModel"
+              [min]="minFechaFin"
+              [max]="'9999-12-31'"
+              (change)="onFechaFinChange()"
+            />
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              *ngIf="cargo.fechaFin"
+              (click)="cargo.fechaFin = null; onFechaFinChange()"
+              title="Limpiar fecha de fin"
+            >
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <small class="text-muted d-flex align-items-center mt-1">
+            <i class="bi bi-info-circle me-1"></i>
+            {{
+              cargo.fechaFin
+                ? "Cargo con fecha límite"
+                : "Cargo vigente indefinidamente"
+            }}
+          </small>
         </div>
       </div>
 
-      <div class="mt-4 text-end">
+      <!-- Sección de resumen -->
+      <div
+        class="row mt-4"
+        *ngIf="cargo.nombre || cargo.cargaHoraria || cargo.tipoDesignacion"
+      >
+        <div class="col-12">
+          <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+              <h6 class="mb-0">
+                <i class="bi bi-eye-fill me-2"></i>
+                Vista previa del cargo
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6" *ngIf="cargo.nombre">
+                  <strong>Nombre: </strong>
+                  <span>{{
+                    cargo.nombre
+                  }}</span>
+                </div>
+                <div class="col-md-6" *ngIf="cargo.cargaHoraria">
+                  <strong>Carga Horaria:</strong>
+                  <span class="badge bg-secondary ms-1">
+                    <i class="bi bi-clock-fill me-1"></i>
+                    {{ cargo.cargaHoraria }} hs
+                  </span>
+                </div>
+                <div class="col-md-6 mt-2" *ngIf="cargo.tipoDesignacion">
+                  <strong>Tipo: </strong>
+                  <span
+                    class="badge ms-1 fw-bold px-3 py-2"
+                    [ngClass]="{
+                      'badge-espacio-curricular':
+                        cargo.tipoDesignacion === 'ESPACIO_CURRICULAR',
+                      'badge-cargo-institucional':
+                        cargo.tipoDesignacion === 'CARGO'
+                    }"
+                  >
+                    <i
+                      class="me-1"
+                      [ngClass]="{
+                        'bi bi-book-fill':
+                          cargo.tipoDesignacion === 'ESPACIO_CURRICULAR',
+                        'bi bi-building-fill': cargo.tipoDesignacion === 'CARGO'
+                      }"
+                    ></i>
+                    {{ cargo.tipoDesignacion | tipoDesignacionFormat }}
+                  </span>
+                </div>
+                   <!-- Turno separado -->
+                <div class="col-md-6 mt-2" *ngIf="cargo.division">
+                  <strong>Turno: </strong>
+                  <span>
+                    {{ cargo.division.turno }}
+                  </span>
+                </div>
+                <div class="col-md-6 mt-2" *ngIf="cargo.division">
+                  <strong>División: </strong>
+                  <span class="ms-1">
+                    <i class="bi bi-mortarboard-fill text-success me-1"></i>
+                    <span class="fw-bold"
+                      >{{ cargo.division.anio }}°
+                      {{ cargo.division.numDivision }}º</span
+                    >
+                  </span>
+                </div>
+             
+                <div class="col-md-6 mt-2" *ngIf="cargo.fechaInicio">
+                  <strong>Vigencia: </strong>
+                  <span class="ms-1">
+                    <i class="bi bi-calendar-check text-success me-1"></i>
+                    {{ cargo.fechaInicio | date : "dd/MM/yyyy" }}
+                    <span *ngIf="cargo.fechaFin">
+                      - <i class="bi bi-calendar-x text-warning mx-1"></i
+                      >{{ cargo.fechaFin | date : "dd/MM/yyyy" }}
+                    </span>
+                    <span
+                      *ngIf="!cargo.fechaFin"
+                      class="text-success fw-bold ms-1"
+                    >
+                      (Vigente)
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--  Boton de guardado y volver-->
+      <div class="mt-4 d-flex justify-content-between align-items-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4"
+          (click)="volver()"
+        >
+          <i class="bi bi-arrow-left me-2"></i>
+          Volver a la lista
+        </button>
+
         <button
           type="submit"
           class="btn btn-outline-primary px-4"
@@ -195,6 +382,8 @@
           {{ isNew ? "Crear Cargo" : "Guardar Cambios" }}
         </button>
       </div>
+
+      <!-- Mensaje de éxito o error-->
       <div
         *ngIf="mensaje"
         id="message-container"

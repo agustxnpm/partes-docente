@@ -18,8 +18,7 @@
           <tr>
             <th>#</th>
             <th>DNI</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
+            <th>Nombre Completo</th>
             <th>CUIL</th>
             <th>Sexo</th>
             <th>Título</th>
@@ -28,32 +27,103 @@
             <th></th>
           </tr>
         </thead>
-        <tbody>
+                <tbody>
           <tr *ngFor="let persona of resultsPage.content; let i = index">
-            <td class="text-center">
+            <!-- Número -->
+            <td class="text-center fw-bold">
               {{ (currentPage - 1) * resultsPage.size + i + 1 }}
             </td>
-            <td>{{ persona.dni }}</td>
-            <td>{{ persona.nombre }}</td>
-            <td>{{ persona.apellido }}</td>
-            <td>{{ persona.cuil }}</td>
-            <td>{{ persona.sexo }}</td>
-            <td>{{ persona.titulo || "Sin título" }}</td>
-            <!-- Mostrar "Sin título" si es nulo -->
-
-            <td>{{ persona.domicilio }}</td>
-            <td>{{ persona.telefono }}</td>
+            
+            <!-- DNI (más sencillo) -->
             <td class="text-center">
+              <span class="dni-text">
+                <i class="bi bi-card-text text-muted me-1"></i>
+                {{ persona.dni }}
+              </span>
+            </td>
+            
+            <!-- Nombre Completo (más sencillo) -->
+            <td>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-person text-secondary me-2"></i>
+                <span class="persona-nombre-subtle">{{ persona.nombre }} {{ persona.apellido }}</span>
+              </div>
+            </td>
+            
+            <!-- CUIL (más sutil) -->
+            <td class="text-center">
+              <span class="cuil-text">
+                <i class="bi bi-shield-check text-muted me-1"></i>
+                {{ persona.cuil }}
+              </span>
+            </td>
+            
+            <!-- Sexo (colores más sutiles) -->
+            <td class="text-center">
+              <span 
+                class="sexo-badge"
+                [ngClass]="{
+                  'sexo-masculino': persona.sexo === 'M',
+                  'sexo-femenino': persona.sexo === 'F'
+                }"
+              >
+                <i 
+                  class="me-1"
+                  [ngClass]="{
+                    'bi bi-gender-male': persona.sexo === 'M',
+                    'bi bi-gender-female': persona.sexo === 'F'
+                  }"
+                ></i>
+                {{ persona.sexo === 'M' ? 'M' : 'F' }}
+              </span>
+            </td>
+            
+            <!-- Título (más contenido y responsivo) -->
+            <td class="titulo-column">
+              <div *ngIf="persona.titulo; else sinTitulo">
+                <span class="titulo-badge" [title]="persona.titulo">
+                  <i class="bi bi-mortarboard text-success me-1"></i>
+                  <span class="titulo-text">{{ persona.titulo }}</span>
+                </span>
+              </div>
+              <ng-template #sinTitulo>
+                <span class="sin-titulo">
+                  <i class="bi bi-dash-circle me-1"></i>
+                  Sin título
+                </span>
+              </ng-template>
+            </td>
+            
+            <!-- Domicilio -->
+            <td>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-house text-warning me-2"></i>
+                <span class="domicilio-text" [title]="persona.domicilio">{{ persona.domicilio }}</span>
+              </div>
+            </td>
+            
+            <!-- Teléfono (más sutil) -->
+            <td class="text-center">
+              <a [href]="'tel:' + persona.telefono" class="text-decoration-none telefono-link">
+                <i class="bi bi-telephone text-muted me-1"></i>
+                <span class="telefono-text">{{ persona.telefono }}</span>
+              </a>
+            </td>
+            
+            <!-- Acciones -->
+            <td class="text-center acciones-column">
               <div class="btn-group btn-group-sm" role="group">
                 <button
                   class="btn btn-outline-primary"
                   [routerLink]="['/personas', persona.id]"
+                  title="Editar persona"
                 >
                   <i class="bi bi-pencil-fill"></i>
                 </button>
                 <button
                   class="btn btn-outline-danger"
                   (click)="eliminarPersona(persona)"
+                  title="Eliminar persona"
                 >
                   <i class="bi bi-trash-fill"></i>
                 </button>
@@ -61,7 +131,8 @@
             </td>
           </tr>
           <tr *ngIf="!resultsPage.content || resultsPage.content.length === 0">
-            <td colspan="10" class="text-center fst-italic text-muted">
+            <td colspan="9" class="text-center fst-italic text-muted">
+              <i class="bi bi-inbox me-2"></i>
               No hay personas para mostrar.
             </td>
           </tr>

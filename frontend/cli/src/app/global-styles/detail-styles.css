@@ -39,5 +39,132 @@
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
+/* Estilos para formularios mejorados */
+.enhanced-select, .enhanced-input {
+  border: 2px solid #e9ecef;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.enhanced-select:focus, .enhanced-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+  transform: translateY(-1px);
+}
+
+.division-preview {
+  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  border-left: 4px solid #28a745;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.required-field::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Input group enhancements */
+.input-group .input-group-text {
+  background: linear-gradient(45deg, #6c757d, #495057);
+  color: white;
+  border: none;
+  font-weight: 600;
+}
+
+.card-header {
+  background: linear-gradient(45deg, #0d6efd, #6610f2) !important;
+}
+
+.enhanced-select:hover, .enhanced-input:hover {
+  border-color: #6c757d;
+  transform: translateY(-1px);
+}
+
+.is-invalid.enhanced-select, .is-invalid.enhanced-input {
+  border-color: #dc3545;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.enhanced-select:valid, .enhanced-input:valid {
+  border-color: #198754;
+}
+
+.badge-preview {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Badges personalizados que hacen juego con el navbar */
+.badge-espacio-curricular {
+  background: linear-gradient(45deg, #2b2d42, #4a4e69) !important;
+  color: #edf2f4 !important;
+  border: 2px solid #2b2d42 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(43, 45, 66, 0.3);
+  transition: all 0.3s ease;
+}
+
+.badge-cargo-institucional {
+  background: linear-gradient(45deg, #8d99ae, #a8b5c7) !important;
+  color: #2b2d42 !important;
+  border: 2px solid #8d99ae !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(141, 153, 174, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Efectos hover para los badges */
+.badge-espacio-curricular:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(43, 45, 66, 0.4);
+}
+
+.badge-cargo-institucional:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(141, 153, 174, 0.4);
+}
+
+/* Mejorar alineación del preview y contador */
+.badge.bg-info {
+  background: linear-gradient(45deg, #17a2b8, #138496) !important;
+  color: white !important;
+  font-size: 0.9rem !important;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1rem;
+  font-weight: 500;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Asegurar que el contador no se mueva */
+.text-end.ms-2 {
+  flex-shrink: 0;
+  min-width: fit-content;
+}
 
   
