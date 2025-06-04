@@ -1,85 +1,85 @@
 .table-responsive {
-    margin-bottom: 1rem;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05);
-  }
-  
-  .table thead {
-    background-color: #e9ecef;
-  }
-  
-  .table thead th {
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-align: center;
-    padding: 0.75rem;
-    border-bottom: 2px solid #dee2e6;
-    color: #212529;
-  }
-  
-  .table tbody tr {
-    border-bottom: 1px solid #dee2e6;
-    transition: background-color 0.15s ease-in-out;
-  }
-  
-  .table tbody tr:hover {
-    background-color: #f8f9fa;
-  }
-  
-  .table td {
-    padding: 0.75rem;
-    vertical-align: middle;
-    font-size: 0.925rem;
-    color: #495057;
-  }
-  
-  .btn-group .btn {
-    padding: 0.4rem 0.55rem;
-    font-size: 0.85rem;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .btn-outline-primary {
-    color: #0d6efd;
-    border-color: transparent;
-    background-color: transparent;
-  }
-  
-  .btn-outline-primary:hover {
-    background-color: #0d6efd;
-    color: white;
-  }
-  
-  .btn-outline-danger {
-    color: #dc3545;
-    border-color: transparent;
-    background-color: transparent;
-  }
-  
-  .btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .btn i {
-    font-size: 1rem;
-  }
-  
-  .badge {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
-    background-color: #0d6efd;
-    color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* ...existing code... */
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05);
+}
+
+.table thead {
+  background-color: #e9ecef;
+}
+
+.table thead th {
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 0.75rem;
+  border-bottom: 2px solid #dee2e6;
+  color: #212529;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #dee2e6;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  font-size: 0.925rem;
+  color: #495057;
+}
+
+.btn-group .btn {
+  padding: 0.4rem 0.55rem;
+  font-size: 0.85rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-outline-primary {
+  color: #0d6efd;
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-danger {
+  color: #dc3545;
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn i {
+  font-size: 1rem;
+}
+
+.badge {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ...existing code... */
 
 /* Estilos para hacer las tablas más llamativas */
 .table td {
@@ -397,14 +397,13 @@
   transform: scale(1.05);
 }
 
-
 /* Responsivo mejorado */
 @media (max-width: 1200px) {
   .titulo-column {
     width: 120px;
     max-width: 120px;
   }
-  
+
   .titulo-text {
     max-width: 80px;
   }
@@ -414,12 +413,12 @@
   .domicilio-text {
     max-width: 150px;
   }
-  
+
   .titulo-column {
     width: 100px;
     max-width: 100px;
   }
-  
+
   .titulo-text {
     max-width: 60px;
   }
@@ -429,7 +428,7 @@
   .domicilio-text {
     max-width: 120px;
   }
-  
+
   .acciones-column {
     width: 100px;
     min-width: 100px;
@@ -437,21 +436,29 @@
 }
 
 .table tbody tr:hover {
-  background: linear-gradient(90deg, rgba(43, 45, 66, 0.02), rgba(141, 153, 174, 0.02));
-  transform: none; 
+  background: linear-gradient(
+    90deg,
+    rgba(43, 45, 66, 0.02),
+    rgba(141, 153, 174, 0.02)
+  );
+  transform: none;
   box-shadow: 0 1px 4px rgba(43, 45, 66, 0.1);
   transition: all 0.2s ease;
 }
 
 .table tbody tr:hover {
-  background: linear-gradient(90deg, rgba(43, 45, 66, 0.02), rgba(141, 153, 174, 0.02));
-  transform: scale(1.01); 
-  box-shadow: 0 2px 8px rgba(43, 45, 66, 0.1); 
+  background: linear-gradient(
+    90deg,
+    rgba(43, 45, 66, 0.02),
+    rgba(141, 153, 174, 0.02)
+  );
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(43, 45, 66, 0.1);
   transition: all 0.2s ease;
 }
 
 .table tr:hover .bi {
-  transform: scale(1.1); 
+  transform: scale(1.1);
 }
 
 .table tbody tr:hover {
@@ -459,4 +466,111 @@
   transform: scale(1.01);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
+}
+/* Estilos específicos para badges de turno - con colores del navbar */
+.badge.bg-warning.text-dark {
+  background: linear-gradient(45deg, #a8b5c7, #8d99ae) !important;
+  color: #2b2d42 !important;
+  border: 1px solid #8d99ae;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(141, 153, 174, 0.3);
+}
+
+.badge.bg-info.text-dark {
+  background: linear-gradient(45deg, #4a4e69, #2b2d42) !important;
+  color: #edf2f4 !important;
+  border: 1px solid #4a4e69;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(74, 78, 105, 0.3);
+}
+
+.badge.bg-dark.text-white {
+  background: linear-gradient(45deg, #2b2d42, #4a4e69) !important;
+  color: #edf2f4 !important;
+  border: 1px solid #2b2d42;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(43, 45, 66, 0.4);
+}
+
+.badge.bg-success.text-white {
+  background: linear-gradient(45deg, #8d99ae, #a8b5c7) !important;
+  color: #2b2d42 !important;
+  border: 1px solid #8d99ae;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(141, 153, 174, 0.3);
+}
+
+/* Badge para el año - con colores principales del navbar */
+.badge.bg-primary {
+  background: linear-gradient(45deg, #2b2d42, #4a4e69) !important;
+  color: #edf2f4 !important;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(43, 45, 66, 0.3);
+  border: 1px solid #2b2d42;
+}
+
+/* Badge secundario para división */
+.badge.bg-secondary {
+  background: linear-gradient(45deg, #8d99ae, #a8b5c7) !important;
+  color: #2b2d42 !important;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(141, 153, 174, 0.3);
+  border: 1px solid #8d99ae;
+}
+
+/* Mejorar la apariencia de los badges */
+.badge.fs-6 {
+  font-size: 0.875rem !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.badge.fs-6:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(43, 45, 66, 0.25);
+}
+
+/* Hover effects específicos para cada tipo de badge */
+.badge.bg-warning.text-dark:hover {
+  background: linear-gradient(45deg, #8d99ae, #a8b5c7) !important;
+  box-shadow: 0 4px 8px rgba(141, 153, 174, 0.4);
+}
+
+.badge.bg-info.text-dark:hover {
+  background: linear-gradient(45deg, #2b2d42, #4a4e69) !important;
+  box-shadow: 0 4px 8px rgba(43, 45, 66, 0.4);
+}
+
+.badge.bg-dark.text-white:hover {
+  background: linear-gradient(45deg, #4a4e69, #2b2d42) !important;
+  box-shadow: 0 4px 8px rgba(43, 45, 66, 0.5);
+}
+
+.badge.bg-success.text-white:hover {
+  background: linear-gradient(45deg, #a8b5c7, #8d99ae) !important;
+  box-shadow: 0 4px 8px rgba(141, 153, 174, 0.4);
+}
+
+.badge.bg-primary:hover {
+  background: linear-gradient(45deg, #4a4e69, #2b2d42) !important;
+  box-shadow: 0 4px 8px rgba(43, 45, 66, 0.4);
+}
+
+.badge.bg-secondary:hover {
+  background: linear-gradient(45deg, #a8b5c7, #8d99ae) !important;
+  box-shadow: 0 4px 8px rgba(141, 153, 174, 0.4);
+}
+
+/* Iconos en headers de tabla */
+th i.bi {
+  font-size: 0.9rem;
+  color: #4a4e69;
+}
+
+/* Mejoras para el estado vacío */
+td .bi.fs-1 {
+  opacity: 0.3;
+  color: #8d99ae;
 }

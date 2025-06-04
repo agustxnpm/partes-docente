@@ -27,29 +27,31 @@
             <th></th>
           </tr>
         </thead>
-                <tbody>
+        <tbody>
           <tr *ngFor="let persona of resultsPage.content; let i = index">
             <!-- Número -->
             <td class="text-center fw-bold">
               {{ (currentPage - 1) * resultsPage.size + i + 1 }}
             </td>
-            
+
             <!-- DNI (más sencillo) -->
             <td class="text-center">
               <span class="dni-text">
-                <i class="bi bi-card-text text-muted me-1"></i>
+                <i class="text-muted me-1"></i>
                 {{ persona.dni }}
               </span>
             </td>
-            
+
             <!-- Nombre Completo (más sencillo) -->
             <td>
               <div class="d-flex align-items-center">
                 <i class="bi bi-person text-secondary me-2"></i>
-                <span class="persona-nombre-subtle">{{ persona.nombre }} {{ persona.apellido }}</span>
+                <span class="persona-nombre-subtle"
+                  >{{ persona.nombre }} {{ persona.apellido }}</span
+                >
               </div>
             </td>
-            
+
             <!-- CUIL (más sutil) -->
             <td class="text-center">
               <span class="cuil-text">
@@ -57,27 +59,27 @@
                 {{ persona.cuil }}
               </span>
             </td>
-            
+
             <!-- Sexo (colores más sutiles) -->
             <td class="text-center">
-              <span 
+              <span
                 class="sexo-badge"
                 [ngClass]="{
                   'sexo-masculino': persona.sexo === 'M',
                   'sexo-femenino': persona.sexo === 'F'
                 }"
               >
-                <i 
+                <i
                   class="me-1"
                   [ngClass]="{
                     'bi bi-gender-male': persona.sexo === 'M',
                     'bi bi-gender-female': persona.sexo === 'F'
                   }"
                 ></i>
-                {{ persona.sexo === 'M' ? 'M' : 'F' }}
+                {{ persona.sexo === "M" ? "M" : "F" }}
               </span>
             </td>
-            
+
             <!-- Título (más contenido y responsivo) -->
             <td class="titulo-column">
               <div *ngIf="persona.titulo; else sinTitulo">
@@ -93,23 +95,28 @@
                 </span>
               </ng-template>
             </td>
-            
+
             <!-- Domicilio -->
             <td>
               <div class="d-flex align-items-center">
                 <i class="bi bi-house text-warning me-2"></i>
-                <span class="domicilio-text" [title]="persona.domicilio">{{ persona.domicilio }}</span>
+                <span class="domicilio-text" [title]="persona.domicilio">{{
+                  persona.domicilio
+                }}</span>
               </div>
             </td>
-            
+
             <!-- Teléfono (más sutil) -->
             <td class="text-center">
-              <a [href]="'tel:' + persona.telefono" class="text-decoration-none telefono-link">
+              <a
+                [href]="'tel:' + persona.telefono"
+                class="text-decoration-none telefono-link"
+              >
                 <i class="bi bi-telephone text-muted me-1"></i>
                 <span class="telefono-text">{{ persona.telefono }}</span>
               </a>
             </td>
-            
+
             <!-- Acciones -->
             <td class="text-center acciones-column">
               <div class="btn-group btn-group-sm" role="group">

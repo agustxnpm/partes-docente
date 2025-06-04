@@ -11,10 +11,13 @@
       <div class="row g-4">
         <!-- DNI -->
         <div class="col-md-4">
-          <label for="dni" class="form-label required-field">DNI</label>
+          <label for="dni" class="form-label required-field">
+            <i class="bi bi-card-text text-primary me-1"></i>
+            DNI
+          </label>
           <input
             type="text"
-            class="form-control form-control-sm"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid': dni.invalid && (dni.dirty || dni.touched)
             }"
@@ -24,17 +27,26 @@
             [disabled]="!isNew"
             pattern="[0-9]*"
             (keypress)="onlyNumbers($event)"
+            placeholder="Ingrese el DNI"
             required
+            maxlength="8"
           />
-          <div class="d-flex mt-1">
-            <div class="flex-grow-1">
-              <small
-                class="error-message"
-                *ngIf="dni.invalid && (dni.dirty || dni.touched)"
-              >
-                Campo obligatorio
-              </small>
-            </div>
+
+          <!-- Preview del DNI -->
+          <div class="mt-2" *ngIf="persona.dni">
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-card-text me-1"></i>
+              DNI: {{ persona.dni }}
+            </span>
+          </div>
+
+          <div class="mt-1 d-flex justify-content-between align-items-center">
+            <small
+              class="error-message"
+              *ngIf="dni.invalid && (dni.dirty || dni.touched)"
+            >
+              Campo obligatorio
+            </small>
             <div class="text-end">
               <small class="text-danger" *ngIf="showErrorDni">
                 Solo se permiten números
@@ -45,12 +57,15 @@
 
         <!-- CUIL -->
         <div class="col-md-4">
-          <label for="cuil" class="form-label required-field">CUIL</label>
-          <div class="d-flex align-items-center">
+          <label for="cuil" class="form-label required-field">
+            <i class="bi bi-person-vcard text-primary me-1"></i>
+            CUIL
+          </label>
+          <div class="input-group">
             <!-- Campo para el prefijo del CUIL -->
             <input
               type="text"
-              class="form-control form-control-sm me-1"
+              class="form-control enhanced-input"
               [ngClass]="{
                 'is-invalid':
                   cuilPrefixField.invalid &&
@@ -63,21 +78,25 @@
               pattern="[0-9]*"
               (keypress)="onlyNumbers($event)"
               [disabled]="!isNew"
+              placeholder="XX"
               required
             />
+            <span class="input-group-text">-</span>
 
             <!-- Campo para el DNI (automáticamente vinculado) -->
             <input
               type="text"
-              class="form-control form-control-sm me-1"
-              [value]="persona.dni"
+              class="form-control enhanced-input"
+              [value]="persona.dni || ''"
+              placeholder="DNI"
               disabled
             />
+            <span class="input-group-text">-</span>
 
             <!-- Campo para el sufijo del CUIL -->
             <input
               type="text"
-              class="form-control form-control-sm"
+              class="form-control enhanced-input"
               [ngClass]="{
                 'is-invalid':
                   cuilSuffixField.invalid &&
@@ -90,23 +109,31 @@
               pattern="[0-9]*"
               (keypress)="onlyNumbers($event)"
               [disabled]="!isNew"
+              placeholder="X"
               required
             />
           </div>
-          <div class="d-flex mt-1">
-            <div class="flex-grow-1">
-              <small
-                class="error-message"
-                *ngIf="
-                  (cuilPrefixField.invalid &&
-                    (cuilPrefixField.dirty || cuilPrefixField.touched)) ||
-                  (cuilSuffixField.invalid &&
-                    (cuilSuffixField.dirty || cuilSuffixField.touched))
-                "
-              >
-                Campo obligatorio
-              </small>
-            </div>
+
+          <!-- Preview del CUIL completo -->
+          <div class="mt-2" *ngIf="cuilPrefix && persona.dni && cuilSuffix">
+            <span class="badge bg-secondary fs-6">
+              <i class="bi bi-person-vcard me-1"></i>
+              CUIL: {{ cuilPrefix }}-{{ persona.dni }}-{{ cuilSuffix }}
+            </span>
+          </div>
+
+          <div class="mt-1 d-flex justify-content-between align-items-center">
+            <small
+              class="error-message"
+              *ngIf="
+                (cuilPrefixField.invalid &&
+                  (cuilPrefixField.dirty || cuilPrefixField.touched)) ||
+                (cuilSuffixField.invalid &&
+                  (cuilSuffixField.dirty || cuilSuffixField.touched))
+              "
+            >
+              Campo obligatorio
+            </small>
             <div class="text-end">
               <small class="text-danger" *ngIf="showErrorCuil">
                 Solo se permiten números
@@ -117,9 +144,12 @@
 
         <!-- Sexo -->
         <div class="col-md-4">
-          <label for="sexo" class="form-label required-field">Sexo</label>
+          <label for="sexo" class="form-label required-field">
+            <i class="bi bi-gender-ambiguous text-primary me-1"></i>
+            Sexo
+          </label>
           <select
-            class="form-select form-select-sm"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid': sexo.invalid && (sexo.dirty || sexo.touched)
             }"
@@ -132,6 +162,21 @@
             <option value="M">Masculino</option>
             <option value="F">Femenino</option>
           </select>
+
+          <!-- Preview del sexo -->
+          <div class="mt-2" *ngIf="persona.sexo">
+            <span class="badge bg-info text-dark fs-6">
+              <i
+                class="me-1"
+                [ngClass]="{
+                  'bi bi-gender-male': persona.sexo === 'M',
+                  'bi bi-gender-female': persona.sexo === 'F'
+                }"
+              ></i>
+              {{ persona.sexo === "M" ? "Masculino" : "Femenino" }}
+            </span>
+          </div>
+
           <small
             class="error-message"
             *ngIf="sexo.invalid && (sexo.dirty || sexo.touched)"
@@ -142,34 +187,67 @@
 
         <!-- Nombre -->
         <div class="col-md-6">
-          <label for="nombre" class="form-label required-field">Nombre</label>
+          <label for="nombre" class="form-label required-field">
+            <i class="bi bi-person-fill text-primary me-1"></i>
+            Nombre
+          </label>
           <input
             type="text"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid': nombre.invalid && (nombre.dirty || nombre.touched)
             }"
             [(ngModel)]="persona.nombre"
             name="nombre"
             #nombre="ngModel"
+            placeholder="Ingrese el nombre"
             required
+            minlength="2"
+            maxlength="50"
           />
-          <small
-            class="error-message"
-            *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
-          >
-            Campo obligatorio
-          </small>
+
+          <!-- Preview del nombre y contador -->
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="flex-grow-1">
+              <span
+                class="badge bg-info text-dark fs-6"
+                *ngIf="persona.nombre && persona.nombre.length >= 2"
+              >
+                <i class="bi bi-person-fill me-1"></i>
+                {{ persona.nombre }}
+              </span>
+            </div>
+            <div class="text-end ms-2" *ngIf="persona.nombre">
+              <small class="text-muted">{{ persona.nombre.length }}/50</small>
+            </div>
+          </div>
+
+          <!-- Mensajes de error -->
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
+            >
+              <span *ngIf="nombre.errors?.['required']">Campo obligatorio</span>
+              <span *ngIf="nombre.errors?.['minlength']"
+                >Mínimo 2 caracteres</span
+              >
+              <span *ngIf="nombre.errors?.['maxlength']"
+                >Máximo 50 caracteres</span
+              >
+            </small>
+          </div>
         </div>
 
         <!-- Apellido -->
         <div class="col-md-6">
-          <label for="apellido" class="form-label required-field"
-            >Apellido</label
-          >
+          <label for="apellido" class="form-label required-field">
+            <i class="bi bi-person-fill text-primary me-1"></i>
+            Apellido
+          </label>
           <input
             type="text"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid':
                 apellido.invalid && (apellido.dirty || apellido.touched)
@@ -177,24 +255,56 @@
             [(ngModel)]="persona.apellido"
             name="apellido"
             #apellido="ngModel"
+            placeholder="Ingrese el apellido"
             required
+            minlength="2"
+            maxlength="50"
           />
-          <small
-            class="error-message"
-            *ngIf="apellido.invalid && (apellido.dirty || apellido.touched)"
-          >
-            Campo obligatorio
-          </small>
+
+          <!-- Preview del apellido y contador -->
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="flex-grow-1">
+              <span
+                class="badge bg-info text-dark fs-6"
+                *ngIf="persona.apellido && persona.apellido.length >= 2"
+              >
+                <i class="bi bi-person-fill me-1"></i>
+                {{ persona.apellido }}
+              </span>
+            </div>
+            <div class="text-end ms-2" *ngIf="persona.apellido">
+              <small class="text-muted">{{ persona.apellido.length }}/50</small>
+            </div>
+          </div>
+
+          <!-- Mensajes de error -->
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="apellido.invalid && (apellido.dirty || apellido.touched)"
+            >
+              <span *ngIf="apellido.errors?.['required']"
+                >Campo obligatorio</span
+              >
+              <span *ngIf="apellido.errors?.['minlength']"
+                >Mínimo 2 caracteres</span
+              >
+              <span *ngIf="apellido.errors?.['maxlength']"
+                >Máximo 50 caracteres</span
+              >
+            </small>
+          </div>
         </div>
 
         <!-- Domicilio -->
         <div class="col-md-6">
-          <label for="domicilio" class="form-label required-field"
-            >Domicilio</label
-          >
+          <label for="domicilio" class="form-label required-field">
+            <i class="bi bi-house-fill text-primary me-1"></i>
+            Domicilio
+          </label>
           <input
             type="text"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid':
                 domicilio.invalid && (domicilio.dirty || domicilio.touched)
@@ -202,56 +312,230 @@
             [(ngModel)]="persona.domicilio"
             name="domicilio"
             #domicilio="ngModel"
+            placeholder="Ingrese el domicilio"
             required
+            maxlength="100"
           />
-          <small
-            class="error-message"
-            *ngIf="domicilio.invalid && (domicilio.dirty || domicilio.touched)"
-          >
-            Campo obligatorio
-          </small>
-        </div>
 
-        <!-- Título -->
-        <div class="col-md-6">
-          <label for="titulo" class="form-label">Título</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="persona.titulo"
-            name="titulo"
-            #titulo="ngModel"
-          />
-          <small class="text-muted">Este campo es opcional.</small>
+          <!-- Preview del domicilio y contador -->
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="flex-grow-1">
+              <span
+                class="badge bg-secondary fs-6"
+                *ngIf="persona.domicilio && persona.domicilio.length >= 3"
+              >
+                <i class="bi bi-house-fill me-1"></i>
+                {{ persona.domicilio }}
+              </span>
+            </div>
+            <div class="text-end ms-2" *ngIf="persona.domicilio">
+              <small class="text-muted"
+                >{{ persona.domicilio.length }}/100</small
+              >
+            </div>
+          </div>
+
+          <!-- Mensajes de error -->
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                domicilio.invalid && (domicilio.dirty || domicilio.touched)
+              "
+            >
+              Campo obligatorio
+            </small>
+          </div>
         </div>
 
         <!-- Teléfono -->
         <div class="col-md-6">
-          <label for="telefono" class="form-label required-field"
-            >Teléfono</label
-          >
+          <label for="telefono" class="form-label required-field">
+            <i class="bi bi-telephone-fill text-primary me-1"></i>
+            Teléfono
+          </label>
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control enhanced-input"
+              [ngClass]="{
+                'is-invalid':
+                  telefono.invalid && (telefono.dirty || telefono.touched)
+              }"
+              [(ngModel)]="persona.telefono"
+              name="telefono"
+              #telefono="ngModel"
+              placeholder="Ingrese el teléfono"
+              required
+              maxlength="20"
+            />
+            <span class="input-group-text">
+              <i class="bi bi-phone"></i>
+            </span>
+          </div>
+
+          <!-- Preview del teléfono y contador -->
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="flex-grow-1">
+              <span class="badge bg-success fs-6" *ngIf="persona.telefono">
+                <i class="bi bi-telephone-fill me-1"></i>
+                {{ persona.telefono }}
+              </span>
+            </div>
+            <div class="text-end ms-2" *ngIf="persona.telefono">
+              <small class="text-muted">{{ persona.telefono.length }}/20</small>
+            </div>
+          </div>
+
+          <!-- Mensajes de error -->
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="telefono.invalid && (telefono.dirty || telefono.touched)"
+            >
+              Campo obligatorio
+            </small>
+          </div>
+        </div>
+
+        <!-- Título (opcional) -->
+        <div class="col-md-12">
+          <label for="titulo" class="form-label">
+            <i class="bi bi-mortarboard-fill text-primary me-1"></i>
+            Título Profesional
+          </label>
           <input
             type="text"
-            class="form-control"
-            [ngClass]="{
-              'is-invalid':
-                telefono.invalid && (telefono.dirty || telefono.touched)
-            }"
-            [(ngModel)]="persona.telefono"
-            name="telefono"
-            #telefono="ngModel"
-            required
+            class="form-control enhanced-input"
+            [(ngModel)]="persona.titulo"
+            name="titulo"
+            #titulo="ngModel"
+            placeholder="Ingrese el título profesional (opcional)"
+            maxlength="100"
           />
-          <small
-            class="error-message"
-            *ngIf="telefono.invalid && (telefono.dirty || telefono.touched)"
-          >
-            Campo obligatorio
-          </small>
+
+          <!-- Preview del título y contador -->
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="flex-grow-1">
+              <span
+                class="badge bg-warning text-dark fs-6"
+                *ngIf="persona.titulo && persona.titulo.length >= 3"
+              >
+                <i class="bi bi-mortarboard-fill me-1"></i>
+                {{ persona.titulo }}
+              </span>
+            </div>
+            <div class="text-end ms-2" *ngIf="persona.titulo">
+              <small class="text-muted">{{ persona.titulo.length }}/100</small>
+            </div>
+          </div>
+
+          <!-- Mensaje informativo -->
+          <div class="mt-1">
+            <small class="text-muted">
+              <i class="bi bi-info-circle me-1"></i>
+              Este campo es opcional
+            </small>
+          </div>
         </div>
       </div>
 
-      <div class="mt-4 text-end">
+      <!-- Sección de resumen -->
+      <div
+        class="row mt-4"
+        *ngIf="persona.nombre || persona.apellido || persona.dni"
+      >
+        <div class="col-12">
+          <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+              <h6 class="mb-0">
+                <i class="bi bi-eye-fill me-2"></i>
+                Vista previa de la persona
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div
+                  class="col-md-6"
+                  *ngIf="persona.apellido && persona.nombre"
+                >
+                  <strong>Nombre completo: </strong>
+                  <span>{{ persona.apellido }}, {{ persona.nombre }}</span>
+                </div>
+                <div class="col-md-6" *ngIf="persona.dni">
+                  <div class="d-flex align-items-center">
+                    <strong class="me-2">DNI:</strong>
+                    <span class="badge bg-info text-dark">
+                      <i class="bi bi-card-text me-1"></i>
+                      {{ persona.dni }}
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="col-md-6 mt-2"
+                  *ngIf="cuilPrefix && persona.dni && cuilSuffix"
+                >
+                  <div class="d-flex align-items-center">
+                    <strong class="me-2">CUIL:</strong>
+                    <span class="badge bg-secondary">
+                      <i class="bi bi-person-vcard me-1"></i>
+                      {{ cuilPrefix }}-{{ persona.dni }}-{{ cuilSuffix }}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-md-6 mt-2" *ngIf="persona.sexo">
+                  <strong>Sexo: </strong>
+                  <span class="ms-1">
+                    <i
+                      class="me-1"
+                      [ngClass]="{
+                        'bi bi-gender-male text-primary': persona.sexo === 'M',
+                        'bi bi-gender-female text-danger': persona.sexo === 'F'
+                      }"
+                    ></i>
+                    {{ persona.sexo === "M" ? "Masculino" : "Femenino" }}
+                  </span>
+                </div>
+                <div class="col-md-6 mt-2" *ngIf="persona.domicilio">
+                  <strong>Domicilio: </strong>
+                  <span class="ms-1">
+                    <i class="bi bi-house-fill text-success me-1"></i>
+                    {{ persona.domicilio }}
+                  </span>
+                </div>
+                <div class="col-md-6 mt-2" *ngIf="persona.telefono">
+                  <strong>Teléfono: </strong>
+                  <span class="ms-1">
+                    <i class="bi bi-telephone-fill text-success me-1"></i>
+                    {{ persona.telefono }}
+                  </span>
+                </div>
+                <div class="col-12 mt-2" *ngIf="persona.titulo">
+                  <div class="d-flex align-items-center">
+                    <strong class="me-2">Título:</strong>
+                    <span class="badge bg-warning text-dark">
+                      <i class="bi bi-mortarboard-fill me-1"></i>
+                      {{ persona.titulo }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de guardado y volver -->
+      <div class="mt-4 d-flex justify-content-between align-items-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4"
+          (click)="volver()"
+        >
+          <i class="bi bi-arrow-left me-2"></i>
+          Volver a la lista
+        </button>
+
         <button
           type="submit"
           class="btn btn-outline-primary px-4"
@@ -262,6 +546,7 @@
         </button>
       </div>
 
+      <!-- Mensaje de éxito o error -->
       <div
         *ngIf="mensaje"
         id="message-container"

@@ -1,6 +1,6 @@
 export interface LogLicencia {
   id: number;
-  fecha: string;
+  fechaLog: string;
   mensaje: string;
   licencia: {
     id: number;

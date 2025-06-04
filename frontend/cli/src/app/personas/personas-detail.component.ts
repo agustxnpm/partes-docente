@@ -136,26 +136,26 @@ export class PersonasDetailComponent {
   }
 
   private resetForm(): void {
-  this.persona = {
-    id: 0,
-    dni: null,
-    cuil: "",
-    nombre: "",
-    apellido: "",
-    sexo: "M",
-    titulo: null,
-    domicilio: "",
-    telefono: "",
-    designaciones: [],
-  };
-  
-  this.cuilPrefix = "";
-  this.cuilSuffix = "";
-  this.cuilInvalid = false;
-  
-  this.mensaje = "";
-  this.isError = false;
-  this.showErrorDni = false;
-  this.showErrorCuil = false;
-}
+    this.persona = {
+      id: 0,
+      dni: null,
+      cuil: "",
+      nombre: "",
+      apellido: "",
+      sexo: "M",
+      titulo: null,
+      domicilio: "",
+      telefono: "",
+      designaciones: [],
+    };
+
+    this.cuilPrefix = "";
+    this.cuilSuffix = "";
+    this.cuilInvalid = false;
+
+    this.mensaje = "";
+    this.isError = false;
+    this.showErrorDni = false;
+    this.showErrorCuil = false;
+  }
 }
