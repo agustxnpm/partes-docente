@@ -70,4 +70,10 @@ public interface LicenciaRepository extends JpaRepository<Licencia, Long> {
                         @Param("fechaInicio") LocalDate fechaInicio,
                         @Param("fechaFin") LocalDate fechaFin);
 
+        /**
+         * Busca todas las licencias de una persona específica sin filtrar por estado
+         */
+        @Query("SELECT l FROM Licencia l WHERE l.persona = :persona")
+        List<Licencia> findByPersona(@Param("persona") Persona persona);
+
 }

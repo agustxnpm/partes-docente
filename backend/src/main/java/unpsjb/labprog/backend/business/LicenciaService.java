@@ -118,9 +118,12 @@ public class LicenciaService {
     }
 
     public List<Licencia> findByEstado(EstadoLicencia estado) {
-    return licenciaRepository.findByEstado(estado);
-}
+        return licenciaRepository.findByEstado(estado);
+    }
 
+    public List<Licencia> findByPersona (Persona persona) {
+        return licenciaRepository.findByPersona(persona);
+    }
     public List<Licencia> getAllLicencias() {
         return licenciaRepository.findAll();
     }
