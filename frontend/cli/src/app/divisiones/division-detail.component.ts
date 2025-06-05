@@ -19,7 +19,7 @@ export class DivisionDetailComponent {
     anio: null,
     numDivision: null,
     orientacion: "",
-    turno: Turno.Mañana, // Valor por defecto
+    turno: null, // Valor por defecto
   };
 
   turnos = Object.values(Turno);
@@ -112,7 +112,7 @@ export class DivisionDetailComponent {
       anio: null,
       numDivision: null,
       orientacion: "",
-      turno: Turno.Mañana, // Mantener el valor por defecto
+      turno: null,
     };
     this.mensaje = "";
     this.isError = false;

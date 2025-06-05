@@ -35,27 +35,26 @@
             </td>
 
             <!-- DNI (más sencillo) -->
-            <td class="text-center">
+             <td class="text-center">
               <span class="dni-text">
-                <i class="text-muted me-1"></i>
                 {{ persona.dni }}
               </span>
             </td>
+            
 
             <!-- Nombre Completo (más sencillo) -->
             <td>
               <div class="d-flex align-items-center">
                 <i class="bi bi-person text-secondary me-2"></i>
-                <span class="persona-nombre-subtle"
+                <span class="persona-nombre"
                   >{{ persona.nombre }} {{ persona.apellido }}</span
                 >
               </div>
             </td>
 
             <!-- CUIL (más sutil) -->
-            <td class="text-center">
+                  <td class="text-center">
               <span class="cuil-text">
-                <i class="bi bi-shield-check text-muted me-1"></i>
                 {{ persona.cuil }}
               </span>
             </td>
@@ -89,7 +88,7 @@
                 </span>
               </div>
               <ng-template #sinTitulo>
-                <span class="sin-titulo">
+                <span class="sin-titulo text-dark">
                   <i class="bi bi-dash-circle me-1"></i>
                   Sin título
                 </span>

@@ -3,7 +3,7 @@
     class="bg-light rounded shadow p-4 border border-2 border-primary-subtle animated-border"
   >
     <div class="d-flex align-items-center mb-4">
-      <i class="bi bi-backpack2 text-primary fs-3 me-2 neon-icon"></i>
+      <i class="bi bi-mortarboard-fill text-primary fs-3 me-2 neon-icon"></i>
       <h3 class="m-0">{{ isNew ? "Nueva División" : "Editar División" }}</h3>
     </div>
 
@@ -11,34 +11,51 @@
       <div class="row g-4">
         <!-- Año -->
         <div class="col-md-6">
-          <label for="anio" class="form-label required-field">Año</label>
+          <label for="anio" class="form-label required-field">
+            <i class="bi bi-calendar-fill text-primary me-1"></i>
+            Año
+          </label>
           <input
             type="text"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid': anio.invalid && (anio.dirty || anio.touched)
             }"
             [(ngModel)]="division.anio"
             name="anio"
             #anio="ngModel"
-            maxlength="1"
-            pattern="[1-6]"
-            (keypress)="onlyNumbers($event)"
-            [disabled]="!isNew"
+            placeholder="Ingrese el año"
             required
+            min="1"
+            max="7"
+            pattern="[1-7]"
+            (keypress)="onlyNumbers($event)"
+            maxlength="1"
           />
-          <div class="d-flex mt-1">
-            <div class="flex-grow-1">
-              <small
-                class="error-message"
-                *ngIf="anio.invalid && (anio.dirty || anio.touched)"
+
+          <!-- Preview del año -->
+          <div class="mt-2" *ngIf="division.anio">
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-mortarboard-fill me-1"></i>
+              {{ division.anio }}º Año
+            </span>
+          </div>
+
+          <div class="mt-1 d-flex justify-content-between align-items-center">
+            <small
+              class="error-message"
+              *ngIf="anio.invalid && (anio.dirty || anio.touched)"
+            >
+              <span *ngIf="anio.errors?.['required']">Campo obligatorio</span>
+              <span *ngIf="anio.errors?.['min']">Mínimo año 1</span>
+              <span *ngIf="anio.errors?.['max']">Máximo año 7</span>
+              <span *ngIf="anio.errors?.['pattern']"
+                >Solo números del 1 al 7</span
               >
-                Campo obligatorio
-              </small>
-            </div>
+            </small>
             <div class="text-end">
               <small class="text-danger" *ngIf="showErrorNumeroAnio">
-                Solo se permiten números
+                Solo números del 1 al 7
               </small>
             </div>
           </div>
@@ -46,12 +63,13 @@
 
         <!-- Número de División -->
         <div class="col-md-6">
-          <label for="numDivision" class="form-label required-field"
-            >Número de División</label
-          >
+          <label for="numDivision" class="form-label required-field">
+            <i class="bi bi-hash text-primary me-1"></i>
+            Número de División
+          </label>
           <input
             type="text"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid':
                 numDivision.invalid &&
@@ -60,27 +78,45 @@
             [(ngModel)]="division.numDivision"
             name="numDivision"
             #numDivision="ngModel"
-            maxlength="1"
-            pattern="[1-9]"
-            (keypress)="onlyNumbers($event)"
-            [disabled]="!isNew"
+            placeholder="Ingrese el número de división"
             required
+            min="1"
+            max="10"
+            pattern="[1-9]|10"
+            (keypress)="onlyNumbers($event)"
+            maxlength="2"
           />
-          <div class="d-flex mt-1">
-            <div class="flex-grow-1">
-              <small
-                class="error-message"
-                *ngIf="
-                  numDivision.invalid &&
-                  (numDivision.dirty || numDivision.touched)
-                "
+
+          <!-- Preview del número de división -->
+          <div class="mt-2" *ngIf="division.numDivision">
+            <span class="badge bg-info text-white fs-6">
+              <i class="bi bi-hash me-1"></i>
+              División {{ division.numDivision }}º
+            </span>
+          </div>
+
+          <div class="mt-1 d-flex justify-content-between align-items-center">
+            <small
+              class="error-message"
+              *ngIf="
+                numDivision.invalid &&
+                (numDivision.dirty || numDivision.touched)
+              "
+            >
+              <span *ngIf="numDivision.errors?.['required']"
+                >Campo obligatorio</span
               >
-                Campo obligatorio
-              </small>
-            </div>
+              <span *ngIf="numDivision.errors?.['min']">Mínimo división 1</span>
+              <span *ngIf="numDivision.errors?.['max']"
+                >Máximo división 10</span
+              >
+              <span *ngIf="numDivision.errors?.['pattern']"
+                >Solo números del 1 al 10</span
+              >
+            </small>
             <div class="text-end">
               <small class="text-danger" *ngIf="showErrorNumeroDivision">
-                Solo se permiten números
+                Solo números del 1 al 10
               </small>
             </div>
           </div>
@@ -88,12 +124,13 @@
 
         <!-- Orientación -->
         <div class="col-md-6">
-          <label for="orientacion" class="form-label required-field"
-            >Orientación</label
-          >
+          <label for="orientacion" class="form-label required-field">
+            <i class="bi bi-compass text-primary me-1"></i>
+            Orientación
+          </label>
           <input
             type="text"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid':
                 orientacion.invalid &&
@@ -102,23 +139,57 @@
             [(ngModel)]="division.orientacion"
             name="orientacion"
             #orientacion="ngModel"
+            placeholder="Ingrese la orientación"
             required
+            minlength="3"
+            maxlength="100"
           />
-          <small
-            class="error-message"
-            *ngIf="
-              orientacion.invalid && (orientacion.dirty || orientacion.touched)
-            "
+
+          <!-- Preview de la orientación -->
+          <div
+            class="mt-2"
+            *ngIf="division.orientacion && division.orientacion.length >= 3"
           >
-            Campo obligatorio
-          </small>
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-compass me-1"></i>
+              {{ division.orientacion }}
+            </span>
+          </div>
+
+          <div class="mt-1 d-flex justify-content-between align-items-center">
+            <small
+              class="error-message"
+              *ngIf="
+                orientacion.invalid &&
+                (orientacion.dirty || orientacion.touched)
+              "
+            >
+              <span *ngIf="orientacion.errors?.['required']"
+                >Campo obligatorio</span
+              >
+              <span *ngIf="orientacion.errors?.['minlength']"
+                >Mínimo 3 caracteres</span
+              >
+              <span *ngIf="orientacion.errors?.['maxlength']"
+                >Máximo 100 caracteres</span
+              >
+            </small>
+            <div class="text-end ms-2" *ngIf="division.orientacion">
+              <small class="text-muted">
+                {{ division.orientacion.length }}/100
+              </small>
+            </div>
+          </div>
         </div>
 
         <!-- Turno -->
         <div class="col-md-6">
-          <label for="turno" class="form-label required-field">Turno</label>
+          <label for="turno" class="form-label required-field">
+            <i class="bi bi-clock text-primary me-1"></i>
+            Turno
+          </label>
           <select
-            class="form-select"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid': turno.invalid && (turno.dirty || turno.touched)
             }"
@@ -127,22 +198,114 @@
             #turno="ngModel"
             required
           >
-            <option value="">Seleccione un turno</option>
-            <option value="Mañana">Mañana</option>
-            <option value="Tarde">Tarde</option>
-            <option value="Vespertino">Vespertino</option>
-            <option value="Noche">Noche</option>
+            <option [ngValue]="null">Seleccione un turno</option>
+            <option *ngFor="let turnoOption of turnos" [ngValue]="turnoOption">
+              {{ turnoOption }}
+            </option>
           </select>
-          <small
-            class="error-message"
-            *ngIf="turno.invalid && (turno.dirty || turno.touched)"
-          >
-            Campo obligatorio
-          </small>
+
+          <!-- Preview del turno sin iconos -->
+          <div class="mt-2" *ngIf="division.turno">
+            <span
+              class="badge bg-info fs-6"
+              [ngClass]="{
+                'bg-warning text-dark': division.turno === 'Mañana',
+                'bg-secondary text-white': division.turno === 'Tarde',
+                'bg-primary text-white': division.turno === 'Noche'
+              }"
+            >
+              Turno {{ division.turno }}
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="turno.invalid && (turno.dirty || turno.touched)"
+            >
+              Campo obligatorio
+            </small>
+          </div>
         </div>
       </div>
 
-      <div class="mt-4 text-end">
+      <!-- Sección de resumen -->
+      <div
+        class="row mt-4"
+        *ngIf="
+          division.anio ||
+          division.numDivision ||
+          division.orientacion ||
+          division.turno
+        "
+      >
+        <div class="col-12">
+          <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+              <h6 class="mb-0">
+                <i class="bi bi-eye-fill me-2"></i>
+                Vista previa de la división
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <!-- Columna izquierda -->
+                <div class="col-md-6">
+                  <!-- División -->
+                  <div class="mb-3" *ngIf="division.anio && division.numDivision">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">División:</strong>
+                      <span class="badge bg-info text-dark">
+                        <i class="bi bi-mortarboard-fill me-1"></i>
+                        {{ division.anio }}° {{ division.numDivision }}º
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Turno -->
+                  <div class="mb-3" *ngIf="division.turno">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">Turno:</strong>
+                      <span
+                        class="badge bg-info"
+                      
+                      >
+                        <i class="bi bi-clock me-1"></i>
+                        {{ division.turno }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Columna derecha -->
+                <div class="col-md-6">
+                  <!-- Orientación -->
+                  <div class="mb-3" *ngIf="division.orientacion">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">Orientación:</strong>
+                      <span class="badge bg-info text-dark">
+                        <i class="bi bi-compass me-1"></i>
+                        {{ division.orientacion }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="mt-4 d-flex justify-content-between align-items-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4"
+          (click)="volver()"
+        >
+          <i class="bi bi-arrow-left me-2"></i>
+          Volver a la lista
+        </button>
         <button
           type="submit"
           class="btn btn-outline-primary px-4"
@@ -153,6 +316,7 @@
         </button>
       </div>
 
+      <!-- Mensajes de éxito o error -->
       <div
         *ngIf="mensaje"
         id="message-container"

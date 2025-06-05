@@ -28,51 +28,100 @@
         </thead>
         <tbody>
           <tr *ngFor="let designacion of resultsPage.content; let i = index">
-            <td class="text-center">
+            <!-- Número -->
+            <td class="text-center fw-bold">
               {{ (currentPage - 1) * resultsPage.size + i + 1 }}
             </td>
+
+            <!-- Persona -->
             <td>
-              {{ designacion.persona.apellido }},
-              {{ designacion.persona.nombre }}
+              <div class="d-flex align-items-center">
+                <i class="bi bi-person text-secondary me-2"></i>
+                <div>
+                  <span class="persona-nombre-designacion">
+                    {{ designacion.persona.apellido }},
+                    {{ designacion.persona.nombre }}
+                  </span>
+                  <br />
+                </div>
+              </div>
             </td>
+
+            <!-- Cargo -->
             <td>
-              {{ designacion.cargo.nombre }}
+              <div class="cargo-designacion-container">
+                <span class="cargo-nombre-designacion">
+                  {{ designacion.cargo.nombre }}
+                </span>
+                <div class="mt-1" *ngIf="designacion.cargo.cargaHoraria"></div>
+              </div>
             </td>
-            <td>
-              {{
-                designacion.cargo.division
-                  ? designacion.cargo.division.anio +
-                    "° " +
-                    designacion.cargo.division.numDivision +
-                    " - " +
-                    designacion.cargo.division.orientacion
-                  : ""
-              }}
-            </td>
-            <td>
-              {{ designacion.situacionRevista }}
-            </td>
-            <td>
-              {{ designacion.fechaInicio | date : "dd/MM/yyyy" }}
-            </td>
-            <td>
-              {{
-                designacion.fechaFin
-                  ? (designacion.fechaFin | date : "dd/MM/yyyy")
-                  : "—"
-              }}
-            </td>
+
+            <!-- División -->
             <td class="text-center">
+              <div *ngIf="designacion.cargo.division; else sinDivision">
+                <div class="division-designacion">
+                  <span class="badge bg-primary">
+                    <i class="bi bi-mortarboard-fill me-1"></i>
+                    {{ designacion.cargo.division.anio }}°
+                    {{ designacion.cargo.division.numDivision }}º
+                  </span>
+                </div>
+              </div>
+              <ng-template #sinDivision>
+                <span class="sin-division text-muted fst-italic">
+                  <i class="bi bi-building-fill me-1"></i>
+                  No aplica
+                </span>
+              </ng-template>
+            </td>
+
+            <!-- Situación de Revista -->
+            <td class="text-center">
+              <span class="situacion-revista-badge">
+                <i class="bi bi-clipboard-check me-1"></i>
+                {{ designacion.situacionRevista }}
+              </span>
+            </td>
+
+            <!-- Fecha de Inicio -->
+            <td class="text-center">
+              <span class="fecha-designacion inicio">
+                <i class="bi bi-calendar-check text-success me-1"></i>
+                {{ designacion.fechaInicio | date : "dd/MM/yyyy" }}
+              </span>
+            </td>
+
+            <!-- Fecha de Fin -->
+            <td class="text-center">
+              <div
+                
+                *ngIf="designacion.fechaFin"
+              >
+                <i class="bi bi-calendar-x text-danger me-1"></i>
+                {{
+                  designacion.fechaFin | date : "dd/MM/yyyy"
+                }}
+              </div>
+              <span *ngIf="!designacion.fechaFin" class="text-success fw-bold">
+                Vigente
+              </span>
+            </td>
+
+            <!-- Acciones -->
+            <td class="text-center acciones-column">
               <div class="btn-group btn-group-sm" role="group">
                 <button
                   class="btn btn-outline-primary"
                   [routerLink]="['/designaciones', designacion.id]"
+                  title="Editar designación"
                 >
                   <i class="bi bi-pencil-fill"></i>
                 </button>
                 <button
                   class="btn btn-outline-danger"
                   (click)="eliminarDesignacion(designacion)"
+                  title="Eliminar designación"
                 >
                   <i class="bi bi-trash-fill"></i>
                 </button>
@@ -81,6 +130,7 @@
           </tr>
           <tr *ngIf="!resultsPage.content || resultsPage.content.length === 0">
             <td colspan="8" class="text-center fst-italic text-muted">
+              <i class="bi bi-inbox me-2"></i>
               No hay designaciones para mostrar.
             </td>
           </tr>

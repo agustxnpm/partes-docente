@@ -167,4 +167,53 @@
   min-width: fit-content;
 }
 
+/* Alineación de cards de información */
+
+
+
+/* Resumen mejorado con alineación */
+.card-body .row.align-items-start {
+  min-height: 200px;
+}
+
+
+.card-body .col-md-6:last-child {
+  padding-left: 2rem;
+  border-left: 1px solid #dee2e6;
+}
+
+/* Espaciado consistente en el resumen */
+
+
+.card-body .ms-4 {
+    margin-left: 1.5rem !important;
+    padding-left: 0.5rem;
+    border-left: 2px solid #e9ecef;
+  }
+
+/* Iconos alineados en el resumen */
+.card-body .d-flex.align-items-center i {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* Responsividad para el resumen */
+@media (max-width: 768px) {
+  .card-body .col-md-6:last-child {
+    border-left: none;
+    border-top: 1px solid #dee2e6;
+    padding-left: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+  
+  .card-body .col-md-6 {
+    padding-right: 1rem;
+  }
+  
+  .info-card-height {
+    min-height: auto;
+  }
+}
   

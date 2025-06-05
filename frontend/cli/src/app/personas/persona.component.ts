@@ -29,7 +29,7 @@ export class PersonaComponent {
   }
 
   getPersonas(): void {
-    this.personaService.byPage(this.currentPage, 4).subscribe((response) => {
+    this.personaService.byPage(this.currentPage, 7).subscribe((response) => {
       this.resultsPage = <ResultsPage>response.data;
     });
   }

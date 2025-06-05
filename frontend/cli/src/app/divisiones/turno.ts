@@ -1,7 +1,7 @@
 export enum Turno {
   
-    Mañana = 'MAÑANA',
-    Tarde = 'TARDE',
-    Vespertino = 'VESPERTINO',
-    Noche = 'NOCHE'
+    Mañana = 'Mañana',
+    Tarde = 'Tarde',
+    Vespertino = 'Vespertino',
+    Noche = 'Noche'
   }

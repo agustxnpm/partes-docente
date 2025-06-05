@@ -244,7 +244,7 @@ export class LicenciaDetailComponent {
         }
       }
     } else {
-      this.isValidDateRange = true; // Si una de las fechas no está, no se considera inválido el rango aún
+      this.isValidDateRange = true;
     }
   }
 
@@ -262,7 +262,10 @@ export class LicenciaDetailComponent {
   }
 
   volver(): void {
-    // Añadido
     this.router.navigate(["/licencias"]);
+  }
+
+  isLicenciaOtorgada(): boolean {
+    return this.licencia.estado === "VALIDA";
   }
 }

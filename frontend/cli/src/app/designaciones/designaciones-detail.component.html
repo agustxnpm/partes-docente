@@ -13,9 +13,12 @@
       <div class="row g-4">
         <!-- Selección de Persona -->
         <div class="col-md-6">
-          <label for="persona" class="form-label required-field">Persona</label>
+          <label for="persona" class="form-label required-field">
+            <i class="bi bi-person-fill text-primary me-1"></i>
+            Persona
+          </label>
           <select
-            class="form-select"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid':
                 personaField.invalid &&
@@ -32,55 +35,63 @@
               {{ persona.apellido }}, {{ persona.nombre }} ({{ persona.dni }})
             </option>
           </select>
-          <!-- Información de la persona seleccionada -->
-          <div class="col-12 mt-1" *ngIf="designacion.persona">
-            <div class="alert alert-info mb-0 d-flex align-items-center">
-              <div class="d-flex align-items-center me-3">
-                <i class="bi bi-person-badge-fill me-2 fs-4"></i>
-              </div>
-              <div>
-                <h6 class="mb-1">
-                  {{ designacion.persona.apellido }},
-                  {{ designacion.persona.nombre }}
-                </h6>
-                <div class="d-flex align-items-center">
-                  <span class="badge bg-primary me-2"
-                    >DNI: {{ designacion.persona.dni }}</span
-                  >
-                  <span
-                    *ngIf="designacion.persona.email"
-                    class="badge bg-secondary me-2"
-                  >
-                    <i class="bi bi-envelope-fill me-1"></i>
-                    {{ designacion.persona.email }}
-                  </span>
-                  <span
-                    *ngIf="designacion.persona.telefono"
-                    class="badge bg-secondary"
-                  >
-                    <i class="bi bi-telephone-fill me-1"></i>
-                    {{ designacion.persona.telefono }}
-                  </span>
-                </div>
-              </div>
+
+          <!-- Preview e información de la persona seleccionada -->
+          <div *ngIf="designacion.persona" class="d-flex flex-wrap gap-2 mt-2">
+            <div>
+              <span class="badge bg-info text-dark fs-6">
+                <i class="bi bi-person-fill me-1"></i>
+                {{ designacion.persona.apellido }},
+                {{ designacion.persona.nombre }}
+              </span>
+            </div>
+
+            <div>
+              <span class="badge bg-info text-dark fs-6">
+                <i class="bi bi-card-text me-1"></i>
+                {{ designacion.persona.dni }}
+              </span>
+            </div>
+
+            <div>
+              <span class="badge bg-info text-dark fs-6">
+                <i class="bi bi-telephone-fill me-1"></i>
+                {{ designacion.persona.telefono }}
+              </span>
+            </div>
+
+            <div>
+              <span
+                *ngIf="designacion.persona.titulo"
+                class="badge bg-info text-dark fs-6"
+              >
+                <i class="bi bi-mortarboard-fill me-1"></i>
+                {{ designacion.persona.titulo }}
+              </span>
             </div>
           </div>
-          <small
-            class="error-message"
-            *ngIf="
-              personaField.invalid &&
-              (personaField.dirty || personaField.touched)
-            "
-          >
-            Debe seleccionar una persona
-          </small>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                personaField.invalid &&
+                (personaField.dirty || personaField.touched)
+              "
+            >
+              Debe seleccionar una persona
+            </small>
+          </div>
         </div>
 
         <!-- Selección de Cargo -->
         <div class="col-md-6">
-          <label for="cargo" class="form-label required-field">Cargo</label>
+          <label for="cargo" class="form-label required-field">
+            <i class="bi bi-briefcase-fill text-primary me-1"></i>
+            Cargo
+          </label>
           <select
-            class="form-select"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid':
                 cargoField.invalid && (cargoField.dirty || cargoField.touched)
@@ -95,83 +106,52 @@
             <option *ngFor="let cargo of cargos" [ngValue]="cargo">
               {{ cargo.nombre }}
               <span *ngIf="cargo.division">
-                ({{ cargo.division.anio }}° {{ cargo.division.numDivision }} -
+                ({{ cargo.division.anio }}° {{ cargo.division.numDivision }}º -
                 {{ cargo.division.orientacion }})
               </span>
               <span *ngIf="!cargo.division">(Cargo Institucional)</span>
             </option>
           </select>
-          <!-- Información del cargo seleccionado -->
-          <div class="col-12 mt-1" *ngIf="designacion.cargo">
-            <div class="alert alert-info mb-0 d-flex align-items-start">
-              <div class="d-flex align-items-center me-3">
-                <i
-                  [class]="
-                    isCargoInstitucional()
-                      ? 'bi bi-building-fill me-2 fs-4'
-                      : 'bi bi-book-fill me-2 fs-4'
-                  "
-                  [ngClass]="{
-                    'text-primary': isCargoInstitucional(),
-                    'text-success': !isCargoInstitucional()
-                  }"
-                >
-                </i>
-              </div>
-              <div>
-                <h6 class="mb-1">{{ designacion.cargo.nombre }}</h6>
-                <div class="d-flex flex-wrap align-items-center">
-                  <span class="badge bg-primary me-2">
-                    {{
-                      isCargoInstitucional()
-                        ? "CARGO INSTITUCIONAL"
-                        : "ESPACIO CURRICULAR"
-                    }}
-                  </span>
-                  <span class="badge bg-secondary me-2">
-                    <i class="bi bi-clock-fill me-1"></i>
-                    {{ designacion.cargo.cargaHoraria }} hs
-                  </span>
 
-                  <!-- Información de la división si es un espacio curricular -->
-                  <div
-                    *ngIf="designacion.cargo.division"
-                    class="col-12 mt-1 w-100"
-                  >
-                    <hr class="my-2" />
-                    <strong>División:</strong>
-                    {{ designacion.cargo.division.anio }}°
-                    {{ designacion.cargo.division.numDivision }}
-                    {{
-                      designacion.cargo.division.orientacion
-                        ? "- " + designacion.cargo.division.orientacion
-                        : ""
-                    }}
-                    <span class="ms-2 badge bg-info">{{
-                      designacion.cargo.division.turno
-                    }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <!-- Preview del cargo -->
+          <div class="d-flex flex-wrap gap-2 mt-2" *ngIf="designacion.cargo">
+            <span class="badge bg-info text-white fs-6">
+              <i
+                class="me-1"
+                [ngClass]="{
+                  'bi bi-building-fill': isCargoInstitucional(),
+                  'bi bi-book-fill': !isCargoInstitucional()
+                }"
+              ></i>
+              {{ designacion.cargo.nombre }}
+            </span>
+
+            <span class="badge bg-info text-white fs-6">
+              <i class="bi bi-clock-fill me-1"></i>
+              Carga horaria: {{ designacion.cargo.cargaHoraria }} hs
+            </span>
           </div>
-          <small
-            class="error-message"
-            *ngIf="
-              cargoField.invalid && (cargoField.dirty || cargoField.touched)
-            "
-          >
-            Debe seleccionar un cargo
-          </small>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                cargoField.invalid && (cargoField.dirty || cargoField.touched)
+              "
+            >
+              Debe seleccionar un cargo
+            </small>
+          </div>
         </div>
 
         <!-- Situación de Revista -->
         <div class="col-md-4">
-          <label for="situacionRevista" class="form-label required-field"
-            >Situación de Revista</label
-          >
+          <label for="situacionRevista" class="form-label required-field">
+            <i class="bi bi-clipboard-check text-primary me-1"></i>
+            Situación de Revista
+          </label>
           <select
-            class="form-select"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid':
                 situacionField.invalid &&
@@ -182,7 +162,7 @@
             #situacionField="ngModel"
             required
           >
-            <option value="">Seleccione una situación</option>
+            <option [ngValue]="null">Seleccione una situación</option>
             <option
               *ngFor="let situacion of situacionesRevista"
               [value]="situacion"
@@ -190,25 +170,37 @@
               {{ situacion }}
             </option>
           </select>
-          <small
-            class="error-message"
-            *ngIf="
-              situacionField.invalid &&
-              (situacionField.dirty || situacionField.touched)
-            "
-          >
-            Debe seleccionar una situación
-          </small>
+
+          <!-- Preview de situación de revista -->
+          <div class="mt-2" *ngIf="designacion.situacionRevista">
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-clipboard-check me-1"></i>
+              {{ designacion.situacionRevista }}
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                situacionField.invalid &&
+                (situacionField.dirty || situacionField.touched)
+              "
+            >
+              Debe seleccionar una situación
+            </small>
+          </div>
         </div>
 
         <!-- Fecha de Inicio -->
         <div class="col-md-4">
-          <label for="fechaInicio" class="form-label required-field"
-            >Fecha de Inicio</label
-          >
+          <label for="fechaInicio" class="form-label required-field">
+            <i class="bi bi-calendar-check text-primary me-1"></i>
+            Fecha de Inicio
+          </label>
           <input
             type="date"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid':
                 fechaInicioField.invalid &&
@@ -221,43 +213,232 @@
             (change)="onFechaInicioChange()"
             required
           />
-          <small
-            class="error-message"
-            *ngIf="
-              fechaInicioField.invalid &&
-              (fechaInicioField.dirty || fechaInicioField.touched)
-            "
-          >
-            La fecha de inicio es obligatoria
-          </small>
+
+          <!-- Preview de fecha de inicio -->
+          <div class="mt-2" *ngIf="designacion.fechaInicio">
+            <span class="badge bg-info fs-6">
+              <i class="bi bi-calendar-check me-1"></i>
+              {{ designacion.fechaInicio | date : "dd/MM/yyyy" }}
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                fechaInicioField.invalid &&
+                (fechaInicioField.dirty || fechaInicioField.touched)
+              "
+            >
+              La fecha de inicio es obligatoria
+            </small>
+          </div>
         </div>
 
         <!-- Fecha de Fin (opcional) -->
         <div class="col-md-4">
-          <label for="fechaFin" class="form-label">Fecha de Fin</label>
+          <label for="fechaFin" class="form-label">
+            <i class="bi bi-calendar-x text-primary me-1"></i>
+            Fecha de Fin
+          </label>
           <input
             type="date"
-            class="form-control"
+            class="form-control enhanced-input"
             [(ngModel)]="designacion.fechaFin"
             name="fechaFin"
             [min]="minFechaFin"
             (change)="onFechaFinChange()"
           />
-          <small class="text-muted">Este campo es opcional.</small>
+
+          <!-- Preview de fecha de fin -->
+          <div class="mt-2">
+            <span
+              class="badge bg-info text-dark fs-6"
+              *ngIf="designacion.fechaFin"
+            >
+              <i class="bi bi-calendar-x me-1"></i>
+              {{ designacion.fechaFin | date : "dd/MM/yyyy" }}
+            </span>
+            <span class="badge bg-success fs-6" *ngIf="!designacion.fechaFin">
+              <i class="bi bi-infinity me-1"></i>
+              Vigente
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small class="text-muted">
+              <i class="bi bi-info-circle me-1"></i>
+              Este campo es opcional (designación vigente)
+            </small>
+          </div>
         </div>
       </div>
 
-      <div class="mt-4 text-end">
+      <!-- Sección de resumen mejorada y alineada -->
+      <div
+        class="row mt-4"
+        *ngIf="
+          designacion.persona ||
+          designacion.cargo ||
+          designacion.situacionRevista
+        "
+      >
+        <div class="col-12">
+          <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+              <h6 class="mb-0">
+                <i class="bi bi-eye-fill me-2"></i>
+                Vista previa de la designación
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row align-items-start">
+                <!-- Columna izquierda -->
+                <div class="col-md-6">
+                  <!-- Persona -->
+                  <div class="mb-3" *ngIf="designacion.persona">
+                    <div class="d-flex align-items-center mb-1">
+                      <i class="bi bi-person-fill text-primary me-2"></i>
+                      <strong>Persona:</strong>
+                    </div>
+                    <div class="ms-4">
+                      <span class="fw-bold">
+                        {{ designacion.persona.apellido }},
+                        {{ designacion.persona.nombre }}
+                      </span>
+                      <br />
+                      <small class="text-muted">
+                        <i class="bi bi-card-text me-1"></i>
+                        DNI: {{ designacion.persona.dni }}
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Cargo -->
+                  <div class="mb-3" *ngIf="designacion.cargo">
+                    <div class="d-flex align-items-center mb-1">
+                      <i
+                        class="text-success me-2"
+                        [ngClass]="{
+                          'bi bi-building-fill': isCargoInstitucional(),
+                          'bi bi-book-fill': !isCargoInstitucional()
+                        }"
+                      ></i>
+                      <strong>Cargo:</strong>
+                    </div>
+                    <div class="ms-4">
+                      <span class="text-primary fw-semibold">{{
+                        designacion.cargo.nombre
+                      }}</span>
+                      <br />
+                      <small class="text-muted">
+                        <i class="bi bi-clock-fill me-1"></i>
+                        {{ designacion.cargo.cargaHoraria }} hs -
+                        {{
+                          isCargoInstitucional()
+                            ? "Cargo Institucional"
+                            : "Espacio Curricular"
+                        }}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Columna derecha -->
+                <div class="col-md-6">
+                  <!-- División -->
+                  <div
+                    class="mb-3"
+                    *ngIf="designacion.cargo && designacion.cargo.division"
+                  >
+                    <div class="d-flex align-items-center mb-1">
+                      <i class="bi bi-mortarboard-fill text-primary me-2"></i>
+                      <strong>División:</strong>
+                    </div>
+                    <div class="ms-4">
+                      <span class="fw-bold">
+                        {{ designacion.cargo.division.anio }}°
+                        {{ designacion.cargo.division.numDivision }}º
+                      </span>
+                      <span class="badge bg-warning text-dark ms-2">
+                        {{ designacion.cargo.division.turno }}
+                      </span>
+                      <br />
+                      <small
+                        class="text-muted"
+                        *ngIf="designacion.cargo.division.orientacion"
+                      >
+                        <i class="bi bi-compass me-1"></i>
+                        {{ designacion.cargo.division.orientacion }}
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Situación y Vigencia -->
+                  <div class="mb-3">
+                    <div
+                      class="d-flex align-items-center mb-1"
+                      *ngIf="designacion.situacionRevista"
+                    >
+                      <i class="bi bi-clipboard-check text-info me-2"></i>
+                      <strong>Situación:</strong>
+                    </div>
+                    <div class="ms-4" *ngIf="designacion.situacionRevista">
+                      <span class="badge bg-info text-dark">
+                        {{ designacion.situacionRevista }}
+                      </span>
+                    </div>
+
+                    <div
+                      class="d-flex align-items-center mb-1 mt-2"
+                      *ngIf="designacion.fechaInicio"
+                    >
+                      <i class="bi bi-calendar-check text-success me-2"></i>
+                      <strong>Vigencia:</strong>
+                    </div>
+                    <div class="ms-4" *ngIf="designacion.fechaInicio">
+                      <span class="text-muted">
+                        {{ designacion.fechaInicio | date : "dd/MM/yyyy" }}
+                        <span *ngIf="designacion.fechaFin">
+                          - {{ designacion.fechaFin | date : "dd/MM/yyyy" }}
+                        </span>
+                        <span
+                          *ngIf="!designacion.fechaFin"
+                          class="text-success fw-bold ms-1"
+                        >
+                          (Vigente)
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="mt-4 d-flex justify-content-between align-items-center">
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4"
+          (click)="volver()"
+        >
+          <i class="bi bi-arrow-left me-2"></i>
+          Volver a la lista
+        </button>
         <button
           type="submit"
           class="btn btn-outline-primary px-4"
           [disabled]="designacionForm.invalid || !isValidDateRange"
         >
-          <i class="bi bi-check-circle me-1"></i>
+          <i class="bi bi-check-circle me-2"></i>
           {{ isNew ? "Crear Designación" : "Guardar Cambios" }}
         </button>
       </div>
 
+      <!-- Mensaje de éxito o error -->
       <div
         *ngIf="mensaje"
         id="message-container"

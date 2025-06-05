@@ -2,19 +2,71 @@
   <div
     class="bg-light rounded shadow p-4 border border-2 border-primary-subtle animated-border"
   >
-    <!-- Título -->
     <div class="d-flex align-items-center mb-4">
       <i class="bi bi-journal-medical text-primary fs-3 me-2 neon-icon"></i>
-      <h3 class="m-0">{{ isNew ? "Nueva Licencia" : "Editar Licencia" }}</h3>
+      <h3 class="m-0">
+        {{ isNew ? "Nueva Licencia" : (isLicenciaOtorgada() ? "Ver Licencia (Solo Lectura)" : "Editar Licencia") }}
+      </h3>
+      <!-- Indicador de estado de la licencia -->
+      <div class="ms-auto" *ngIf="!isNew">
+        <span 
+          class="badge fs-6"
+          [ngClass]="{
+            'bg-success text-white': isLicenciaOtorgada(),
+            'bg-warning text-dark': !isLicenciaOtorgada()
+          }"
+        >
+          <i 
+            class="me-1"
+            [ngClass]="{
+              'bi bi-check-circle': isLicenciaOtorgada(),
+              'bi bi-exclamation-triangle': !isLicenciaOtorgada()
+            }"
+          ></i>
+          {{ isLicenciaOtorgada() ? 'OTORGADA' : 'INVÁLIDA' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Alerta informativa para licencias otorgadas -->
+    <div 
+      *ngIf="!isNew && isLicenciaOtorgada()" 
+      class="alert alert-info d-flex align-items-center mb-4"
+      role="alert"
+    >
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <span>
+        Esta licencia ya ha sido <strong>otorgada</strong> y no puede ser modificada. 
+        Solo puede visualizar la información.
+      </span>
+    </div>
+
+    <!-- Alerta informativa para licencias inválidas -->
+    <div 
+      *ngIf="!isNew && !isLicenciaOtorgada()" 
+      class="alert alert-warning d-flex align-items-center mb-4"
+      role="alert"
+    >
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <span>
+        Esta licencia es <strong>inválida</strong>. Puede editar las fechas, artículo, certificado médico y domicilio.
+        <strong>No es posible cambiar la persona asignada.</strong>
+      </span>
     </div>
 
     <form #licenciaForm="ngForm" (ngSubmit)="saveLicencia()">
       <div class="row g-4">
         <!-- Selección de Persona -->
         <div class="col-md-6">
-          <label for="persona" class="form-label required-field">Agente</label>
+          <label for="persona" class="form-label required-field">
+            <i class="bi bi-person-fill text-primary me-1"></i>
+            Agente
+            <span *ngIf="!isNew && !isLicenciaOtorgada()" class="text-muted small ms-2">
+              (No modificable)
+            </span>
+          </label>
           <select
-            class="form-select"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid':
                 personaField.invalid &&
@@ -24,6 +76,7 @@
             [compareWith]="comparePersonas"
             name="persona"
             #personaField="ngModel"
+            [disabled]="!isNew"
             required
           >
             <option [ngValue]="null">Seleccione una persona</option>
@@ -31,48 +84,64 @@
               {{ p.apellido }}, {{ p.nombre }} ({{ p.dni }})
             </option>
           </select>
-          <small
-            class="error-message"
-            *ngIf="
-              personaField.invalid &&
-              (personaField.dirty || personaField.touched)
-            "
-          >
-            Debe seleccionar un agente.
-          </small>
-          <!-- Información de la persona seleccionada -->
-          <div
-            class="mt-2"
-            *ngIf="licencia.persona && licencia.persona.id !== 0"
-          >
-            <div class="alert alert-info mb-0 d-flex align-items-center">
-              <div class="d-flex align-items-center me-3">
-                <i class="bi bi-person-badge-fill me-2 fs-4"></i>
-              </div>
-              <div>
-                <h6 class="mb-1">
-                  {{ licencia.persona.apellido }}, {{ licencia.persona.nombre }}
-                </h6>
-                <div class="d-flex align-items-center">
-                  <span class="badge bg-primary me-2"
-                    >DNI: {{ licencia.persona.dni }}</span
-                  >
-                  <span class="badge bg-secondary"
-                    >CUIL: {{ licencia.persona.cuil }}</span
-                  >
-                </div>
-              </div>
-            </div>
+
+          <!-- Información de la persona como múltiples previews agrupados -->
+          <div *ngIf="licencia.persona && licencia.persona.id !== 0" class="d-flex flex-wrap gap-2 mt-2">
+            <!-- Nombre completo -->
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-person-fill me-1"></i>
+              {{ licencia.persona.apellido }}, {{ licencia.persona.nombre }}
+            </span>
+            
+            <!-- DNI -->
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-person-vcard me-1"></i>
+              {{ licencia.persona.dni }}
+            </span>
+            
+            <!-- CUIL -->
+            <span *ngIf="licencia.persona.cuil" class="badge bg-info text-dark fs-6">
+              <i class="bi bi-person-vcard me-1"></i>
+              {{ licencia.persona.cuil }}
+            </span>
+            
+            <!-- Teléfono -->
+            <span *ngIf="licencia.persona.telefono" class="badge bg-info text-dark fs-6">
+              <i class="bi bi-telephone me-1"></i>
+              {{ licencia.persona.telefono }}
+            </span>
+            
+            <!-- Título -->
+            <span *ngIf="licencia.persona.titulo" class="badge bg-info text-dark fs-6">
+              <i class="bi bi-mortarboard me-1"></i>
+              {{ licencia.persona.titulo }}
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                personaField.invalid &&
+                (personaField.dirty || personaField.touched)
+              "
+            >
+              Debe seleccionar un agente
+            </small>
           </div>
         </div>
 
         <!-- Selección de Artículo de Licencia -->
         <div class="col-md-6">
-          <label for="articuloLicencia" class="form-label required-field"
-            >Artículo de Licencia</label
-          >
+          <label for="articuloLicencia" class="form-label required-field">
+            <i class="bi bi-clipboard-check text-primary me-1"></i>
+            Artículo de Licencia
+            <span *ngIf="!isNew && isLicenciaOtorgada()" class="text-muted small ms-2">
+              (Solo lectura)
+            </span>
+          </label>
           <select
-            class="form-select"
+            class="form-select enhanced-select"
             [ngClass]="{
               'is-invalid':
                 articuloField.invalid &&
@@ -82,6 +151,7 @@
             [compareWith]="compareArticulos"
             name="articuloLicencia"
             #articuloField="ngModel"
+            [disabled]="!isNew && isLicenciaOtorgada()"
             required
           >
             <option [ngValue]="null">Seleccione un artículo</option>
@@ -89,42 +159,47 @@
               {{ art.articulo }} - {{ art.descripcion }}
             </option>
           </select>
-          <small
-            class="error-message"
-            *ngIf="
-              articuloField.invalid &&
-              (articuloField.dirty || articuloField.touched)
-            "
-          >
-            Debe seleccionar un artículo de licencia.
-          </small>
-          <!-- Información del artículo seleccionado -->
-          <div
-            class="mt-2"
-            *ngIf="
-              licencia.articuloLicencia && licencia.articuloLicencia.id !== 0
-            "
-          >
-            <div class="alert alert-secondary mb-0">
-              <div>
-                <strong>Código:</strong>
-                {{ licencia.articuloLicencia.articulo }}
-              </div>
-              <div>
-                <strong>Descripción:</strong>
-                {{ licencia.articuloLicencia.descripcion }}
-              </div>
-            </div>
+
+          <!-- Información del artículo como múltiples previews agrupados -->
+          <div *ngIf="licencia.articuloLicencia && licencia.articuloLicencia.id !== 0" class="d-flex flex-wrap gap-2 mt-2">
+            <!-- Código del artículo -->
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-journal-text me-1"></i>
+              Artículo {{ licencia.articuloLicencia.articulo }}
+            </span>
+            
+            <!-- Descripción -->
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-card-text me-1"></i>
+              {{ licencia.articuloLicencia.descripcion }}
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                articuloField.invalid &&
+                (articuloField.dirty || articuloField.touched)
+              "
+            >
+              Debe seleccionar un artículo de licencia
+            </small>
           </div>
         </div>
+
         <!-- Fecha de Inicio -->
-        <div class="col-md-6">
-          <label for="pedidoDesde" class="form-label required-field"
-            >Fecha de Inicio</label
-          >
+        <div class="col-md-4">
+          <label for="pedidoDesde" class="form-label required-field">
+            <i class="bi bi-calendar-check text-primary me-1"></i>
+            Fecha de Inicio
+            <span *ngIf="!isNew && isLicenciaOtorgada()" class="text-muted small ms-2">
+              (Solo lectura)
+            </span>
+          </label>
           <input
             type="date"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid':
                 (pedidoDesdeField.invalid &&
@@ -135,28 +210,44 @@
             name="pedidoDesde"
             #pedidoDesdeField="ngModel"
             [max]="maxFechaInicio"
+            [disabled]="!isNew && isLicenciaOtorgada()"
             (change)="onFechaInicioChange()"
             required
           />
-          <small
-            class="error-message"
-            *ngIf="
-              pedidoDesdeField.invalid &&
-              (pedidoDesdeField.dirty || pedidoDesdeField.touched)
-            "
-          >
-            La fecha de inicio es obligatoria.
-          </small>
+
+          <!-- Preview de fecha de inicio -->
+          <div class="mt-2" *ngIf="licencia.pedidoDesde">
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-calendar-check me-1"></i>
+              {{ licencia.pedidoDesde | date: 'dd/MM/yyyy' }}
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                pedidoDesdeField.invalid &&
+                (pedidoDesdeField.dirty || pedidoDesdeField.touched)
+              "
+            >
+              La fecha de inicio es obligatoria
+            </small>
+          </div>
         </div>
 
         <!-- Fecha de Fin -->
-        <div class="col-md-6">
-          <label for="pedidoHasta" class="form-label required-field"
-            >Fecha de Fin</label
-          >
+        <div class="col-md-4">
+          <label for="pedidoHasta" class="form-label required-field">
+            <i class="bi bi-calendar-x text-primary me-1"></i>
+            Fecha de Fin
+            <span *ngIf="!isNew && isLicenciaOtorgada()" class="text-muted small ms-2">
+              (Solo lectura)
+            </span>
+          </label>
           <input
             type="date"
-            class="form-control"
+            class="form-control enhanced-input"
             [ngClass]="{
               'is-invalid':
                 (pedidoHastaField.invalid &&
@@ -167,81 +258,258 @@
             name="pedidoHasta"
             #pedidoHastaField="ngModel"
             [min]="minFechaFin"
+            [disabled]="!isNew && isLicenciaOtorgada()"
             (change)="onFechaFinChange()"
             required
           />
-          <small
-            class="error-message"
-            *ngIf="
-              pedidoHastaField.invalid &&
-              (pedidoHastaField.dirty || pedidoHastaField.touched)
-            "
-          >
-            La fecha de fin es obligatoria.
-          </small>
-          <small
-            class="error-message"
-            *ngIf="
-              !isValidDateRange &&
-              (pedidoDesdeField.dirty || pedidoHastaField.dirty)
-            "
-          >
-            La fecha de fin debe ser posterior o igual a la fecha de inicio.
-          </small>
-        </div>
 
-        <!-- Domicilio (Opcional) -->
-        <div class="col-md-12">
-          <label for="domicilio" class="form-label"
-            >Domicilio durante la licencia</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="licencia.domicilio"
-            name="domicilio"
-            #domicilio="ngModel"
-          />
-          <small class="text-muted">Este campo es opcional.</small>
+          <!-- Preview de fecha de fin -->
+          <div class="mt-2" *ngIf="licencia.pedidoHasta">
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-calendar-x me-1"></i>
+              {{ licencia.pedidoHasta | date: 'dd/MM/yyyy' }}
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small
+              class="error-message"
+              *ngIf="
+                pedidoHastaField.invalid &&
+                (pedidoHastaField.dirty || pedidoHastaField.touched)
+              "
+            >
+              La fecha de fin es obligatoria
+            </small>
+            <small
+              class="error-message"
+              *ngIf="
+                !isValidDateRange &&
+                (pedidoDesdeField.dirty || pedidoHastaField.dirty)
+              "
+            >
+              La fecha de fin debe ser posterior o igual a la fecha de inicio
+            </small>
+          </div>
         </div>
 
         <!-- Certificado Médico -->
-        <div class="col-12">
-          <div class="form-check">
+        <div class="col-md-4">
+          <label class="form-label">
+            <i class="bi bi-clipboard2-pulse text-primary me-1"></i>
+            Certificado Médico
+            <span *ngIf="!isNew && isLicenciaOtorgada()" class="text-muted small ms-2">
+              (Solo lectura)
+            </span>
+          </label>
+          <div class="form-check mt-2">
             <input
               class="form-check-input"
               type="checkbox"
               [(ngModel)]="licencia.certificadoMedico"
               name="certificadoMedico"
               id="certificadoMedico"
+              [disabled]="!isNew && isLicenciaOtorgada()"
             />
             <label class="form-check-label" for="certificadoMedico">
               Presenta Certificado Médico
             </label>
           </div>
+
+          <!-- Preview del certificado médico -->
+          <div class="mt-2">
+            <span class="badge bg-info text-dark fs-6">
+              <i
+                class="me-1"
+                [ngClass]="{
+                  'bi bi-check-circle': licencia.certificadoMedico,
+                  'bi bi-x-circle': !licencia.certificadoMedico
+                }"
+              ></i>
+              {{ licencia.certificadoMedico ? 'Con certificado' : 'Sin certificado' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Domicilio (Opcional) -->
+        <div class="col-md-12">
+          <label for="domicilio" class="form-label">
+            <i class="bi bi-house text-primary me-1"></i>
+            Domicilio durante la licencia
+            <span *ngIf="!isNew && isLicenciaOtorgada()" class="text-muted small ms-2">
+              (Solo lectura)
+            </span>
+          </label>
+          <input
+            type="text"
+            class="form-control enhanced-input"
+            [(ngModel)]="licencia.domicilio"
+            name="domicilio"
+            #domicilio="ngModel"
+            [disabled]="!isNew && isLicenciaOtorgada()"
+          />
+
+          <!-- Preview del domicilio -->
+          <div class="mt-2" *ngIf="licencia.domicilio">
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-house me-1"></i>
+              {{ licencia.domicilio }}
+            </span>
+          </div>
+
+          <div class="mt-1">
+            <small class="text-muted">
+              <i class="bi bi-info-circle me-1"></i>
+              Este campo es opcional
+            </small>
+          </div>
         </div>
       </div>
-      <!-- Fin .row -->
 
-      <!-- Botones y Mensajes -->
+      <!-- Sección de resumen mejorada y alineada -->
+      <div
+        class="row mt-4"
+        *ngIf="
+          licencia.persona ||
+          licencia.articuloLicencia ||
+          licencia.pedidoDesde ||
+          licencia.pedidoHasta
+        "
+      >
+        <div class="col-12">
+          <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+              <h6 class="mb-0">
+                <i class="bi bi-eye-fill me-2"></i>
+                Vista previa de la licencia
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row align-items-start">
+                <!-- Columna izquierda -->
+                <div class="col-md-6">
+                  <!-- Persona -->
+                  <div class="mb-3" *ngIf="licencia.persona">
+                    <div class="d-flex align-items-center mb-1">
+                      <i class="bi bi-person-fill text-primary me-2"></i>
+                      <strong>Agente:</strong>
+                    </div>
+                    <div class="ms-4">
+                      <span class="fw-bold">
+                        {{ licencia.persona.apellido }}, {{ licencia.persona.nombre }}
+                      </span>
+                      <br>
+                      <small class="text-muted">
+                        <i class="bi bi-card-text me-1"></i>
+                        DNI: {{ licencia.persona.dni }}
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Artículo -->
+                  <div class="mb-3" *ngIf="licencia.articuloLicencia">
+                    <div class="d-flex align-items-center mb-1">
+                      <i class="bi bi-journal-text text-success me-2"></i>
+                      <strong>Artículo:</strong>
+                    </div>
+                    <div class="ms-4">
+                      <span class="text-primary fw-semibold">
+                        Art. {{ licencia.articuloLicencia.articulo }}
+                      </span>
+                      <br>
+                      <small class="text-muted">
+                        <i class="bi bi-card-text me-1"></i>
+                        {{ licencia.articuloLicencia.descripcion }}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Columna derecha -->
+                <div class="col-md-6">
+                  <!-- Período de licencia -->
+                  <div class="mb-3" *ngIf="licencia.pedidoDesde || licencia.pedidoHasta">
+                    <div class="d-flex align-items-center mb-1">
+                      <i class="bi bi-calendar-range text-success me-2"></i>
+                      <strong>Período:</strong>
+                    </div>
+                    <div class="ms-4">
+                      <span class="text-muted">
+                        <span *ngIf="licencia.pedidoDesde">
+                          {{ licencia.pedidoDesde | date: 'dd/MM/yyyy' }}
+                        </span>
+                        <span *ngIf="licencia.pedidoDesde && licencia.pedidoHasta"> - </span>
+                        <span *ngIf="licencia.pedidoHasta">
+                          {{ licencia.pedidoHasta | date: 'dd/MM/yyyy' }}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Certificado médico y domicilio -->
+                  <div class="mb-3">
+                    <div class="d-flex align-items-center mb-1">
+                      <i class="bi bi-clipboard2-pulse text-info me-2"></i>
+                      <strong>Certificado:</strong>
+                    </div>
+                    <div class="ms-4">
+                      <span class="badge bg-info text-dark">
+                        {{ licencia.certificadoMedico ? 'Presenta certificado' : 'Sin certificado' }}
+                      </span>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-1 mt-2" *ngIf="licencia.domicilio">
+                      <i class="bi bi-house text-warning me-2"></i>
+                      <strong>Domicilio:</strong>
+                    </div>
+                    <div class="ms-4" *ngIf="licencia.domicilio">
+                      <span class="text-muted">
+                        {{ licencia.domicilio }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
       <div class="mt-4 d-flex justify-content-between align-items-center">
         <button
           type="button"
           class="btn btn-outline-secondary px-4"
           (click)="volver()"
         >
-          <i class="bi bi-arrow-left-circle me-1"></i> Volver
+          <i class="bi bi-arrow-left me-2"></i>
+          Volver a la lista
         </button>
+        
+        <!-- Botón de guardar solo visible para nueva licencia o licencia inválida -->
         <button
           type="submit"
           class="btn btn-outline-primary px-4"
           [disabled]="licenciaForm.invalid || !isValidDateRange"
+          *ngIf="isNew || (!isNew && !isLicenciaOtorgada())"
         >
-          <i class="bi bi-check-circle me-1"></i>
+          <i class="bi bi-check-circle me-2"></i>
           {{ isNew ? "Crear Licencia" : "Guardar Cambios" }}
+        </button>
+
+        <!-- Botón informativo para licencias otorgadas -->
+        <button
+          type="button"
+          class="btn btn-success px-4"
+          disabled
+          *ngIf="!isNew && isLicenciaOtorgada()"
+        >
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Licencia Otorgada
         </button>
       </div>
 
+      <!-- Mensaje de éxito o error -->
       <div
         *ngIf="mensaje"
         id="message-container"
@@ -253,10 +521,11 @@
           <span>{{ mensaje }}</span>
           <button
             type="button"
-            class="btn-close"
-            (click)="mensaje = ''"
-            aria-label="Close"
-          ></button>
+            class="btn btn-outline-secondary btn-sm"
+            (click)="volver()"
+          >
+            <i class="bi bi-arrow-left me-1"></i>Volver
+          </button>
         </div>
       </div>
     </form>

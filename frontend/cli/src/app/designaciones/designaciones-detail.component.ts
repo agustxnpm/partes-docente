@@ -21,7 +21,7 @@ export class DesignacionesDetailComponent {
     id: 0,
     persona: null,
     cargo: null,
-    situacionRevista: "",
+    situacionRevista: null,
     fechaInicio: null,
     fechaFin: null,
   };
@@ -30,9 +30,7 @@ export class DesignacionesDetailComponent {
   cargos: Cargo[] = [];
   situacionesRevista: string[] = [
     "TITULAR",
-    "INTERINO",
     "SUPLENTE",
-    "TEMPORAL",
   ];
 
   mensaje: string = "";
@@ -78,6 +76,10 @@ export class DesignacionesDetailComponent {
                 new Date(this.designacion.fechaFin)
               );
             }
+            // CORRECCIÓN: Asegurar que situacionRevista se mantenga en edición
+          
+          
+          this.cdr.detectChanges(); 
           },
           error: (err) => {
             console.error("Error al obtener la designación:", err);
@@ -241,7 +243,7 @@ export class DesignacionesDetailComponent {
       id: 0,
       persona: null,
       cargo: null,
-      situacionRevista: "",
+      situacionRevista: null,
       fechaInicio: null,
       fechaFin: null,
     };

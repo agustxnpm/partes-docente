@@ -1,35 +1,394 @@
-<div class="container mt-5">
-    <div class="bg-white rounded-4 shadow-lg p-5 border border-light-subtle">
-      <div class="text-center mb-5">
-        <i class="bi bi-house-door-fill text-primary fs-1 mb-3"></i>
-        <h2 class="fw-bold">Panel Principal</h2>
-        <p class="text-muted">
-          Bienvenido al sistema. Desde aquí podés acceder a las secciones más importantes.
-        </p>
+<div class="container-fluid mt-5">
+  <!-- Header Principal -->
+  <div class="bg-white rounded-4 shadow-lg p-5 border border-light-subtle mb-5">
+    <div class="text-center">
+      <div class="mb-4">
+        <i class="bi bi-building text-primary" style="font-size: 5rem;"></i>
       </div>
-  
-      <div class="row g-4 justify-content-center">
-        <ng-container *ngFor="let section of sections">
-          <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm hover-scale">
-              <div class="card-body text-center">
-                <i class="bi {{ section.icon }} text-primary fs-1 mb-3"></i>
-                <h5 class="card-title mb-4">{{ section.title }}</h5>
-                <div class="d-grid gap-2">
-                  <a [routerLink]="section.listLink" class="btn btn-outline-primary">
-                    <i class="bi bi-list-ul me-2"></i>
-                    Listado
-                  </a>
-                  <a [routerLink]="section.newLink" class="btn btn-outline-success">
-                    <i class="bi bi-plus-circle me-2"></i>
-                    Nuevo
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
+      <h1 class="fw-bold text-primary mb-3">Sistema de Gestión de Novedades Docentes</h1>
+      <h4 class="text-muted mb-3">Escuela Secundaria N° 775 - Puerto Madryn</h4>
+      <p class="text-muted fs-5">
+        Sistema integral para la administración de designaciones, licencias y novedades del personal docente
+      </p>
+    </div>
+  </div>
+
+  <!-- Estadísticas Generales -->
+  <div class="row mb-5">
+    <div class="col-md-3">
+      <div class="card bg-gradient-primary text-white h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-people-fill fs-1 mb-2"></i>
+          <h5 class="card-title">Gestión de Personal</h5>
+          <p class="card-text">Administración completa del personal docente</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-gradient-success text-white h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-person-badge-fill fs-1 mb-2"></i>
+          <h5 class="card-title">Designaciones</h5>
+          <p class="card-text">Control de asignaciones a cargos y espacios curriculares</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-gradient-info text-white h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-journal-medical fs-1 mb-2"></i>
+          <h5 class="card-title">Licencias</h5>
+          <p class="card-text">Gestión y validación de licencias docentes</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-gradient-warning text-white h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-file-earmark-text-fill fs-1 mb-2"></i>
+          <h5 class="card-title">Reportes</h5>
+          <p class="card-text">Informes y partes diarios de novedades</p>
+        </div>
       </div>
     </div>
   </div>
-  
+
+  <!-- Secciones Principales -->
+  <div class="row g-4">
+    <!-- ADMINISTRACIÓN DE PERSONAL -->
+    <div class="col-lg-6">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-people-fill me-2"></i>
+            Administración de Personal
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-4">
+            Gestión completa del personal docente de la escuela, incluyendo datos personales, 
+            títulos y designaciones históricas.
+          </p>
+          
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="d-grid">
+                <a routerLink="/personas" class="btn btn-outline-primary">
+                  <i class="bi bi-list-ul me-2"></i>
+                  Listado de Personas
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-grid">
+                <a routerLink="/personas/new" class="btn btn-success">
+                  <i class="bi bi-person-plus me-2"></i>
+                  Nuevo Docente
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-3">
+          
+          <h6 class="fw-bold text-primary mb-2">Funcionalidades:</h6>
+          <ul class="list-unstyled text-muted">
+            <li><i class="bi bi-check-circle text-success me-2"></i>Registro completo de datos personales</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Gestión de títulos y capacitaciones</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Historial de designaciones</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Validación de documentación</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMINISTRACIÓN DE DESIGNACIONES -->
+    <div class="col-lg-6">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-person-badge-fill me-2"></i>
+            Administración de Designaciones
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-4">
+            Control de asignaciones de docentes a cargos institucionales y espacios curriculares 
+            con validación automática de compatibilidad horaria.
+          </p>
+          
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <div class="d-grid">
+                <a routerLink="/designaciones" class="btn btn-outline-success">
+                  <i class="bi bi-list-ul me-2"></i>
+                  Ver Designaciones
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-grid">
+                <a routerLink="/designaciones/new" class="btn btn-success">
+                  <i class="bi bi-plus-circle me-2"></i>
+                  Nueva Designación
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold text-primary mb-2">Gestión de Estructura:</h6>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <a routerLink="/cargos" class="btn btn-sm btn-outline-secondary w-100">
+                <i class="bi bi-briefcase me-1"></i>
+                Cargos
+              </a>
+            </div>
+            <div class="col-6">
+              <a routerLink="/divisiones" class="btn btn-sm btn-outline-secondary w-100">
+                <i class="bi bi-collection me-1"></i>
+                Divisiones
+              </a>
+            </div>
+          </div>
+
+          <h6 class="fw-bold text-primary mb-2">Características:</h6>
+          <ul class="list-unstyled text-muted">
+            <li><i class="bi bi-check-circle text-success me-2"></i>Validación de superposición horaria</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Control de carga horaria máxima</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Gestión de suplencias automáticas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- GESTIÓN DE LICENCIAS -->
+    <div class="col-lg-6">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-journal-medical me-2"></i>
+            Gestión de Licencias
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-4">
+            Sistema avanzado de gestión de licencias con validación automática según 
+            reglamentación del Ministerio de Educación y control de requisitos.
+          </p>
+          
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <div class="d-grid">
+                <a routerLink="/licencias" class="btn btn-outline-info">
+                  <i class="bi bi-list-ul me-2"></i>
+                  Ver Licencias
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-grid">
+                <a routerLink="/licencias/new" class="btn btn-info text-white">
+                  <i class="bi bi-plus-circle me-2"></i>
+                  Nueva Licencia
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <a routerLink="/articulo-licencia" class="btn btn-sm btn-outline-secondary w-100">
+              <i class="bi bi-journal-text me-1"></i>
+              Artículos de Licencia
+            </a>
+          </div>
+
+          <h6 class="fw-bold text-primary mb-2">Validaciones Automáticas:</h6>
+          <ul class="list-unstyled text-muted">
+            <li><i class="bi bi-check-circle text-success me-2"></i>Verificación de requisitos por artículo</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Control de topes anuales</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Validación de certificación médica</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Trazabilidad completa de estados</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTES Y ANÁLISIS -->
+    <div class="col-lg-6">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">
+            <i class="bi bi-file-earmark-text-fill me-2"></i>
+            Reportes y Análisis
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-4">
+            Generación automática de informes oficiales requeridos por el Ministerio 
+            de Educación y reportes de gestión interna.
+          </p>
+          
+          <h6 class="fw-bold text-primary mb-3">Informes Disponibles:</h6>
+          
+          <div class="d-grid gap-2 mb-3">
+            <button class="btn btn-outline-warning text-start" disabled>
+              <i class="bi bi-calendar-day me-2"></i>
+              <strong>Parte Diario de Novedades</strong>
+              <small class="d-block text-muted">Licencias y novedades del día</small>
+            </button>
+            
+            <button class="btn btn-outline-warning text-start" disabled>
+              <i class="bi bi-person-check me-2"></i>
+              <strong>Concepto Anual del Personal</strong>
+              <small class="d-block text-muted">Evaluación anual por docente</small>
+            </button>
+            
+            <button class="btn btn-outline-warning text-start" disabled>
+              <i class="bi bi-calendar-week me-2"></i>
+              <strong>Mapa de Horarios por División</strong>
+              <small class="d-block text-muted">Distribución semanal de clases</small>
+            </button>
+            
+            <button class="btn btn-outline-warning text-start" disabled>
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              <strong>Espacios Curriculares Descubiertos</strong>
+              <small class="d-block text-muted">Materias sin designación o con licencia</small>
+            </button>
+          </div>
+
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Los reportes estarán disponibles próximamente
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accesos Rápidos -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="bi bi-lightning-fill text-warning me-2"></i>
+            Accesos Rápidos
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-2">
+              <div class="d-grid">
+                <a routerLink="/personas/new" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-person-plus-fill mb-1 d-block"></i>
+                  Nuevo Docente
+                </a>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="d-grid">
+                <a routerLink="/designaciones/new" class="btn btn-sm btn-outline-success">
+                  <i class="bi bi-person-badge mb-1 d-block"></i>
+                  Nueva Designación
+                </a>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="d-grid">
+                <a routerLink="/licencias/new" class="btn btn-sm btn-outline-info">
+                  <i class="bi bi-journal-plus mb-1 d-block"></i>
+                  Nueva Licencia
+                </a>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="d-grid">
+                <a routerLink="/cargos/new" class="btn btn-sm btn-outline-secondary">
+                  <i class="bi bi-briefcase-fill mb-1 d-block"></i>
+                  Nuevo Cargo
+                </a>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="d-grid">
+                <a routerLink="/divisiones/new" class="btn btn-sm btn-outline-secondary">
+                  <i class="bi bi-collection-fill mb-1 d-block"></i>
+                  Nueva División
+                </a>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="d-grid">
+                <button class="btn btn-sm btn-outline-warning" disabled>
+                  <i class="bi bi-file-earmark-text mb-1 d-block"></i>
+                  Parte Diario
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información del Sistema -->
+  <div class="row mt-5">
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-info-circle me-2"></i>
+            Características del Sistema
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="fw-bold text-primary">Gestión Integral:</h6>
+              <ul class="list-unstyled text-muted">
+                <li><i class="bi bi-check text-success me-2"></i>Administración completa de personal docente</li>
+                <li><i class="bi bi-check text-success me-2"></i>Control de designaciones y carga horaria</li>
+                <li><i class="bi bi-check text-success me-2"></i>Validación automática de licencias</li>
+                <li><i class="bi bi-check text-success me-2"></i>Generación de reportes oficiales</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6 class="fw-bold text-primary">Funcionalidades Avanzadas:</h6>
+              <ul class="list-unstyled text-muted">
+                <li><i class="bi bi-check text-success me-2"></i>Trazabilidad completa de cambios</li>
+                <li><i class="bi bi-check text-success me-2"></i>Validaciones según normativa ministerial</li>
+                <li><i class="bi bi-check text-success me-2"></i>Control de suplencias automáticas</li>
+                <li><i class="bi bi-check text-success me-2"></i>Interfaz intuitiva y responsiva</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-building me-2"></i>
+            Información de la Institución
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <i class="bi bi-geo-alt-fill text-primary fs-1"></i>
+          </div>
+          <h6 class="fw-bold text-center">Escuela Secundaria N° 775</h6>
+          <p class="text-muted text-center mb-2">Puerto Madryn, Chubut</p>
+          <hr>
+          <small class="text-muted">
+            <strong>Ministerio de Educación</strong><br>
+            Provincia del Chubut<br>
+            Sistema de Gestión Integral
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

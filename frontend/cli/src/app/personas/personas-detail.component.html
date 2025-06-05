@@ -116,7 +116,7 @@
 
           <!-- Preview del CUIL completo -->
           <div class="mt-2" *ngIf="cuilPrefix && persona.dni && cuilSuffix">
-            <span class="badge bg-secondary fs-6">
+            <span class="badge bg-info fs-6">
               <i class="bi bi-person-vcard me-1"></i>
               CUIL: {{ cuilPrefix }}-{{ persona.dni }}-{{ cuilSuffix }}
             </span>
@@ -321,7 +321,7 @@
           <div class="d-flex justify-content-between align-items-center mt-2">
             <div class="flex-grow-1">
               <span
-                class="badge bg-secondary fs-6"
+                class="badge bg-info fs-6"
                 *ngIf="persona.domicilio && persona.domicilio.length >= 3"
               >
                 <i class="bi bi-house-fill me-1"></i>
@@ -377,7 +377,7 @@
           <!-- Preview del teléfono y contador -->
           <div class="d-flex justify-content-between align-items-center mt-2">
             <div class="flex-grow-1">
-              <span class="badge bg-success fs-6" *ngIf="persona.telefono">
+              <span class="badge bg-info fs-6" *ngIf="persona.telefono">
                 <i class="bi bi-telephone-fill me-1"></i>
                 {{ persona.telefono }}
               </span>
@@ -418,7 +418,7 @@
           <div class="d-flex justify-content-between align-items-center mt-2">
             <div class="flex-grow-1">
               <span
-                class="badge bg-warning text-dark fs-6"
+                class="badge bg-info text-dark fs-6"
                 *ngIf="persona.titulo && persona.titulo.length >= 3"
               >
                 <i class="bi bi-mortarboard-fill me-1"></i>
@@ -440,7 +440,7 @@
         </div>
       </div>
 
-      <!-- Sección de resumen -->
+     <!-- Sección de resumen -->
       <div
         class="row mt-4"
         *ngIf="persona.nombre || persona.apellido || persona.dni"
@@ -454,69 +454,93 @@
               </h6>
             </div>
             <div class="card-body">
-              <div class="row">
-                <div
-                  class="col-md-6"
-                  *ngIf="persona.apellido && persona.nombre"
-                >
-                  <strong>Nombre completo: </strong>
-                  <span>{{ persona.apellido }}, {{ persona.nombre }}</span>
-                </div>
-                <div class="col-md-6" *ngIf="persona.dni">
-                  <div class="d-flex align-items-center">
-                    <strong class="me-2">DNI:</strong>
-                    <span class="badge bg-info text-dark">
-                      <i class="bi bi-card-text me-1"></i>
-                      {{ persona.dni }}
-                    </span>
+              <div class="row g-3">
+                <!-- Columna izquierda -->
+                <div class="col-md-6">
+                  <!-- Nombre completo -->
+                  <div class="mb-3" *ngIf="persona.apellido && persona.nombre">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">Nombre completo:</strong>
+                      <span >
+                        <i class="bi bi-person-fill me-1"></i>
+                        {{ persona.apellido }}, {{ persona.nombre }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- CUIL -->
+                  <div class="mb-3" *ngIf="cuilPrefix && persona.dni && cuilSuffix">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">CUIL:</strong>
+                      <span >
+                        <i class="bi bi-person-vcard me-1"></i>
+                        {{ cuilPrefix }}-{{ persona.dni }}-{{ cuilSuffix }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Domicilio -->
+                  <div class="mb-3" *ngIf="persona.domicilio">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">Domicilio:</strong>
+                      <span >
+                        <i class="bi bi-house-fill me-1"></i>
+                        {{ persona.domicilio }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Título -->
+                  <div class="mb-3" *ngIf="persona.titulo">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">Título:</strong>
+                      <span class="badge bg-info text-dark">
+                        <i class="bi bi-mortarboard-fill me-1"></i>
+                        {{ persona.titulo }}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div
-                  class="col-md-6 mt-2"
-                  *ngIf="cuilPrefix && persona.dni && cuilSuffix"
-                >
-                  <div class="d-flex align-items-center">
-                    <strong class="me-2">CUIL:</strong>
-                    <span class="badge bg-secondary">
-                      <i class="bi bi-person-vcard me-1"></i>
-                      {{ cuilPrefix }}-{{ persona.dni }}-{{ cuilSuffix }}
-                    </span>
+
+                <!-- Columna derecha -->
+                <div class="col-md-6">
+                  <!-- DNI -->
+                  <div class="mb-3" *ngIf="persona.dni">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">DNI:</strong>
+                      <span>
+                        <i class="bi bi-card-text me-1"></i>
+                        {{ persona.dni }}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div class="col-md-6 mt-2" *ngIf="persona.sexo">
-                  <strong>Sexo: </strong>
-                  <span class="ms-1">
-                    <i
-                      class="me-1"
-                      [ngClass]="{
-                        'bi bi-gender-male text-primary': persona.sexo === 'M',
-                        'bi bi-gender-female text-danger': persona.sexo === 'F'
-                      }"
-                    ></i>
-                    {{ persona.sexo === "M" ? "Masculino" : "Femenino" }}
-                  </span>
-                </div>
-                <div class="col-md-6 mt-2" *ngIf="persona.domicilio">
-                  <strong>Domicilio: </strong>
-                  <span class="ms-1">
-                    <i class="bi bi-house-fill text-success me-1"></i>
-                    {{ persona.domicilio }}
-                  </span>
-                </div>
-                <div class="col-md-6 mt-2" *ngIf="persona.telefono">
-                  <strong>Teléfono: </strong>
-                  <span class="ms-1">
-                    <i class="bi bi-telephone-fill text-success me-1"></i>
-                    {{ persona.telefono }}
-                  </span>
-                </div>
-                <div class="col-12 mt-2" *ngIf="persona.titulo">
-                  <div class="d-flex align-items-center">
-                    <strong class="me-2">Título:</strong>
-                    <span class="badge bg-warning text-dark">
-                      <i class="bi bi-mortarboard-fill me-1"></i>
-                      {{ persona.titulo }}
-                    </span>
+
+                  <!-- Sexo -->
+                  <div class="mb-3" *ngIf="persona.sexo">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">Sexo:</strong>
+                      <span>
+                        <i
+                          class="me-1"
+                          [ngClass]="{
+                            'bi bi-gender-male': persona.sexo === 'M',
+                            'bi bi-gender-female': persona.sexo === 'F'
+                          }"
+                        ></i>
+                        {{ persona.sexo === "M" ? "Masculino" : "Femenino" }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Teléfono -->
+                  <div class="mb-3" *ngIf="persona.telefono">
+                    <div class="d-flex align-items-center">
+                      <strong class="me-2">Teléfono:</strong>
+                      <span class="badge bg-info text-dark">
+                        <i class="bi bi-telephone-fill me-1"></i>
+                        {{ persona.telefono }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

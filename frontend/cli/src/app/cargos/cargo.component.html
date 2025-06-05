@@ -33,10 +33,10 @@
             <td class="text-center">
               {{ (currentPage - 1) * resultsPage.size + i + 1 }}
             </td>
-            
+
             <!-- Nombre -->
             <td>{{ cargo.nombre }}</td>
-            
+
             <!-- Carga horaria -->
             <td class="text-center">
               <span class="badge bg-secondary fs-6">
@@ -47,24 +47,17 @@
 
             <!-- Fecha de Inicio -->
             <td class="text-center">
-              <div class="d-flex flex-column align-items-center">
-                <i class="bi bi-calendar-check text-success mb-1"></i>
-                <span class="fw-semibold">{{
-                  cargo.fechaInicio | date : "dd/MM/yyyy"
-                }}</span>
+              <div>
+                <i class="bi bi-calendar-check text-success me-1"></i>
+                {{ cargo.fechaInicio | date : "dd/MM/yyyy" }}
               </div>
             </td>
 
             <!-- Fecha de Fin -->
             <td class="text-center">
-              <div
-                class="d-flex flex-column align-items-center"
-                *ngIf="cargo.fechaFin"
-              >
-                <i class="bi bi-calendar-x text-danger mb-1"></i>
-                <span class="fw-semibold">{{
-                  cargo.fechaFin | date : "dd/MM/yyyy"
-                }}</span>
+              <div *ngIf="cargo.fechaFin">
+                <i class="bi bi-calendar-x text-danger me-1"></i>
+                {{ cargo.fechaFin | date : "dd/MM/yyyy" }}
               </div>
               <span *ngIf="!cargo.fechaFin" class="text-success fw-bold">
                 Vigente
@@ -73,7 +66,10 @@
 
             <!-- División -->
             <td class="text-center">
-              <div *ngIf="cargo.division" class="d-flex align-items-center justify-content-center">
+              <div
+                *ngIf="cargo.division"
+                class="d-flex align-items-center justify-content-center"
+              >
                 <i class="bi bi-mortarboard-fill text-success me-2"></i>
                 <span class="fw-bold">
                   {{ cargo.division.anio }}° {{ cargo.division.numDivision }}º
@@ -87,50 +83,38 @@
 
             <!-- Turno -->
             <td class="text-center">
-              <span 
-                *ngIf="cargo.division" 
+              <span
+                *ngIf="cargo.division"
                 class="badge"
                 [ngClass]="{
                   'bg-warning text-dark': cargo.division.turno === 'MAÑANA',
                   'bg-dark': cargo.division.turno === 'TARDE',
                   'bg-primary': cargo.division.turno === 'NOCHE',
-                  'bg-secondary': cargo.division.turno !== 'MAÑANA' && cargo.division.turno !== 'TARDE' && cargo.division.turno !== 'NOCHE'
+                  'bg-secondary':
+                    cargo.division.turno !== 'MAÑANA' &&
+                    cargo.division.turno !== 'TARDE' &&
+                    cargo.division.turno !== 'NOCHE'
                 }"
               >
-                <i 
-                  class="me-1"
-                  [ngClass]="{
-                    'bi bi-sun-fill': cargo.division.turno === 'MAÑANA',
-                    'bi bi-sunset-fill': cargo.division.turno === 'TARDE',
-                    'bi bi-moon-fill': cargo.division.turno === 'NOCHE'
-                  }"
-                ></i>
                 {{ cargo.division.turno }}
               </span>
               <span *ngIf="!cargo.division" class="text-muted fst-italic">
                 <i class="bi bi-building-fill me-1"></i>
-                Institucional
+                No aplica
               </span>
             </td>
 
             <!-- Tipo de designación -->
             <td class="text-center">
-              <span
-                class="badge fw-bold px-3 py-2"
+              <i
+                class="me-1"
                 [ngClass]="{
-                  'badge-espacio-curricular': cargo.tipoDesignacion === 'ESPACIO_CURRICULAR',
-                  'badge-cargo-institucional': cargo.tipoDesignacion === 'CARGO'
+                  'bi bi-book-fill':
+                    cargo.tipoDesignacion === 'ESPACIO_CURRICULAR',
+                  'bi bi-building-fill': cargo.tipoDesignacion === 'CARGO'
                 }"
-              >
-                <i 
-                  class="me-1"
-                  [ngClass]="{
-                    'bi bi-book-fill': cargo.tipoDesignacion === 'ESPACIO_CURRICULAR',
-                    'bi bi-building-fill': cargo.tipoDesignacion === 'CARGO'
-                  }"
-                ></i>
-                {{ cargo.tipoDesignacion | tipoDesignacionFormat }}
-              </span>
+              ></i>
+              {{ cargo.tipoDesignacion | tipoDesignacionFormat }}
             </td>
 
             <!-- Acciones -->

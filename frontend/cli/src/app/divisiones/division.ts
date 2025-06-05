@@ -5,5 +5,5 @@ export interface Division {
   anio: number | null; // Corresponde a "int" en Java
   numDivision: number | null; // Corresponde a "int" en Java
   orientacion: string; // Corresponde a "String" en Java
-  turno: Turno; // Enum Turno
+  turno: Turno | null; // Enum Turno
 }

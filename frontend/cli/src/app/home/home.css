@@ -35,3 +35,83 @@
     }
   }
   
+  /* Gradientes para las cards de estadísticas */
+.bg-gradient-primary {
+  background: linear-gradient(45deg, #0d6efd, #0b5ed7) !important;
+}
+
+.bg-gradient-success {
+  background: linear-gradient(45deg, #198754, #157347) !important;
+}
+
+.bg-gradient-info {
+  background: linear-gradient(45deg, #0dcaf0, #31d2f2) !important;
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(45deg, #ffc107, #ffcd39) !important;
+}
+
+/* Efectos hover para las cards */
+.card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+}
+
+/* Estilos para accesos rápidos */
+.btn-sm {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.btn-sm i {
+  font-size: 1.25rem;
+}
+
+/* Animaciones suaves */
+.card {
+  transition: all 0.3s ease;
+}
+
+.btn {
+  transition: all 0.2s ease;
+}
+
+/* Responsividad mejorada */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .fs-1 {
+    font-size: 2rem !important;
+  }
+}
+
+/* Iconos de estado */
+.text-success {
+  color: #198754 !important;
+}
+
+.text-primary {
+  color: #0d6efd !important;
+}
+
+/* Espaciado mejorado */
+.mb-5 {
+  margin-bottom: 3rem !important;
+}
+
+.mt-5 {
+  margin-top: 3rem !important;
+}
