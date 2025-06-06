@@ -1,7 +1,10 @@
 package unpsjb.labprog.backend.presenter;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,6 +83,17 @@ public class CargoPresenter {
             return Response.ok(cargo);
         } catch (IllegalArgumentException e) {
             return Response.badRequest(e, e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public ResponseEntity<Object> search(@RequestParam("term") String term) {
+        try {
+            List<Cargo> cargos = cargoService.search(term);
+            return Response.ok(cargos, "Búsqueda completada exitosamente");
+        } catch (Exception e) {
+            return Response.internalServerError(
+                    "Error en la búsqueda: " + e.getMessage(), null);
         }
     }
 }

@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { DataPackage } from "../data-package";
 import { Observable } from "rxjs";
@@ -35,5 +35,10 @@ export class CargoService {
     return this.http.get<DataPackage>(
       `${this.url}/page?page=${page - 1}&size=${size}`
     );
+  }
+
+  search(term: string): Observable<DataPackage> {
+    const params = new HttpParams().set('term', term);
+    return this.http.get<DataPackage>(`${this.url}/search`, { params });
   }
 }

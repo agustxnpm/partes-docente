@@ -11,110 +11,162 @@
 
     <form #designacionForm="ngForm" (ngSubmit)="saveDesignacion()">
       <div class="row g-4">
-        <!-- Selección de Persona -->
+        <!-- Selección de Persona con TypeAhead -->
         <div class="col-md-6">
           <label for="persona" class="form-label required-field">
             <i class="bi bi-person-fill text-primary me-1"></i>
             Persona
           </label>
-          <select
-            class="form-select enhanced-select"
-            [ngClass]="{
-              'is-invalid':
-                personaField.invalid &&
-                (personaField.dirty || personaField.touched)
-            }"
-            [(ngModel)]="designacion.persona"
-            [compareWith]="comparePersonas"
-            name="persona"
-            #personaField="ngModel"
-            required
-          >
-            <option [ngValue]="null">Seleccione una persona</option>
-            <option *ngFor="let persona of personas" [ngValue]="persona">
-              {{ persona.apellido }}, {{ persona.nombre }} ({{ persona.dni }})
-            </option>
-          </select>
 
-          <!-- Preview e información de la persona seleccionada -->
-          <div *ngIf="designacion.persona" class="d-flex flex-wrap gap-2 mt-2">
-            <div>
-              <span class="badge bg-info text-dark fs-6">
-                <i class="bi bi-person-fill me-1"></i>
-                {{ designacion.persona.apellido }},
-                {{ designacion.persona.nombre }}
-              </span>
-            </div>
-
-            <div>
-              <span class="badge bg-info text-dark fs-6">
-                <i class="bi bi-card-text me-1"></i>
-                {{ designacion.persona.dni }}
-              </span>
-            </div>
-
-            <div>
-              <span class="badge bg-info text-dark fs-6">
-                <i class="bi bi-telephone-fill me-1"></i>
-                {{ designacion.persona.telefono }}
-              </span>
-            </div>
-
-            <div>
-              <span
-                *ngIf="designacion.persona.titulo"
-                class="badge bg-info text-dark fs-6"
+          <div class="position-relative">
+            <input
+              type="text"
+              class="form-control enhanced-input"
+              [ngClass]="{
+                'is-invalid': (!designacion.persona && designacionForm.submitted) || (personaInput.invalid && personaInput.touched)
+              }"
+              [value]="designacion.persona ? formatterPersona(designacion.persona) : ''"
+              name="persona"
+              #personaInput="ngModel"
+              [(ngModel)]="personaInputValue"
+              placeholder="Buscar por nombre, apellido o DNI..."
+              (focus)="onPersonaFocus()"
+              (blur)="onPersonaBlur()"
+              (input)="onPersonaInput($event)"
+              autocomplete="off"
+              required
+            />
+            
+            <!-- Dropdown con opciones -->
+            <div 
+              *ngIf="showPersonaDropdown && personasFiltradas.length > 0"
+              class="dropdown-menu show position-absolute w-100 mt-1"
+              style="max-height: 250px; overflow-y: auto; z-index: 1050;"
+            >
+              <button
+                *ngFor="let persona of personasFiltradas; let i = index"
+                type="button"
+                class="dropdown-item d-flex align-items-center py-2"
+                (click)="selectPersona(persona)"
+                [class.active]="designacion.persona?.id === persona.id"
               >
-                <i class="bi bi-mortarboard-fill me-1"></i>
-                {{ designacion.persona.titulo }}
-              </span>
+                <div class="flex-grow-1">
+                  <div class="fw-bold">{{ persona.apellido }}, {{ persona.nombre }}</div>
+                  <small class="text-muted">
+                    <i class="bi bi-card-text me-1"></i>{{ persona?.dni || 'Sin DNI' }}
+                  </small>
+                </div>
+              </button>
+              
+              <!-- Mensaje cuando no hay resultados -->
+              <div *ngIf="personasFiltradas.length === 0" class="dropdown-item-text text-muted">
+                <i class="bi bi-search me-2"></i>No se encontraron personas
+              </div>
             </div>
+          </div>
+
+          <!-- Preview de la persona seleccionada -->
+          <div
+            *ngIf="designacion.persona && designacion.persona.id"
+            class="d-flex flex-wrap gap-2 mt-2"
+          >
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-person-fill me-1"></i>
+              {{ designacion.persona.apellido }},
+              {{ designacion.persona.nombre }}
+            </span>
+            <span class="badge bg-info text-dark fs-6">
+              <i class="bi bi-card-text me-1"></i>
+              {{ designacion.persona?.dni || 'Sin DNI' }}
+            </span>
+            <span
+              *ngIf="designacion.persona?.telefono"
+              class="badge bg-info text-dark fs-6"
+            >
+              <i class="bi bi-telephone-fill me-1"></i>
+              {{ designacion.persona.telefono }}
+            </span>
+            <span
+              *ngIf="designacion.persona?.titulo"
+              class="badge bg-info text-dark fs-6"
+            >
+              <i class="bi bi-mortarboard-fill me-1"></i>
+              {{ designacion.persona.titulo }}
+            </span>
           </div>
 
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="
-                personaField.invalid &&
-                (personaField.dirty || personaField.touched)
-              "
+              *ngIf="(!designacion.persona && designacionForm.submitted) || (personaInput.invalid && personaInput.touched)"
             >
               Debe seleccionar una persona
             </small>
           </div>
         </div>
 
-        <!-- Selección de Cargo -->
+        <!-- Selección de Cargo con TypeAhead y Dropdown -->
         <div class="col-md-6">
           <label for="cargo" class="form-label required-field">
             <i class="bi bi-briefcase-fill text-primary me-1"></i>
             Cargo
           </label>
-          <select
-            class="form-select enhanced-select"
-            [ngClass]="{
-              'is-invalid':
-                cargoField.invalid && (cargoField.dirty || cargoField.touched)
-            }"
-            [(ngModel)]="designacion.cargo"
-            [compareWith]="compareCargos"
-            name="cargo"
-            #cargoField="ngModel"
-            required
-          >
-            <option [ngValue]="null">Seleccione un cargo</option>
-            <option *ngFor="let cargo of cargos" [ngValue]="cargo">
-              {{ cargo.nombre }}
-              <span *ngIf="cargo.division">
-                ({{ cargo.division.anio }}° {{ cargo.division.numDivision }}º -
-                {{ cargo.division.orientacion }})
-              </span>
-              <span *ngIf="!cargo.division">(Cargo Institucional)</span>
-            </option>
-          </select>
 
-          <!-- Preview del cargo -->
-          <div class="d-flex flex-wrap gap-2 mt-2" *ngIf="designacion.cargo">
+          <div class="position-relative">
+            <input
+              type="text"
+              class="form-control enhanced-input"
+              [ngClass]="{
+                'is-invalid': (!designacion.cargo && designacionForm.submitted) || (cargoInput.invalid && cargoInput.touched)
+              }"
+              [value]="designacion.cargo ? formatterCargo(designacion.cargo) : ''"
+              name="cargo"
+              #cargoInput="ngModel"
+              [(ngModel)]="cargoInputValue"
+              placeholder="Buscar por nombre del cargo, año, división..."
+              (focus)="onCargoFocus()"
+              (blur)="onCargoBlur()"
+              (input)="onCargoInput($event)"
+              autocomplete="off"
+              required
+            />
+            
+            <!-- Dropdown con opciones -->
+            <div 
+              *ngIf="showCargoDropdown && cargosFiltrados.length > 0"
+              class="dropdown-menu show position-absolute w-100 mt-1"
+              style="max-height: 250px; overflow-y: auto; z-index: 1050;"
+            >
+              <button
+                *ngFor="let cargo of cargosFiltrados; let i = index"
+                type="button"
+                class="dropdown-item d-flex align-items-center py-2"
+                (click)="selectCargo(cargo)"
+                [class.active]="designacion.cargo?.id === cargo.id"
+              >
+                <div class="flex-grow-1">
+                  <div class="fw-bold">{{ cargo.nombre }}</div>
+                  <small class="text-muted">
+                    <span *ngIf="cargo.division">
+                      <i class="bi bi-mortarboard ms-2 me-1"></i>
+                      {{ cargo.division?.anio }}° {{ cargo.division?.numDivision }}º ({{ cargo.division?.turno }})
+                    </span>
+                  </small>
+                </div>
+              </button>
+              
+              <!-- Mensaje cuando no hay resultados -->
+              <div *ngIf="cargosFiltrados.length === 0" class="dropdown-item-text text-muted">
+                <i class="bi bi-search me-2"></i>No se encontraron cargos
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview del cargo seleccionado -->
+          <div
+            class="d-flex flex-wrap gap-2 mt-2"
+            *ngIf="designacion.cargo && designacion.cargo.id"
+          >
             <span class="badge bg-info text-white fs-6">
               <i
                 class="me-1"
@@ -125,26 +177,32 @@
               ></i>
               {{ designacion.cargo.nombre }}
             </span>
-
             <span class="badge bg-info text-white fs-6">
               <i class="bi bi-clock-fill me-1"></i>
-              Carga horaria: {{ designacion.cargo.cargaHoraria }} hs
+              {{ designacion.cargo.cargaHoraria }} hs
+            </span>
+            <span
+              *ngIf="designacion.cargo.division"
+              class="badge bg-info text-dark fs-6"
+            >
+              <i class="bi bi-mortarboard-fill me-1"></i>
+              {{ designacion.cargo.division?.anio }}°
+              {{ designacion.cargo.division?.numDivision }}º -
+              {{ designacion.cargo.division?.turno }}
             </span>
           </div>
 
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="
-                cargoField.invalid && (cargoField.dirty || cargoField.touched)
-              "
+              *ngIf="(!designacion.cargo && designacionForm.submitted) || (cargoInput.invalid && cargoInput.touched)"
             >
               Debe seleccionar un cargo
             </small>
           </div>
         </div>
 
-        <!-- Situación de Revista -->
+       <!-- Situación de Revista -->
         <div class="col-md-4">
           <label for="situacionRevista" class="form-label required-field">
             <i class="bi bi-clipboard-check text-primary me-1"></i>
@@ -153,13 +211,11 @@
           <select
             class="form-select enhanced-select"
             [ngClass]="{
-              'is-invalid':
-                situacionField.invalid &&
-                (situacionField.dirty || situacionField.touched)
+              'is-invalid': (!designacion.situacionRevista && designacionForm.submitted) || (situacionInput.invalid && situacionInput.touched)
             }"
             [(ngModel)]="designacion.situacionRevista"
             name="situacionRevista"
-            #situacionField="ngModel"
+            #situacionInput="ngModel"
             required
           >
             <option [ngValue]="null">Seleccione una situación</option>
@@ -182,10 +238,7 @@
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="
-                situacionField.invalid &&
-                (situacionField.dirty || situacionField.touched)
-              "
+              *ngIf="(!designacion.situacionRevista && designacionForm.submitted) || (situacionInput.invalid && situacionInput.touched)"
             >
               Debe seleccionar una situación
             </small>
@@ -202,35 +255,29 @@
             type="date"
             class="form-control enhanced-input"
             [ngClass]="{
-              'is-invalid':
-                fechaInicioField.invalid &&
-                (fechaInicioField.dirty || fechaInicioField.touched)
+              'is-invalid': (!designacion.fechaInicio && designacionForm.submitted) || (fechaInicioInput.invalid && fechaInicioInput.touched)
             }"
             [(ngModel)]="designacion.fechaInicio"
             name="fechaInicio"
-            #fechaInicioField="ngModel"
+            #fechaInicioInput="ngModel"
             [max]="maxFechaInicio || '9999-12-31'"
             (change)="onFechaInicioChange()"
             required
           />
 
-        
-
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="
-                fechaInicioField.invalid &&
-                (fechaInicioField.dirty || fechaInicioField.touched)
-              "
+              *ngIf="(!designacion.fechaInicio && designacionForm.submitted) || (fechaInicioInput.invalid && fechaInicioInput.touched)"
             >
               La fecha de inicio es obligatoria
             </small>
           </div>
         </div>
 
+
         <!-- Fecha de Fin (opcional) -->
-        <div class="col-md-4">
+       <div class="col-md-4">
           <label for="fechaFin" class="form-label">
             <i class="bi bi-calendar-x text-primary me-1"></i>
             Fecha de Fin
@@ -238,13 +285,15 @@
           <input
             type="date"
             class="form-control enhanced-input"
+            [ngClass]="{
+              'is-invalid': fechaFinInput.invalid && fechaFinInput.touched
+            }"
             [(ngModel)]="designacion.fechaFin"
             name="fechaFin"
+            #fechaFinInput="ngModel"
             [min]="minFechaFin"
             (change)="onFechaFinChange()"
           />
-
-     
 
           <div class="mt-1">
             <small class="text-muted">
@@ -253,19 +302,23 @@
             </small>
           </div>
         </div>
+
+
+
       </div>
 
-      <!-- Sección de resumen mejorada y alineada -->
+      <!-- Vista previa  -->
       <div
         class="row mt-4"
         *ngIf="
-          designacion.persona ||
-          designacion.cargo ||
-          designacion.situacionRevista
+          designacion.persona?.id ||
+          designacion.cargo?.id ||
+          designacion.situacionRevista ||
+          designacion.fechaInicio
         "
       >
         <div class="col-12">
-          <div class="card border-primary">
+          <div class="card border-primary shadow-sm">
             <div class="card-header bg-primary text-white">
               <h6 class="mb-0">
                 <i class="bi bi-eye-fill me-2"></i>
@@ -273,125 +326,283 @@
               </h6>
             </div>
             <div class="card-body">
-              <div class="row align-items-start">
-                <!-- Columna izquierda -->
-                <div class="col-md-6">
-                  <!-- Persona -->
-                  <div class="mb-3" *ngIf="designacion.persona">
-                    <div class="d-flex align-items-center mb-1">
-                      <i class="bi bi-person-fill text-primary me-2"></i>
-                      <strong>Persona:</strong>
+              <div class="row g-3">
+                <!-- Información de la Persona -->
+                <div class="col-md-6" *ngIf="designacion.persona?.id">
+                  <div class="bg-light rounded p-3 h-100">
+                    <h6 class="text-primary mb-3">
+                      <i class="bi bi-person-fill me-2"></i>
+                      Información Personal
+                    </h6>
+
+                    <div class="d-flex align-items-center mb-2">
+                      <strong class="me-2 text-nowrap">Nombre:</strong>
+                      <span
+                        >{{ designacion.persona.apellido }},
+                        {{ designacion.persona.nombre }}</span
+                      >
                     </div>
-                    <div class="ms-4">
-                      <span class="fw-bold">
-                        {{ designacion.persona.apellido }},
-                        {{ designacion.persona.nombre }}
+
+                    <div class="d-flex align-items-center mb-2">
+                      <strong class="me-2 text-nowrap">DNI:</strong>
+                      <span class="badge bg-info">
+                        <i class="bi bi-person-vcard me-1"> </i>
+                         {{ designacion.persona.dni }}
                       </span>
-                      <br />
-                      <small class="text-muted">
-                        <i class="bi bi-card-text me-1"></i>
-                        DNI: {{ designacion.persona.dni }}
-                      </small>
+                    </div>
+
+                    <div
+                      class="d-flex align-items-center mb-2"
+                      *ngIf="designacion.persona.telefono"
+                    >
+                      <strong class="me-2 text-nowrap">Teléfono:</strong>
+                      <span>
+                        <i class="bi bi-telephone-fill text-success me-1"></i>
+                        {{ designacion.persona.telefono }}
+                      </span>
+                    </div>
+
+                    <div
+                      class="d-flex align-items-center"
+                      *ngIf="designacion.persona.titulo"
+                    >
+                      <strong class="me-2 text-nowrap">Título:</strong>
+                      <span class="badge bg-info text-white">
+                        <i class="bi bi-mortarboard-fill me-1"></i>
+                        {{ designacion.persona.titulo }}
+                      </span>
                     </div>
                   </div>
+                </div>
 
-                  <!-- Cargo -->
-                  <div class="mb-3" *ngIf="designacion.cargo">
-                    <div class="d-flex align-items-center mb-1">
-                      <i
-                        class="text-success me-2"
-                        [ngClass]="{
-                          'bi bi-building-fill': isCargoInstitucional(),
-                          'bi bi-book-fill': !isCargoInstitucional()
-                        }"
-                      ></i>
-                      <strong>Cargo:</strong>
+                <!-- Información del Cargo -->
+                <div class="col-md-6" *ngIf="designacion.cargo?.id">
+                  <div class="bg-light rounded p-3 h-100">
+                    <h6 class="text-primary mb-3">
+                      <i class="bi bi-briefcase-fill me-2"></i>
+                      Información del Cargo
+                    </h6>
+
+                    <div class="d-flex align-items-center mb-2">
+                      <strong class="me-2 text-nowrap">Cargo:</strong>
+                      <span class="badge bg-info text-white fw-bold">
+                        <i
+                          class="me-1"
+                          [ngClass]="{
+                            'bi bi-building-fill': isCargoInstitucional(),
+                            'bi bi-book-fill': !isCargoInstitucional()
+                          }"
+                        ></i>
+                        {{ designacion.cargo.nombre }}
+                      </span>
                     </div>
-                    <div class="ms-4">
-                      <span class="text-primary fw-semibold">{{
-                        designacion.cargo.nombre
-                      }}</span>
-                      <br />
-                      <small class="text-muted">
+
+                    <div class="d-flex align-items-center mb-2">
+                      <strong class="me-2 text-nowrap">Carga Horaria:</strong>
+                      <span class="badge bg-info text-dark">
                         <i class="bi bi-clock-fill me-1"></i>
-                        {{ designacion.cargo.cargaHoraria }} hs -
+                        {{ designacion.cargo.cargaHoraria }} hs semanales
+                      </span>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-2">
+                      <strong class="me-2 text-nowrap">Tipo:</strong>
+                      <span class="badge bg-info text-white">
+                        <i
+                          class="me-1"
+                          [ngClass]="{
+                            'bi bi-building': isCargoInstitucional(),
+                            'bi bi-book': !isCargoInstitucional()
+                          }"
+                        ></i>
                         {{
                           isCargoInstitucional()
                             ? "Cargo Institucional"
                             : "Espacio Curricular"
                         }}
-                      </small>
+                      </span>
+                    </div>
+
+                    <div
+                      class="d-flex align-items-start"
+                      *ngIf="designacion.cargo.division"
+                    >
+                      <strong class="me-2 text-nowrap">División:</strong>
+                      <div>
+                        <span class="badge bg-primary text-white me-1">
+                          <i class="bi bi-mortarboard-fill me-1"></i>
+                          {{ designacion.cargo.division.anio }}°
+                          {{ designacion.cargo.division.numDivision }}º
+                        </span>
+                        <span class="badge bg-secondary text-white me-1">
+                          <i class="bi bi-sun-fill me-1"></i>
+                          {{ designacion.cargo.division.turno }}
+                        </span>
+                        <span
+                          class="badge bg-dark text-white"
+                          *ngIf="designacion.cargo.division.orientacion"
+                        >
+                          <i class="bi bi-compass me-1"></i>
+                          {{ designacion.cargo.division.orientacion }}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Columna derecha -->
-                <div class="col-md-6">
-                  <!-- División -->
+                <!-- Información de la Designación -->
+                <div
+                  class="col-12"
+                  *ngIf="
+                    designacion.situacionRevista || designacion.fechaInicio
+                  "
+                >
                   <div
-                    class="mb-3"
-                    *ngIf="designacion.cargo && designacion.cargo.division"
+                    class="bg-gradient-light rounded p-3 border border-primary-subtle"
                   >
-                    <div class="d-flex align-items-center mb-1">
-                      <i class="bi bi-mortarboard-fill text-primary me-2"></i>
-                      <strong>División:</strong>
-                    </div>
-                    <div class="ms-4">
-                      <span class="fw-bold">
-                        {{ designacion.cargo.division.anio }}°
-                        {{ designacion.cargo.division.numDivision }}º
-                      </span>
-                      <span class="badge bg-warning text-dark ms-2">
-                        {{ designacion.cargo.division.turno }}
-                      </span>
-                      <br />
-                      <small
-                        class="text-muted"
-                        *ngIf="designacion.cargo.division.orientacion"
+                    <h6 class="text-primary mb-3">
+                      <i class="bi bi-clipboard-check-fill me-2"></i>
+                      Detalles de la Designación
+                    </h6>
+
+                    <div class="row g-3">
+                      <!-- Situación de Revista -->
+                      <div
+                        class="col-md-4"
+                        *ngIf="designacion.situacionRevista"
                       >
-                        <i class="bi bi-compass me-1"></i>
-                        {{ designacion.cargo.division.orientacion }}
-                      </small>
+                        <div class="d-flex align-items-center">
+                          <strong class="me-2 text-nowrap">Situación:</strong>
+                          <span
+                            class="badge fs-6 fw-bold px-3 py-2"
+                            [ngClass]="{
+                              'bg-success text-white':
+                                designacion.situacionRevista === 'TITULAR',
+                              'bg-warning text-dark':
+                                designacion.situacionRevista === 'SUPLENTE'
+                            }"
+                          >
+                            <i
+                              class="me-1"
+                              [ngClass]="{
+                                'bi bi-star-fill':
+                                  designacion.situacionRevista === 'TITULAR',
+                                'bi bi-hourglass-split':
+                                  designacion.situacionRevista === 'SUPLENTE'
+                              }"
+                            ></i>
+                            {{ designacion.situacionRevista }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- Fecha de Inicio -->
+                      <div class="col-md-4" *ngIf="designacion.fechaInicio">
+                        <div class="d-flex align-items-center">
+                          <strong class="me-2 text-nowrap">Inicio:</strong>
+                          <span class="badge bg-success text-white fs-6">
+                            <i class="bi bi-calendar-check me-1"></i>
+                            {{ designacion.fechaInicio | date : "dd/MM/yyyy" }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- Fecha de Fin o Estado -->
+                      <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                          <strong class="me-2 text-nowrap">Estado:</strong>
+                          <span
+                            *ngIf="designacion.fechaFin; else vigente"
+                            class="badge bg-danger text-white fs-6"
+                          >
+                            <i class="bi bi-calendar-x me-1"></i>
+                            Finaliza:
+                            {{ designacion.fechaFin | date : "dd/MM/yyyy" }}
+                          </span>
+                          <ng-template #vigente>
+                            <span class="badge bg-success text-white fs-6">
+                              <i class="bi bi-check-circle-fill me-1"></i>
+                              VIGENTE
+                            </span>
+                          </ng-template>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Período de duración (si hay fecha de fin) -->
+                    <div
+                      class="mt-3 pt-3 border-top"
+                      *ngIf="designacion.fechaInicio && designacion.fechaFin"
+                    >
+                      <div class="row">
+                        <div class="col-12">
+                          <div
+                            class="d-flex align-items-center justify-content-center"
+                          >
+                            <span class="badge bg-info text-white fs-6">
+                              <i class="bi bi-calendar-range me-1"></i>
+                              Período:
+                              {{
+                                designacion.fechaInicio | date : "dd/MM/yyyy"
+                              }}
+                              <i class="bi bi-arrow-right mx-2"></i>
+                              {{ designacion.fechaFin | date : "dd/MM/yyyy" }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  <!-- Situación y Vigencia -->
-                  <div class="mb-3">
-                    <div
-                      class="d-flex align-items-center mb-1"
-                      *ngIf="designacion.situacionRevista"
+              <!-- Resumen ejecutivo -->
+              <div
+                class="mt-4 pt-3 border-top border-primary-subtle"
+                *ngIf="designacion.persona?.id && designacion.cargo?.id"
+              >
+                <div class="text-center">
+                  <h6 class="text-primary mb-2">
+                    <i class="bi bi-file-text-fill me-2"></i>
+                    Resumen Ejecutivo
+                  </h6>
+                  <p class="mb-0 text-muted fst-italic">
+                    <strong
+                      >{{ designacion.persona.apellido }},
+                      {{ designacion.persona.nombre }}</strong
                     >
-                      <i class="bi bi-clipboard-check text-info me-2"></i>
-                      <strong>Situación:</strong>
-                    </div>
-                    <div class="ms-4" *ngIf="designacion.situacionRevista">
-                      <span class="badge bg-info text-dark">
-                        {{ designacion.situacionRevista }}
-                      </span>
-                    </div>
-
-                    <div
-                      class="d-flex align-items-center mb-1 mt-2"
-                      *ngIf="designacion.fechaInicio"
+                    <span *ngIf="designacion.situacionRevista">
+                      ({{ designacion.situacionRevista }})</span
                     >
-                      <i class="bi bi-calendar-check text-success me-2"></i>
-                      <strong>Vigencia:</strong>
-                    </div>
-                    <div class="ms-4" *ngIf="designacion.fechaInicio">
-                      <span class="text-muted">
-                        {{ designacion.fechaInicio | date : "dd/MM/yyyy" }}
-                        <span *ngIf="designacion.fechaFin">
-                          - {{ designacion.fechaFin | date : "dd/MM/yyyy" }}
-                        </span>
-                        <span
-                          *ngIf="!designacion.fechaFin"
-                          class="text-success fw-bold ms-1"
-                        >
-                          (Vigente)
-                        </span>
-                      </span>
-                    </div>
-                  </div>
+                    será designado/a en el cargo
+                    <strong>{{ designacion.cargo.nombre }}</strong>
+                    <span *ngIf="designacion.cargo.division">
+                      para
+                      <strong
+                        >{{ designacion.cargo.division.anio }}°
+                        {{ designacion.cargo.division.numDivision }}º</strong
+                      >
+                      turno
+                      <strong>{{ designacion.cargo.division.turno }}</strong>
+                    </span>
+                    <span *ngIf="designacion.fechaInicio">
+                      a partir del
+                      <strong>{{
+                        designacion.fechaInicio | date : "dd/MM/yyyy"
+                      }}</strong>
+                    </span>
+                    <span *ngIf="designacion.fechaFin">
+                      hasta el
+                      <strong>{{
+                        designacion.fechaFin | date : "dd/MM/yyyy"
+                      }}</strong>
+                    </span>
+                    <span
+                      *ngIf="!designacion.fechaFin && designacion.fechaInicio"
+                    >
+                      con vigencia indefinida </span
+                    >.
+                  </p>
                 </div>
               </div>
             </div>
@@ -412,7 +623,13 @@
         <button
           type="submit"
           class="btn btn-outline-primary px-4"
-          [disabled]="designacionForm.invalid || !isValidDateRange"
+          [disabled]="
+            !designacion.persona?.id ||
+            !designacion.cargo?.id ||
+            !designacion.situacionRevista ||
+            !designacion.fechaInicio ||
+            !isValidDateRange
+          "
         >
           <i class="bi bi-check-circle me-2"></i>
           {{ isNew ? "Crear Designación" : "Guardar Cambios" }}

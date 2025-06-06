@@ -1,16 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Observable, map } from "rxjs";
 import { Persona } from "./persona";
-import { DataPackage } from '../data-package';
+import { DataPackage } from "../data-package";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class PersonaService {
-
-  private url = 'rest/personas';
-  constructor(private http: HttpClient) { }
+  private url = "rest/personas";
+  constructor(private http: HttpClient) {}
 
   findAll(): Observable<DataPackage> {
     return this.http.get<DataPackage>(this.url);
@@ -36,5 +35,10 @@ export class PersonaService {
     return this.http.get<DataPackage>(
       `${this.url}/page?page=${page - 1}&size=${size}`
     );
+  }
+
+  search(term: string): Observable<DataPackage> {
+    const params = new HttpParams().set("term", term);
+    return this.http.get<DataPackage>(`${this.url}/search`, { params });
   }
 }

@@ -110,4 +110,8 @@ public class CargoService {
     public boolean existsByDivisionId(long id) {
         return cargoRepository.existsByDivisionId(id);
     }
+
+    public List<Cargo> search(String term) {
+        return cargoRepository.search(term.trim());
+    }
 }

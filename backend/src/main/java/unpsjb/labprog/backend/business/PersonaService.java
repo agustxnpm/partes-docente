@@ -97,4 +97,8 @@ public class PersonaService {
         return mensajeBuilder.generarMensajeExitoPersonaBorrada(persona);
     }
 
+    public List<Persona> search(String term) {
+        return personaRepository.search(term.trim());
+    }
+
 }
