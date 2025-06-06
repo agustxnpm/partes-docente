@@ -56,7 +56,6 @@
 
     <form #licenciaForm="ngForm" (ngSubmit)="saveLicencia()">
       <div class="row g-4">
-        <!-- Selección de Persona -->
         <div class="col-md-6">
           <label for="persona" class="form-label required-field">
             <i class="bi bi-person-fill text-primary me-1"></i>
@@ -65,25 +64,54 @@
               (No modificable)
             </span>
           </label>
-          <select
-            class="form-select enhanced-select"
-            [ngClass]="{
-              'is-invalid':
-                personaField.invalid &&
-                (personaField.dirty || personaField.touched)
-            }"
-            [(ngModel)]="licencia.persona"
-            [compareWith]="comparePersonas"
-            name="persona"
-            #personaField="ngModel"
-            [disabled]="!isNew"
-            required
-          >
-            <option [ngValue]="null">Seleccione una persona</option>
-            <option *ngFor="let p of personas" [ngValue]="p">
-              {{ p.apellido }}, {{ p.nombre }} ({{ p.dni }})
-            </option>
-          </select>
+
+          <div class="position-relative">
+            <input
+              type="text"
+              class="form-control enhanced-input"
+              [ngClass]="{
+                'is-invalid': (!licencia.persona || licencia.persona.id === 0) && (personaInput.invalid && personaInput.touched)
+              }"
+              [value]="licencia.persona && licencia.persona.id !== 0 ? formatterPersona(licencia.persona) : ''"
+              name="persona"
+              #personaInput="ngModel"
+              [(ngModel)]="personaInputValue"
+              placeholder="Buscar por nombre, apellido o DNI..."
+              (focus)="onPersonaFocus()"
+              (blur)="onPersonaBlur()"
+              (input)="onPersonaInput($event)"
+              [disabled]="!isNew"
+              autocomplete="off"
+              required
+            />
+            
+            <!-- Dropdown con opciones para personas -->
+            <div 
+              *ngIf="showPersonaDropdown && personasFiltradas.length > 0 && isNew"
+              class="dropdown-menu show position-absolute w-100 mt-1"
+              style="max-height: 250px; overflow-y: auto; z-index: 1050;"
+            >
+              <button
+                *ngFor="let persona of personasFiltradas; let i = index"
+                type="button"
+                class="dropdown-item d-flex align-items-center py-2"
+                (click)="selectPersona(persona)"
+                [class.active]="licencia.persona?.id === persona.id"
+              >
+                <div class="flex-grow-1">
+                  <div class="fw-bold">{{ persona.apellido }}, {{ persona.nombre }}</div>
+                  <small class="text-muted">
+                    <i class="bi bi-card-text me-1"></i>{{ persona?.dni || 'Sin DNI' }}
+                  </small>
+                </div>
+              </button>
+              
+              <!-- Mensaje cuando no hay resultados -->
+              <div *ngIf="personasFiltradas.length === 0" class="dropdown-item-text text-muted">
+                <i class="bi bi-search me-2"></i>No se encontraron personas
+              </div>
+            </div>
+          </div>
 
           <!-- Información de la persona como múltiples previews agrupados -->
           <div *ngIf="licencia.persona && licencia.persona.id !== 0" class="d-flex flex-wrap gap-2 mt-2">
@@ -96,23 +124,23 @@
             <!-- DNI -->
             <span class="badge bg-info text-dark fs-6">
               <i class="bi bi-person-vcard me-1"></i>
-              {{ licencia.persona.dni }}
+              {{ licencia.persona?.dni || 'Sin DNI' }}
             </span>
             
             <!-- CUIL -->
-            <span *ngIf="licencia.persona.cuil" class="badge bg-info text-dark fs-6">
+            <span *ngIf="licencia.persona?.cuil" class="badge bg-info text-dark fs-6">
               <i class="bi bi-person-vcard me-1"></i>
               {{ licencia.persona.cuil }}
             </span>
             
             <!-- Teléfono -->
-            <span *ngIf="licencia.persona.telefono" class="badge bg-info text-dark fs-6">
+            <span *ngIf="licencia.persona?.telefono" class="badge bg-info text-dark fs-6">
               <i class="bi bi-telephone me-1"></i>
               {{ licencia.persona.telefono }}
             </span>
             
             <!-- Título -->
-            <span *ngIf="licencia.persona.titulo" class="badge bg-info text-dark fs-6">
+            <span *ngIf="licencia.persona?.titulo" class="badge bg-info text-dark fs-6">
               <i class="bi bi-mortarboard me-1"></i>
               {{ licencia.persona.titulo }}
             </span>
@@ -121,10 +149,7 @@
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="
-                personaField.invalid &&
-                (personaField.dirty || personaField.touched)
-              "
+              *ngIf="(!licencia.persona || licencia.persona.id === 0) && (personaInput.invalid && personaInput.touched)"
             >
               Debe seleccionar un agente
             </small>
@@ -140,25 +165,54 @@
               (Solo lectura)
             </span>
           </label>
-          <select
-            class="form-select enhanced-select"
-            [ngClass]="{
-              'is-invalid':
-                articuloField.invalid &&
-                (articuloField.dirty || articuloField.touched)
-            }"
-            [(ngModel)]="licencia.articuloLicencia"
-            [compareWith]="compareArticulos"
-            name="articuloLicencia"
-            #articuloField="ngModel"
-            [disabled]="!isNew && isLicenciaOtorgada()"
-            required
-          >
-            <option [ngValue]="null">Seleccione un artículo</option>
-            <option *ngFor="let art of articulosLicencia" [ngValue]="art">
-              {{ art.articulo }} - {{ art.descripcion }}
-            </option>
-          </select>
+
+          <div class="position-relative">
+            <input
+              type="text"
+              class="form-control enhanced-input"
+              [ngClass]="{
+                'is-invalid': (!licencia.articuloLicencia || licencia.articuloLicencia.id === 0) && (articuloInput.invalid && articuloInput.touched)
+              }"
+              [value]="licencia.articuloLicencia && licencia.articuloLicencia.id !== 0 ? formatterArticulo(licencia.articuloLicencia) : ''"
+              name="articuloLicencia"
+              #articuloInput="ngModel"
+              [(ngModel)]="articuloInputValue"
+              placeholder="Buscar por artículo o descripción..."
+              (focus)="onArticuloFocus()"
+              (blur)="onArticuloBlur()"
+              (input)="onArticuloInput($event)"
+              [disabled]="!isNew && isLicenciaOtorgada()"
+              autocomplete="off"
+              required
+            />
+            
+            <!-- Dropdown con opciones para artículos -->
+            <div 
+              *ngIf="showArticuloDropdown && articulosFiltrados.length > 0 && (!isLicenciaOtorgada() || isNew)"
+              class="dropdown-menu show position-absolute w-100 mt-1"
+              style="max-height: 250px; overflow-y: auto; z-index: 1050;"
+            >
+              <button
+                *ngFor="let articulo of articulosFiltrados; let i = index"
+                type="button"
+                class="dropdown-item d-flex align-items-center py-2"
+                (click)="selectArticulo(articulo)"
+                [class.active]="licencia.articuloLicencia?.id === articulo.id"
+              >
+                <div class="flex-grow-1">
+                  <div class="fw-bold">Artículo {{ articulo.articulo }}</div>
+                  <small class="text-muted">
+                    <i class="bi bi-card-text me-1"></i>{{ articulo.descripcion }}
+                  </small>
+                </div>
+              </button>
+              
+              <!-- Mensaje cuando no hay resultados -->
+              <div *ngIf="articulosFiltrados.length === 0" class="dropdown-item-text text-muted">
+                <i class="bi bi-search me-2"></i>No se encontraron artículos
+              </div>
+            </div>
+          </div>
 
           <!-- Información del artículo como múltiples previews agrupados -->
           <div *ngIf="licencia.articuloLicencia && licencia.articuloLicencia.id !== 0" class="d-flex flex-wrap gap-2 mt-2">
@@ -178,10 +232,7 @@
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="
-                articuloField.invalid &&
-                (articuloField.dirty || articuloField.touched)
-              "
+              *ngIf="(!licencia.articuloLicencia || licencia.articuloLicencia.id === 0) && (articuloInput.invalid && articuloInput.touched)"
             >
               Debe seleccionar un artículo de licencia
             </small>
