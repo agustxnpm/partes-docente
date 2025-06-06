@@ -214,13 +214,7 @@
             required
           />
 
-          <!-- Preview de fecha de inicio -->
-          <div class="mt-2" *ngIf="designacion.fechaInicio">
-            <span class="badge bg-info fs-6">
-              <i class="bi bi-calendar-check me-1"></i>
-              {{ designacion.fechaInicio | date : "dd/MM/yyyy" }}
-            </span>
-          </div>
+        
 
           <div class="mt-1">
             <small
@@ -250,20 +244,7 @@
             (change)="onFechaFinChange()"
           />
 
-          <!-- Preview de fecha de fin -->
-          <div class="mt-2">
-            <span
-              class="badge bg-info text-dark fs-6"
-              *ngIf="designacion.fechaFin"
-            >
-              <i class="bi bi-calendar-x me-1"></i>
-              {{ designacion.fechaFin | date : "dd/MM/yyyy" }}
-            </span>
-            <span class="badge bg-success fs-6" *ngIf="!designacion.fechaFin">
-              <i class="bi bi-infinity me-1"></i>
-              Vigente
-            </span>
-          </div>
+     
 
           <div class="mt-1">
             <small class="text-muted">

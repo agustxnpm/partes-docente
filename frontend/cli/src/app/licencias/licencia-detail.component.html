@@ -215,13 +215,7 @@
             required
           />
 
-          <!-- Preview de fecha de inicio -->
-          <div class="mt-2" *ngIf="licencia.pedidoDesde">
-            <span class="badge bg-info text-dark fs-6">
-              <i class="bi bi-calendar-check me-1"></i>
-              {{ licencia.pedidoDesde | date: 'dd/MM/yyyy' }}
-            </span>
-          </div>
+         
 
           <div class="mt-1">
             <small
@@ -262,14 +256,6 @@
             (change)="onFechaFinChange()"
             required
           />
-
-          <!-- Preview de fecha de fin -->
-          <div class="mt-2" *ngIf="licencia.pedidoHasta">
-            <span class="badge bg-info text-dark fs-6">
-              <i class="bi bi-calendar-x me-1"></i>
-              {{ licencia.pedidoHasta | date: 'dd/MM/yyyy' }}
-            </span>
-          </div>
 
           <div class="mt-1">
             <small
