@@ -23,9 +23,13 @@
               type="text"
               class="form-control enhanced-input"
               [ngClass]="{
-                'is-invalid': (!designacion.persona && designacionForm.submitted) || (personaInput.invalid && personaInput.touched)
+                'is-invalid':
+                  (!designacion.persona && designacionForm.submitted) ||
+                  (personaInput.invalid && personaInput.touched)
               }"
-              [value]="designacion.persona ? formatterPersona(designacion.persona) : ''"
+              [value]="
+                designacion.persona ? formatterPersona(designacion.persona) : ''
+              "
               name="persona"
               #personaInput="ngModel"
               [(ngModel)]="personaInputValue"
@@ -36,12 +40,12 @@
               autocomplete="off"
               required
             />
-            
+
             <!-- Dropdown con opciones -->
-            <div 
+            <div
               *ngIf="showPersonaDropdown && personasFiltradas.length > 0"
               class="dropdown-menu show position-absolute w-100 mt-1"
-              style="max-height: 250px; overflow-y: auto; z-index: 1050;"
+              style="max-height: 250px; overflow-y: auto; z-index: 1050"
             >
               <button
                 *ngFor="let persona of personasFiltradas; let i = index"
@@ -51,15 +55,21 @@
                 [class.active]="designacion.persona?.id === persona.id"
               >
                 <div class="flex-grow-1">
-                  <div class="fw-bold">{{ persona.apellido }}, {{ persona.nombre }}</div>
+                  <div class="fw-bold">
+                    {{ persona.apellido }}, {{ persona.nombre }}
+                  </div>
                   <small class="text-muted">
-                    <i class="bi bi-card-text me-1"></i>{{ persona?.dni || 'Sin DNI' }}
+                    <i class="bi bi-card-text me-1"></i
+                    >{{ persona?.dni || "Sin DNI" }}
                   </small>
                 </div>
               </button>
-              
+
               <!-- Mensaje cuando no hay resultados -->
-              <div *ngIf="personasFiltradas.length === 0" class="dropdown-item-text text-muted">
+              <div
+                *ngIf="personasFiltradas.length === 0"
+                class="dropdown-item-text text-muted"
+              >
                 <i class="bi bi-search me-2"></i>No se encontraron personas
               </div>
             </div>
@@ -77,7 +87,7 @@
             </span>
             <span class="badge bg-info text-dark fs-6">
               <i class="bi bi-card-text me-1"></i>
-              {{ designacion.persona?.dni || 'Sin DNI' }}
+              {{ designacion.persona?.dni || "Sin DNI" }}
             </span>
             <span
               *ngIf="designacion.persona?.telefono"
@@ -98,7 +108,10 @@
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="(!designacion.persona && designacionForm.submitted) || (personaInput.invalid && personaInput.touched)"
+              *ngIf="
+                (!designacion.persona && designacionForm.submitted) ||
+                (personaInput.invalid && personaInput.touched)
+              "
             >
               Debe seleccionar una persona
             </small>
@@ -117,9 +130,13 @@
               type="text"
               class="form-control enhanced-input"
               [ngClass]="{
-                'is-invalid': (!designacion.cargo && designacionForm.submitted) || (cargoInput.invalid && cargoInput.touched)
+                'is-invalid':
+                  (!designacion.cargo && designacionForm.submitted) ||
+                  (cargoInput.invalid && cargoInput.touched)
               }"
-              [value]="designacion.cargo ? formatterCargo(designacion.cargo) : ''"
+              [value]="
+                designacion.cargo ? formatterCargo(designacion.cargo) : ''
+              "
               name="cargo"
               #cargoInput="ngModel"
               [(ngModel)]="cargoInputValue"
@@ -130,12 +147,12 @@
               autocomplete="off"
               required
             />
-            
+
             <!-- Dropdown con opciones -->
-            <div 
+            <div
               *ngIf="showCargoDropdown && cargosFiltrados.length > 0"
               class="dropdown-menu show position-absolute w-100 mt-1"
-              style="max-height: 250px; overflow-y: auto; z-index: 1050;"
+              style="max-height: 250px; overflow-y: auto; z-index: 1050"
             >
               <button
                 *ngFor="let cargo of cargosFiltrados; let i = index"
@@ -149,14 +166,20 @@
                   <small class="text-muted">
                     <span *ngIf="cargo.division">
                       <i class="bi bi-mortarboard ms-2 me-1"></i>
-                      {{ cargo.division?.anio }}° {{ cargo.division?.numDivision }}º ({{ cargo.division?.turno }})
+                      {{ cargo.division?.anio }}°
+                      {{ cargo.division?.numDivision }}º ({{
+                        cargo.division?.turno
+                      }})
                     </span>
                   </small>
                 </div>
               </button>
-              
+
               <!-- Mensaje cuando no hay resultados -->
-              <div *ngIf="cargosFiltrados.length === 0" class="dropdown-item-text text-muted">
+              <div
+                *ngIf="cargosFiltrados.length === 0"
+                class="dropdown-item-text text-muted"
+              >
                 <i class="bi bi-search me-2"></i>No se encontraron cargos
               </div>
             </div>
@@ -195,14 +218,17 @@
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="(!designacion.cargo && designacionForm.submitted) || (cargoInput.invalid && cargoInput.touched)"
+              *ngIf="
+                (!designacion.cargo && designacionForm.submitted) ||
+                (cargoInput.invalid && cargoInput.touched)
+              "
             >
               Debe seleccionar un cargo
             </small>
           </div>
         </div>
 
-       <!-- Situación de Revista -->
+        <!-- Situación de Revista -->
         <div class="col-md-4">
           <label for="situacionRevista" class="form-label required-field">
             <i class="bi bi-clipboard-check text-primary me-1"></i>
@@ -211,7 +237,9 @@
           <select
             class="form-select enhanced-select"
             [ngClass]="{
-              'is-invalid': (!designacion.situacionRevista && designacionForm.submitted) || (situacionInput.invalid && situacionInput.touched)
+              'is-invalid':
+                (!designacion.situacionRevista && designacionForm.submitted) ||
+                (situacionInput.invalid && situacionInput.touched)
             }"
             [(ngModel)]="designacion.situacionRevista"
             name="situacionRevista"
@@ -238,7 +266,10 @@
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="(!designacion.situacionRevista && designacionForm.submitted) || (situacionInput.invalid && situacionInput.touched)"
+              *ngIf="
+                (!designacion.situacionRevista && designacionForm.submitted) ||
+                (situacionInput.invalid && situacionInput.touched)
+              "
             >
               Debe seleccionar una situación
             </small>
@@ -255,7 +286,9 @@
             type="date"
             class="form-control enhanced-input"
             [ngClass]="{
-              'is-invalid': (!designacion.fechaInicio && designacionForm.submitted) || (fechaInicioInput.invalid && fechaInicioInput.touched)
+              'is-invalid':
+                (!designacion.fechaInicio && designacionForm.submitted) ||
+                (fechaInicioInput.invalid && fechaInicioInput.touched)
             }"
             [(ngModel)]="designacion.fechaInicio"
             name="fechaInicio"
@@ -268,16 +301,18 @@
           <div class="mt-1">
             <small
               class="error-message"
-              *ngIf="(!designacion.fechaInicio && designacionForm.submitted) || (fechaInicioInput.invalid && fechaInicioInput.touched)"
+              *ngIf="
+                (!designacion.fechaInicio && designacionForm.submitted) ||
+                (fechaInicioInput.invalid && fechaInicioInput.touched)
+              "
             >
               La fecha de inicio es obligatoria
             </small>
           </div>
         </div>
 
-
         <!-- Fecha de Fin (opcional) -->
-       <div class="col-md-4">
+        <div class="col-md-4">
           <label for="fechaFin" class="form-label">
             <i class="bi bi-calendar-x text-primary me-1"></i>
             Fecha de Fin
@@ -302,9 +337,6 @@
             </small>
           </div>
         </div>
-
-
-
       </div>
 
       <!-- Vista previa  -->
@@ -345,10 +377,8 @@
 
                     <div class="d-flex align-items-center mb-2">
                       <strong class="me-2 text-nowrap">DNI:</strong>
-                      <span class="badge bg-info">
-                        <i class="bi bi-person-vcard me-1"> </i>
-                         {{ designacion.persona.dni }}
-                      </span>
+                      <i class="bi bi-person-vcard me-1"> </i>
+                      {{ designacion.persona.dni }}
                     </div>
 
                     <div
@@ -385,42 +415,22 @@
 
                     <div class="d-flex align-items-center mb-2">
                       <strong class="me-2 text-nowrap">Cargo:</strong>
-                      <span class="badge bg-info text-white fw-bold">
-                        <i
-                          class="me-1"
-                          [ngClass]="{
-                            'bi bi-building-fill': isCargoInstitucional(),
-                            'bi bi-book-fill': !isCargoInstitucional()
-                          }"
-                        ></i>
-                        {{ designacion.cargo.nombre }}
-                      </span>
+
+                      {{ designacion.cargo.nombre }}
                     </div>
 
                     <div class="d-flex align-items-center mb-2">
                       <strong class="me-2 text-nowrap">Carga Horaria:</strong>
-                      <span class="badge bg-info text-dark">
-                        <i class="bi bi-clock-fill me-1"></i>
-                        {{ designacion.cargo.cargaHoraria }} hs semanales
-                      </span>
+                      {{ designacion.cargo.cargaHoraria }} hs semanales
                     </div>
 
                     <div class="d-flex align-items-center mb-2">
                       <strong class="me-2 text-nowrap">Tipo:</strong>
-                      <span class="badge bg-info text-white">
-                        <i
-                          class="me-1"
-                          [ngClass]="{
-                            'bi bi-building': isCargoInstitucional(),
-                            'bi bi-book': !isCargoInstitucional()
-                          }"
-                        ></i>
-                        {{
-                          isCargoInstitucional()
-                            ? "Cargo Institucional"
-                            : "Espacio Curricular"
-                        }}
-                      </span>
+                      {{
+                        isCargoInstitucional()
+                          ? "Cargo Institucional"
+                          : "Espacio Curricular"
+                      }}
                     </div>
 
                     <div

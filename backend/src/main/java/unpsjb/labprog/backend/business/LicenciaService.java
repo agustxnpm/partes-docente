@@ -102,6 +102,11 @@ public class LicenciaService {
 
     }
 
+    public List<Licencia> findLicenciasEnPeriodo(Cargo cargo, Persona persona, LocalDate fechaInicio,
+            LocalDate fechaFin) {
+        return licenciaRepository.findLicenciasEnPeriodo(cargo, persona, fechaInicio, fechaFin);
+    }
+
     public Page<Licencia> findByPage(int page, int size) {
         return licenciaRepository.findAll(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
@@ -121,9 +126,10 @@ public class LicenciaService {
         return licenciaRepository.findByEstado(estado);
     }
 
-    public List<Licencia> findByPersona (Persona persona) {
+    public List<Licencia> findByPersona(Persona persona) {
         return licenciaRepository.findByPersona(persona);
     }
+
     public List<Licencia> getAllLicencias() {
         return licenciaRepository.findAll();
     }

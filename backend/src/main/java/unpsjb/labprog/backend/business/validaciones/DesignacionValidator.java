@@ -11,10 +11,12 @@ import org.springframework.stereotype.Component;
 import unpsjb.labprog.backend.business.CargoService;
 import unpsjb.labprog.backend.business.DesignacionService;
 import unpsjb.labprog.backend.business.LicenciaRepository;
+import unpsjb.labprog.backend.business.LicenciaService;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Licencia;
+import unpsjb.labprog.backend.model.Persona;
 import unpsjb.labprog.backend.model.TipoDesignacion;
 
 @Component
@@ -29,7 +31,8 @@ public class DesignacionValidator {
     private DesignacionService designacionService;
 
     @Autowired
-    LicenciaRepository licenciaRepository;
+    @Lazy
+    LicenciaService licenciaService;
 
     public void validarDesignacion(Designacion designacion) {
 
@@ -105,17 +108,11 @@ public class DesignacionValidator {
             LocalDate fechaFinNueva = nuevaDesignacion.getFechaFin() != null ? nuevaDesignacion.getFechaFin()
                     : LocalDate.now().plusYears(100);
 
-            // Verificar si la persona de la designación existente tiene licencias
-            // que cubran COMPLETAMENTE el período de la nueva designación
-            List<Licencia> licenciasQueCubrenCompleto = licenciaRepository
-                    .findLicenciasQueCubrenPeriodoCompleto(
-                            nuevaDesignacion.getCargo(),
-                            existente.getPersona(),
-                            nuevaDesignacion.getFechaInicio(),
-                            fechaFinNueva);
-
-            if (licenciasQueCubrenCompleto.isEmpty()) {
-                // No hay licencia que cubra completamente el período, es un conflicto real
+            // Verificar si las licencias de la persona existente cubren COMPLETAMENTE
+            // el período de la nueva designación
+            if (!licenciasCubrenPeriodoCompleto(existente.getPersona(), nuevaDesignacion.getCargo(),
+                    nuevaDesignacion.getFechaInicio(), fechaFinNueva)) {
+                // No hay licencias que cubran completamente el período, es un conflicto real
                 String mensaje;
                 if (existente.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
                     mensaje = String.format(
@@ -141,7 +138,38 @@ public class DesignacionValidator {
                 throw new IllegalArgumentException(mensaje);
             }
         }
+    }
 
+    /**
+     * Verifica si las licencias de una persona cubren completamente un período dado
+     */
+    private boolean licenciasCubrenPeriodoCompleto(Persona persona, Cargo cargo,
+            LocalDate fechaInicio, LocalDate fechaFin) {
+        // Obtener todas las licencias válidas de la persona en el período
+        List<Licencia> licenciasEnPeriodo = licenciaService.findLicenciasEnPeriodo(
+                cargo, persona, fechaInicio, fechaFin);
 
+        if (licenciasEnPeriodo.isEmpty()) {
+            return false;
+        }
+
+        // Verificar si las licencias cubren todo el período día por día
+        LocalDate fechaActual = fechaInicio;
+
+        while (!fechaActual.isAfter(fechaFin)) {
+            final LocalDate fecha = fechaActual;
+
+            boolean diaCubierto = licenciasEnPeriodo.stream()
+                    .anyMatch(licencia -> !fecha.isBefore(licencia.getPedidoDesde()) &&
+                            !fecha.isAfter(licencia.getPedidoHasta()));
+
+            if (!diaCubierto) {
+                return false; // Encontramos un día no cubierto
+            }
+
+            fechaActual = fechaActual.plusDays(1);
+        }
+
+        return true; // Todos los días están cubiertos
     }
 }

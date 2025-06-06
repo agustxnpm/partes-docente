@@ -58,13 +58,32 @@ public interface LicenciaRepository extends JpaRepository<Licencia, Long> {
          * muy lejana).
          * Las licencias siempre tienen una fecha de fin (pedidoHasta).
          */
-        @Query("SELECT l FROM Licencia l JOIN l.designaciones d " +
-                        "WHERE d.cargo = :cargo " +
-                        "AND l.persona = :persona " +
+        @Query("SELECT DISTINCT l FROM Licencia l " +
+                        "WHERE l.persona = :persona " +
+                        "AND l.estado = 'VALIDA' " +
+                        "AND EXISTS (" +
+                        "    SELECT d FROM l.designaciones d " +
+                        "    WHERE d.cargo = :cargo" +
+                        ") " +
                         "AND l.pedidoDesde <= :fechaInicio " +
-                        "AND l.pedidoHasta >= :fechaFin " +
-                        "AND l.estado = 'VALIDA'")
+                        "AND l.pedidoHasta >= :fechaFin")
         List<Licencia> findLicenciasQueCubrenPeriodoCompleto(
+                        @Param("cargo") Cargo cargo,
+                        @Param("persona") Persona persona,
+                        @Param("fechaInicio") LocalDate fechaInicio,
+                        @Param("fechaFin") LocalDate fechaFin);
+
+        @Query("SELECT l FROM Licencia l " +
+                        "WHERE l.persona = :persona " +
+                        "AND l.estado = 'VALIDA' " +
+                        "AND EXISTS (" +
+                        "    SELECT d FROM l.designaciones d " +
+                        "    WHERE d.cargo = :cargo" +
+                        ") " +
+                        "AND l.pedidoHasta >= :fechaInicio " +
+                        "AND l.pedidoDesde <= :fechaFin " +
+                        "ORDER BY l.pedidoDesde")
+        List<Licencia> findLicenciasEnPeriodo(
                         @Param("cargo") Cargo cargo,
                         @Param("persona") Persona persona,
                         @Param("fechaInicio") LocalDate fechaInicio,
