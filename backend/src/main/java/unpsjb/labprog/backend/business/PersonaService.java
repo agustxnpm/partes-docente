@@ -11,12 +11,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.interfaces.IPersonaService;
+import unpsjb.labprog.backend.business.interfaces.IPersonaValidator;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
-import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Persona;
 
+/**
+ * Implementación del servicio de personas.
+ * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
+ * en lugar de implementaciones concretas.
+ */
 @Service
-public class PersonaService {
+public class PersonaService implements IPersonaService {
 
     @Autowired
     private PersonaRepository personaRepository;
@@ -24,8 +30,9 @@ public class PersonaService {
     @Autowired
     private MensajeBuilder mensajeBuilder;
 
+    // Aplicando DIP e ISP: Dependemos de la abstracción específica IPersonaValidator
     @Autowired
-    private Validator validator;
+    private IPersonaValidator personaValidator;
 
     public Page<Persona> findByPage(int page, int size) {
         return personaRepository.findAll(
@@ -40,13 +47,13 @@ public class PersonaService {
 
     @Transactional
     public Persona save(Persona persona) {
-        validator.validarPersona(persona);
+        personaValidator.validarPersona(persona);
         return personaRepository.save(persona);
     }
 
     @Transactional
     public Persona update(Persona personaActualizada) {
-        validator.validarPersona(personaActualizada);
+        personaValidator.validarPersona(personaActualizada);
         // Obtener la persona existente con todas sus designaciones
         Persona personaExistente = findById(personaActualizada.getId());
 
@@ -60,15 +67,13 @@ public class PersonaService {
         personaExistente.setDomicilio(personaActualizada.getDomicilio());
         personaExistente.setTelefono(personaActualizada.getTelefono());
 
-        // sin modificar las designaciones
-        // personaExistente.setDesignaciones(...)
 
         return personaRepository.save(personaExistente);
     }
 
     @Transactional
     public void delete(Persona persona) {
-        validator.validarBorradoPersona(persona);
+        personaValidator.validarBorradoPersona(persona);
         personaRepository.delete(persona);
     }
 

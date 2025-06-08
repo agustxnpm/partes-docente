@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.DesignacionService;
+import unpsjb.labprog.backend.business.interfaces.IDesignacionService;
 import unpsjb.labprog.backend.model.Designacion;
 
 @RestController
@@ -18,9 +18,8 @@ import unpsjb.labprog.backend.model.Designacion;
 public class DesignacionPresenter {
 
     @Autowired
-    private DesignacionService designacionService;
+    private IDesignacionService designacionService;
 
-   
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> designarCargo(@RequestBody Designacion designacion) {

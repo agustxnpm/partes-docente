@@ -7,6 +7,13 @@ import java.util.stream.Collectors;
 import unpsjb.labprog.backend.business.utilidades.ValidadorArticulo;
 import unpsjb.labprog.backend.model.Licencia;
 
+/**
+ * Validador para el artículo 23A de licencias.
+ * Este validador asegura que las licencias del artículo 23A cumplan con las restricciones
+ * de límite anual de días.
+ * Según la normativa, se permite un máximo de 30 días de licencia por año para este artículo.
+ * Si se supera este límite, se lanza una excepción IllegalArgumentException.
+ */
 @ValidadorArticulo(codigoArticulo = "23A")
 public class Articulo23AValidator implements ArticuloLicenciaValidator {
 

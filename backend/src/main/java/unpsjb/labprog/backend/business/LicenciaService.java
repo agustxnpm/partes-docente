@@ -10,8 +10,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.interfaces.IDesignacionService;
+import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.ILicenciaValidator;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
-import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.EstadoLicencia;
@@ -19,14 +21,19 @@ import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.LogLicencia;
 import unpsjb.labprog.backend.model.Persona;
 
+/**
+ * Implementación del servicio de licencias.
+ * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
+ * en lugar de implementaciones concretas.
+ */
 @Service
-public class LicenciaService {
+public class LicenciaService implements ILicenciaService {
 
     @Autowired
     private LicenciaRepository licenciaRepository;
 
     @Autowired
-    private DesignacionRepository designacionRepository;
+    private IDesignacionService designacionService;
 
     @Autowired
     private LogLicenciaService logLicenciaService;
@@ -34,8 +41,9 @@ public class LicenciaService {
     @Autowired
     private MensajeBuilder mensajeBuilder;
 
+    // Aplicando DIP e ISP: Dependemos de la abstracción específica ILicenciaValidator
     @Autowired
-    private Validator validator;
+    private ILicenciaValidator licenciaValidator;
 
     @Transactional
     public LogLicencia agregarLog(Licencia licencia, EstadoLicencia estado, String mensaje) {
@@ -49,7 +57,7 @@ public class LicenciaService {
 
         // Buscar todas las designaciones vigentes para la persona en el período de la
         // licencia
-        List<Designacion> designacionesVigentes = designacionRepository.findAllByPersonaAndPeriodoVigente(
+        List<Designacion> designacionesVigentes = designacionService.findAllByPersonaAndPeriodoVigente(
                 licencia.getPersona(),
                 licencia.getPedidoDesde(),
                 licencia.getPedidoHasta());
@@ -64,7 +72,7 @@ public class LicenciaService {
     private Licencia validarLicencia(Licencia licencia) {
 
         try {
-            validator.validarLicencia(licencia);
+            licenciaValidator.validarLicencia(licencia);
 
             licencia.setEstado(EstadoLicencia.VALIDA);
             licenciaRepository.save(licencia);
@@ -92,7 +100,7 @@ public class LicenciaService {
         licenciaExistente.setArticuloLicencia(licenciaActualizar.getArticuloLicencia());
 
         // Re-asociar designaciones si es necesario y validar
-        List<Designacion> designacionesVigentes = designacionRepository.findAllByPersonaAndPeriodoVigente(
+        List<Designacion> designacionesVigentes = designacionService.findAllByPersonaAndPeriodoVigente(
                 licenciaExistente.getPersona(), // Usar la persona de la licencia existente
                 licenciaExistente.getPedidoDesde(),
                 licenciaExistente.getPedidoHasta());
@@ -145,6 +153,10 @@ public class LicenciaService {
     public List<Licencia> findLicenciasQueCubrenPeriodoCompleto(Cargo cargo, Persona persona, LocalDate fechaInicio,
             LocalDate fechaFin) {
         return licenciaRepository.findLicenciasQueCubrenPeriodoCompleto(cargo, persona, fechaInicio, fechaFin);
+    }
+
+    public List<Licencia> findByPersonaAndYear(Persona persona, int year) {
+        return licenciaRepository.findByPersonaAndYear(persona, year);
     }
 
 }

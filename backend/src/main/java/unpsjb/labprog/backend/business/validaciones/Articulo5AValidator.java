@@ -7,6 +7,11 @@ import java.util.stream.Collectors;
 import unpsjb.labprog.backend.business.utilidades.ValidadorArticulo;
 import unpsjb.labprog.backend.model.Licencia;
 
+/**
+ * Validador para el artículo 5A de licencias.
+ * Este validador asegura que las licencias del artículo 5A cumplan con las restricciones
+ * de certificado médico y el límite anual de días.
+ */
 @ValidadorArticulo(codigoArticulo = "5A")
 public class Articulo5AValidator implements ArticuloLicenciaValidator {
 

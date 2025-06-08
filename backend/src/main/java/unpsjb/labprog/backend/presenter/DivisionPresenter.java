@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.DivisionService;
+import unpsjb.labprog.backend.business.interfaces.IDivisionService;
 import unpsjb.labprog.backend.model.Division;
 
 @RestController
@@ -19,7 +19,7 @@ import unpsjb.labprog.backend.model.Division;
 public class DivisionPresenter {
 
     @Autowired
-    private DivisionService divisionService;
+    private IDivisionService divisionService;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createDivision(@RequestBody Division division) {

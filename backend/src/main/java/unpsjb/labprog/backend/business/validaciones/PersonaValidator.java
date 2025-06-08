@@ -7,22 +7,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import unpsjb.labprog.backend.business.LicenciaService;
-import unpsjb.labprog.backend.business.PersonaService;
+import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.IPersonaService;
+import unpsjb.labprog.backend.business.interfaces.IPersonaValidator;
 import unpsjb.labprog.backend.model.EstadoLicencia;
 import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
 
+/**
+ * Validador para operaciones relacionadas con la entidad Persona.
+ * 
+ * Esta clase implementa el Principio de Inversión de Dependencias (DIP) del SOLID,
+ * dependiendo de abstracciones (interfaces) en lugar de clases concretas:
+ * - IPersonaService: Interface para operaciones de persona
+ * - ILicenciaService: Interface para operaciones de licencia
+ * 
+ * Esto mejora la testabilidad, flexibilidad y mantenibilidad del código.
+ * 
+ */
 @Component
-public class PersonaValidator {
+public class PersonaValidator implements IPersonaValidator {
 
+    /**
+     * Servicio de persona inyectado mediante interfaz (DIP).
+     * Se usa @Lazy para evitar dependencias circulares.
+     */
     @Autowired
     @Lazy
-    private PersonaService personaService;
+    private IPersonaService personaService;
 
+    /**
+     * Servicio de licencia inyectado mediante interfaz (DIP).
+     * Se usa @Lazy para evitar dependencias circulares.
+     */
     @Autowired
     @Lazy
-    private LicenciaService licenciaService;
+    private ILicenciaService licenciaService;
 
     public void validarPersona(Persona persona) {
         if (persona.getDni() <= 0)
@@ -52,7 +72,7 @@ public class PersonaValidator {
         }
     }
 
-    public void validarBorrado(Persona persona) {
+    public void validarBorradoPersona(Persona persona) {
         if (persona.getDesignaciones() != null && !persona.getDesignaciones().isEmpty()) {
             throw new IllegalArgumentException(
                     "No se puede eliminar a " + persona.getNombre() + " " + persona.getApellido()

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.LicenciaService;
-import unpsjb.labprog.backend.business.LogLicenciaService;
+import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.ILogLicenciaService;
 import unpsjb.labprog.backend.model.EstadoLicencia;
 import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.LogLicencia;
@@ -25,24 +25,16 @@ import unpsjb.labprog.backend.model.LogLicencia;
 public class LicenciasPresenter {
 
     @Autowired
-    private LicenciaService licenciaService;
+    private ILicenciaService licenciaService;
 
     @Autowired
-    private LogLicenciaService logLicenciaService;
+    private ILogLicenciaService logLicenciaService;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createLicencia(@RequestBody Licencia licencia) {
         try {
             Licencia licenciaGuardada = licenciaService.createLicencia(licencia);
-
-            if (licenciaGuardada.getEstado() == EstadoLicencia.VALIDA) {
-                return Response.ok(licenciaGuardada,
-                        logLicenciaService.obtenerUltimoLog(licenciaGuardada).getMensaje());
-            } else {
-                return Response.internalServerError(licenciaGuardada,
-                        logLicenciaService.obtenerUltimoLog(licenciaGuardada).getMensaje());
-            }
-
+            return buildLicenciaResponse(licenciaGuardada);
         } catch (Exception e) {
             return Response.internalServerError(licencia, "Error al procesar la licencia: " + e.getMessage());
         }
@@ -52,17 +44,23 @@ public class LicenciasPresenter {
     public ResponseEntity<Object> updateLicencia(@PathVariable("id") Long id, @RequestBody Licencia licencia) {
         try {
             Licencia licenciaActualizada = licenciaService.updateLicencia(id, licencia);
-
-            if (licenciaActualizada.getEstado() == EstadoLicencia.VALIDA) {
-                return Response.ok(licenciaActualizada,
-                        logLicenciaService.obtenerUltimoLog(licenciaActualizada).getMensaje());
-            } else {
-                return Response.internalServerError(licenciaActualizada,
-                        logLicenciaService.obtenerUltimoLog(licenciaActualizada).getMensaje());
-            }
-
+            return buildLicenciaResponse(licenciaActualizada);
         } catch (Exception e) {
             return Response.internalServerError(licencia, "Error al procesar la licencia: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Construye la respuesta HTTP basada en el estado de la licencia.
+     * Aplica el principio SRP (Single Responsibility Principle).
+     */
+    private ResponseEntity<Object> buildLicenciaResponse(Licencia licencia) {
+        if (licencia.getEstado() == EstadoLicencia.VALIDA) {
+            return Response.ok(licencia,
+                    logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
+        } else {
+            return Response.internalServerError(licencia,
+                    logLicenciaService.obtenerUltimoLog(licencia).getMensaje());
         }
     }
 

@@ -5,20 +5,39 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import unpsjb.labprog.backend.business.CargoService;
-import unpsjb.labprog.backend.business.DivisionService;
+import unpsjb.labprog.backend.business.interfaces.ICargoService;
+import unpsjb.labprog.backend.business.interfaces.IDivisionService;
+import unpsjb.labprog.backend.business.interfaces.IDivisionValidator;
 import unpsjb.labprog.backend.model.Division;
 
+/**
+ * Validador para operaciones relacionadas con la entidad División.
+ * 
+ * Esta clase implementa el Principio de Inversión de Dependencias (DIP) del SOLID,
+ * dependiendo de abstracciones (interfaces) en lugar de clases concretas:
+ * - ICargoService: Interface para operaciones de cargo
+ * - IDivisionService: Interface para operaciones de división
+ * 
+ * 
+ */
 @Component
-public class DivisionValidator {
+public class DivisionValidator implements IDivisionValidator {
 
+    /**
+     * Servicio de cargo inyectado mediante interfaz (DIP).
+     * Se usa @Lazy para evitar dependencias circulares.
+     */
     @Autowired
     @Lazy
-    private CargoService cargoService;
+    private ICargoService cargoService;
 
+    /**
+     * Servicio de división inyectado mediante interfaz (DIP).
+     * Se usa @Lazy para evitar dependencias circulares.
+     */
     @Autowired
     @Lazy
-    private DivisionService divisionService;
+    private IDivisionService divisionService;
 
     public void validarDivision(Division division) {
 
@@ -42,7 +61,7 @@ public class DivisionValidator {
                     + division.getNumDivision() + "º");
     }
 
-    public void validarBorrado(Division division) {
+    public void validarBorradoDivision(Division division) {
         // Verificar si hay cargos asociados a esta división
         boolean tieneCargos = cargoService.existsByDivisionId(division.getId());
 

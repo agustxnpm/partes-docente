@@ -6,15 +6,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import unpsjb.labprog.backend.business.HorarioService;
+import unpsjb.labprog.backend.business.interfaces.IHorarioService;
+import unpsjb.labprog.backend.business.interfaces.IHorarioValidator;
 import unpsjb.labprog.backend.model.Horario;
 
+/**
+ * Validador para operaciones relacionadas con la entidad Horario.
+ * 
+ * Esta clase implementa el Principio de Inversión de Dependencias (DIP) del SOLID,
+ * dependiendo de abstracciones (interfaces) en lugar de clases concretas:
+ * - IHorarioService: Interface para operaciones de horario
+ * 
+ */
 @Component
-public class HorarioValidator {
+public class HorarioValidator implements IHorarioValidator {
 
     @Autowired
     @Lazy
-    private HorarioService horarioService;
+    private IHorarioService horarioService;
 
     private static final Set<String> DIAS_SEMANA_VALIDOS = Set.of(
             "Lunes", "Martes", "Miércoles", "Jueves", "Viernes");
@@ -49,7 +58,7 @@ public class HorarioValidator {
         }
     }
 
-    public void validarBorrado(Horario horario) {
+    public void validarBorradoHorario(Horario horario) {
         if (horario == null || horario.getId() == 0) {
             throw new IllegalArgumentException("El horario a validar para borrado no puede ser nulo o no tener ID.");
         }

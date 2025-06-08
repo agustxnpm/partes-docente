@@ -10,6 +10,11 @@ import java.util.Map;
 
 import unpsjb.labprog.backend.business.validaciones.ArticuloLicenciaValidator;
 
+/**
+ * Registro de validadores de artículos.
+ * Utiliza el patrón Registry para almacenar y recuperar validadores
+ * basados en la anotación @ValidadorArticulo.
+ */
 @Component
 public class ValidadorArticuloRegistry {
     private final Map<String, ArticuloLicenciaValidator> validadores = new HashMap<>();

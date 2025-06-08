@@ -6,12 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.interfaces.IHorarioService;
+import unpsjb.labprog.backend.business.interfaces.IHorarioValidator;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
-import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Horario;
 
+/**
+ * Implementación del servicio de horarios.
+ * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
+ * en lugar de implementaciones concretas.
+ */
 @Service
-public class HorarioService {
+public class HorarioService implements IHorarioService {
 
     @Autowired
     private HorarioRepository horarioRepository;
@@ -19,18 +25,19 @@ public class HorarioService {
     @Autowired
     private MensajeBuilder mensajeBuilder;
 
+    // Aplicando DIP e ISP: Dependemos de la abstracción específica IHorarioValidator
     @Autowired
-    private Validator validator;
+    private IHorarioValidator horarioValidator;
 
     @Transactional
     public Horario save(Horario horario) {
-        validator.validarHorario(horario);
+        horarioValidator.validarHorario(horario);
         return horarioRepository.save(horario);
     }
 
     @Transactional
     public void delete(Horario horario) {
-        validator.validarBorradoHorario(horario);
+        horarioValidator.validarBorradoHorario(horario);
         horarioRepository.delete(horario);
     }
 

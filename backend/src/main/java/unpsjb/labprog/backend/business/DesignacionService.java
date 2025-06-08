@@ -4,21 +4,29 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.interfaces.IDesignacionService;
+import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.IDesignacionValidator;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
-import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
 
+/**
+ * Implementación del servicio de designaciones.
+ * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
+ * en lugar de implementaciones concretas.
+ */
 @Service
-public class DesignacionService {
+public class DesignacionService implements IDesignacionService {
 
     @Autowired
     private DesignacionRepository designacionRepository;
@@ -26,15 +34,19 @@ public class DesignacionService {
     @Autowired
     private MensajeBuilder mensajeBuilder;
 
+    // Aplicando DIP e ISP: Dependemos de la abstracción específica IDesignacionValidator
     @Autowired
-    private Validator validator;
+    @Lazy
+    private IDesignacionValidator designacionValidator;
 
+    // Aplicando DIP: Dependemos de la abstracción ILicenciaService, no de la implementación concreta
     @Autowired
-    private LicenciaService licenciaService;
+    @Lazy
+    private ILicenciaService licenciaService;
 
     @Transactional
     public Designacion save(Designacion designacion) {
-        validator.validarDesignacion(designacion);
+        designacionValidator.validarDesignacion(designacion);
         return designacionRepository.save(designacion);
 
     }
@@ -163,6 +175,11 @@ public class DesignacionService {
         }
 
         return true; // Todos los días están cubiertos
+    }
+
+    public List<Designacion> findAllByPersonaAndPeriodoVigente(Persona persona, LocalDate pedidoDesde,
+            LocalDate pedidoHasta) {
+        return designacionRepository.findAllByPersonaAndPeriodoVigente(persona, pedidoDesde, pedidoHasta);
     }
 
 }

@@ -10,12 +10,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.interfaces.IDivisionService;
+import unpsjb.labprog.backend.business.interfaces.IDivisionValidator;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
-import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Division;
 
+/**
+ * Implementación del servicio de divisiones.
+ * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
+ * en lugar de implementaciones concretas.
+ */
 @Service
-public class DivisionService {
+public class DivisionService implements IDivisionService {
 
     @Autowired
     private DivisionRepository divisionRepository;
@@ -23,18 +29,19 @@ public class DivisionService {
     @Autowired
     private MensajeBuilder mensajeBuilder;
 
+    // Aplicando DIP e ISP: Dependemos de la abstracción específica IDivisionValidator
     @Autowired
-    private Validator validator;
+    private IDivisionValidator divisionValidator;
 
     @Transactional
     public Division save(Division division) {
-        validator.validarDivision(division);
+        divisionValidator.validarDivision(division);
         return divisionRepository.save(division);
     }
 
     @Transactional
     public void delete(Division division) {
-        validator.validarBorradoDivision(division);
+        divisionValidator.validarBorradoDivision(division);
         divisionRepository.delete(division);
     }
 

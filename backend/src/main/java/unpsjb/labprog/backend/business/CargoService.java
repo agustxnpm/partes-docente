@@ -11,13 +11,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import unpsjb.labprog.backend.business.interfaces.ICargoService;
+import unpsjb.labprog.backend.business.interfaces.ICargoValidator;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
-import unpsjb.labprog.backend.business.validaciones.Validator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Division;
 
+/**
+ * Implementación del servicio de cargos.
+ * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
+ * en lugar de implementaciones concretas.
+ */
 @Service
-public class CargoService {
+public class CargoService implements ICargoService {
 
     @Autowired
     private CargoRepository cargoRepository;
@@ -25,8 +31,9 @@ public class CargoService {
     @Autowired
     private MensajeBuilder mensajeBuilder;
 
+    // Aplicando DIP e ISP: Dependemos de la abstracción específica ICargoValidator
     @Autowired
-    private Validator validator;
+    private ICargoValidator cargoValidator;
 
     @Transactional
     public Cargo save(Cargo cargo) {
@@ -49,11 +56,11 @@ public class CargoService {
                 cargoExistente.getHorario().addAll(cargo.getHorario());
             }
 
-            validator.validarCargo(cargoExistente);
+            cargoValidator.validarCargo(cargoExistente);
             return cargoRepository.save(cargoExistente);
         } else {
             // Es una creación nueva
-            validator.validarCargo(cargo);
+            cargoValidator.validarCargo(cargo);
             return cargoRepository.save(cargo);
         }
     }

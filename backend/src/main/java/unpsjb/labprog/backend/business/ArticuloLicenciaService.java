@@ -5,11 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import unpsjb.labprog.backend.business.interfaces.IArticuloLicenciaService;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
 import unpsjb.labprog.backend.model.ArticuloLicencia;
 
 @Service
-public class ArticuloLicenciaService {
+public class ArticuloLicenciaService implements IArticuloLicenciaService {
 
     @Autowired
     private ArticuloLicenciaRepository articuloLicenciaRepository;

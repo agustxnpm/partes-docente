@@ -1,11 +1,13 @@
 package unpsjb.labprog.backend.business.validaciones;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
-import unpsjb.labprog.backend.business.LicenciaRepository;
-import unpsjb.labprog.backend.business.PersonaRepository;
+import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.ILicenciaValidator;
+import unpsjb.labprog.backend.business.interfaces.IPersonaService;
 import unpsjb.labprog.backend.business.utilidades.ValidadorArticuloRegistry;
 import unpsjb.labprog.backend.business.validaciones.LicenciaValidator;
 
@@ -13,19 +15,27 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Validador de licencias.
+ * Implementa el Principio de Responsabilidad Única (SRP) de SOLID,
+ * validando únicamente las reglas de negocio relacionadas con las licencias.
+ * 
+ * Utiliza el patrón Registry para manejar validadores específicos de artículos.
+ */
 @Component
-public class LicenciaValidator {
+public class LicenciaValidator implements ILicenciaValidator {
 
     @Autowired
-    private LicenciaRepository licenciaRepository; // Para buscar licencias existentes
+    @Lazy
+    private ILicenciaService licenciaService; // Para buscar licencias existentes
 
     @Autowired
-    private PersonaRepository personaRepository; // Para cargar la persona completa
+    private IPersonaService personaService; // Para cargar la persona completa
 
     @Autowired
     private ValidadorArticuloRegistry validadorRegistry;
 
-    public void validateLicencia(Licencia licencia) throws IllegalArgumentException {
+    public void validarLicencia(Licencia licencia) throws IllegalArgumentException {
 
         // Validaciones básicas y generales
         if (licencia == null) {
@@ -45,8 +55,11 @@ public class LicenciaValidator {
             throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.");
         }
         // Cargar la persona completa desde la BD para verificar designaciones
-        Persona personaCompleta = personaRepository.findById(licencia.getPersona().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Persona no encontrada"));
+        Persona personaCompleta = personaService.findById(licencia.getPersona().getId());
+
+        if (personaCompleta == null) {
+            throw new IllegalArgumentException("Persona no encontrada");
+        }
 
         // Verificar si la persona tiene algún cargo en la institución
         if (personaCompleta.getDesignaciones() == null || personaCompleta.getDesignaciones().isEmpty()) {
@@ -66,7 +79,7 @@ public class LicenciaValidator {
         validarDesignacionesActivasParaLicencia(licencia);
 
         // Obtener licencias existentes para la persona en el año de la solicitud
-        List<Licencia> licenciasExistentesAnioPersona = licenciaRepository.findByPersonaAndYear(
+        List<Licencia> licenciasExistentesAnioPersona = licenciaService.findByPersonaAndYear(
                 licencia.getPersona(),
                 licencia.getPedidoDesde().getYear());
 

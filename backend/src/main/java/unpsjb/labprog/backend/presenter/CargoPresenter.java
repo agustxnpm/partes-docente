@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.CargoService;
+import unpsjb.labprog.backend.business.interfaces.ICargoService;
 import unpsjb.labprog.backend.model.Cargo;
 
 @RestController
@@ -22,7 +21,7 @@ import unpsjb.labprog.backend.model.Cargo;
 public class CargoPresenter {
 
     @Autowired
-    private CargoService cargoService;
+    private ICargoService cargoService;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createCargo(@RequestBody Cargo cargo) {

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.HorarioService;
+import unpsjb.labprog.backend.business.interfaces.IHorarioService;
 import unpsjb.labprog.backend.model.Horario;
 
 @RestController
@@ -18,7 +18,7 @@ import unpsjb.labprog.backend.model.Horario;
 public class HorarioPresenter {
 
     @Autowired
-    private HorarioService horarioService;
+    private IHorarioService horarioService;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createHorario(@RequestBody Horario horario) {

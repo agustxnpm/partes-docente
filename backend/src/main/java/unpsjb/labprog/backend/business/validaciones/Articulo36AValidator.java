@@ -7,6 +7,13 @@ import java.util.stream.Collectors;
 import unpsjb.labprog.backend.business.utilidades.ValidadorArticulo;
 import unpsjb.labprog.backend.model.Licencia;
 
+/**
+ * Validador para el artículo 36A de licencias.
+ * Este validador asegura que las licencias del artículo 36A cumplan con las restricciones
+ * de límite mensual y anual de días.
+ * Según la normativa, se permite un máximo de 2 días por mes y 6 días por año para este artículo.
+ * Si se superan estos límites, se lanza una excepción IllegalArgumentException.
+ */
 @ValidadorArticulo(codigoArticulo = "36A")
 public class Articulo36AValidator implements ArticuloLicenciaValidator {
 

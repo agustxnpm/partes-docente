@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import unpsjb.labprog.backend.business.CargoService;
-import unpsjb.labprog.backend.business.DesignacionService;
-import unpsjb.labprog.backend.business.LicenciaRepository;
-import unpsjb.labprog.backend.business.LicenciaService;
+import unpsjb.labprog.backend.business.interfaces.ICargoService;
+import unpsjb.labprog.backend.business.interfaces.IDesignacionService;
+import unpsjb.labprog.backend.business.interfaces.IDesignacionValidator;
+import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;
@@ -19,20 +19,38 @@ import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
 import unpsjb.labprog.backend.model.TipoDesignacion;
 
+/**
+ * Validador para operaciones relacionadas con la entidad Designación.
+ * 
+ * Esta clase implementa el Principio de Inversión de Dependencias (DIP) de SOLID,
+ * dependiendo de abstracciones (interfaces) en lugar de clases concretas:
+ * - ICargoService: Interface para operaciones de cargo
+ * - IDesignacionService: Interface para operaciones de designación
+ * 
+ * 
+ * 
+ */
 @Component
-public class DesignacionValidator {
+public class DesignacionValidator implements IDesignacionValidator {
 
+    /**
+     * Servicio de cargo inyectado mediante interfaz (DIP).
+     * Se usa @Lazy para evitar dependencias circulares.
+     */
     @Autowired
     @Lazy
-    private CargoService cargoService;
+    private ICargoService cargoService;
 
+    /**
+     * Servicio de designación inyectado mediante interfaz (DIP).
+     * Se usa @Lazy para evitar dependencias circulares.
+     */
     @Autowired
     @Lazy
-    private DesignacionService designacionService;
+    private IDesignacionService designacionService;
 
     @Autowired
-    @Lazy
-    LicenciaService licenciaService;
+    private ILicenciaService licenciaService;
 
     public void validarDesignacion(Designacion designacion) {
 
@@ -108,11 +126,17 @@ public class DesignacionValidator {
             LocalDate fechaFinNueva = nuevaDesignacion.getFechaFin() != null ? nuevaDesignacion.getFechaFin()
                     : LocalDate.now().plusYears(100);
 
-            // Verificar si las licencias de la persona existente cubren COMPLETAMENTE
-            // el período de la nueva designación
-            if (!licenciasCubrenPeriodoCompleto(existente.getPersona(), nuevaDesignacion.getCargo(),
-                    nuevaDesignacion.getFechaInicio(), fechaFinNueva)) {
-                // No hay licencias que cubran completamente el período, es un conflicto real
+            // Verificar si la persona de la designación existente tiene licencias
+            // que cubran COMPLETAMENTE el período de la nueva designación
+            List<Licencia> licenciasQueCubrenCompleto = licenciaService
+                    .findLicenciasQueCubrenPeriodoCompleto(
+                            nuevaDesignacion.getCargo(),
+                            existente.getPersona(),
+                            nuevaDesignacion.getFechaInicio(),
+                            fechaFinNueva);
+
+            if (licenciasQueCubrenCompleto.isEmpty()) {
+                // No hay licencia que cubra completamente el período, es un conflicto real
                 String mensaje;
                 if (existente.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
                     mensaje = String.format(

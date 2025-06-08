@@ -13,7 +13,7 @@ import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Turno;
 
 @Repository
-public interface CargoRepository extends JpaRepository<Cargo, Long> {
+public interface  CargoRepository extends JpaRepository<Cargo, Long> {
 
     Optional<Cargo> findByNombre(String nombre);
 

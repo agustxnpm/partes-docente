@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.ArticuloLicenciaService;
+import unpsjb.labprog.backend.business.interfaces.IArticuloLicenciaService;
 import unpsjb.labprog.backend.model.ArticuloLicencia;
 
 @RestController
@@ -16,7 +16,7 @@ import unpsjb.labprog.backend.model.ArticuloLicencia;
 public class ArticuloLicenciaPresenter {
 
     @Autowired
-    private ArticuloLicenciaService articuloLicenciaService;
+    private IArticuloLicenciaService articuloLicenciaService;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Object> listarArticulosLicencias() {
