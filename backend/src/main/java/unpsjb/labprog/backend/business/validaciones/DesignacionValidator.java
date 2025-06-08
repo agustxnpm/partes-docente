@@ -126,17 +126,11 @@ public class DesignacionValidator implements IDesignacionValidator {
             LocalDate fechaFinNueva = nuevaDesignacion.getFechaFin() != null ? nuevaDesignacion.getFechaFin()
                     : LocalDate.now().plusYears(100);
 
-            // Verificar si la persona de la designación existente tiene licencias
-            // que cubran COMPLETAMENTE el período de la nueva designación
-            List<Licencia> licenciasQueCubrenCompleto = licenciaService
-                    .findLicenciasQueCubrenPeriodoCompleto(
-                            nuevaDesignacion.getCargo(),
-                            existente.getPersona(),
-                            nuevaDesignacion.getFechaInicio(),
-                            fechaFinNueva);
-
-            if (licenciasQueCubrenCompleto.isEmpty()) {
-                // No hay licencia que cubra completamente el período, es un conflicto real
+            // Verificar si las licencias de la persona existente cubren COMPLETAMENTE
+            // el período de la nueva designación
+            if (!licenciasCubrenPeriodoCompleto(existente.getPersona(), nuevaDesignacion.getCargo(),
+                    nuevaDesignacion.getFechaInicio(), fechaFinNueva)) {
+                // No hay licencias que cubran completamente el período, es un conflicto real
                 String mensaje;
                 if (existente.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO) {
                     mensaje = String.format(
@@ -163,6 +157,7 @@ public class DesignacionValidator implements IDesignacionValidator {
             }
         }
     }
+
 
     /**
      * Verifica si las licencias de una persona cubren completamente un período dado
@@ -196,4 +191,5 @@ public class DesignacionValidator implements IDesignacionValidator {
 
         return true; // Todos los días están cubiertos
     }
+
 }

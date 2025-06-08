@@ -143,6 +143,7 @@ public class DesignacionService implements IDesignacionService {
         return null; // No se encontró persona reemplazada
     }
 
+
     /**
      * Verifica si las licencias de una persona cubren completamente un período dado
      * (Mismo método que está en DesignacionValidator)
@@ -176,6 +177,7 @@ public class DesignacionService implements IDesignacionService {
 
         return true; // Todos los días están cubiertos
     }
+
 
     public List<Designacion> findAllByPersonaAndPeriodoVigente(Persona persona, LocalDate pedidoDesde,
             LocalDate pedidoHasta) {
