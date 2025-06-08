@@ -1,7 +1,7 @@
 package unpsjb.labprog.backend.model;
 /* clase para guardar los mensajes que devuelve cada otorgamiento de licencia */
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,7 +30,7 @@ public class LogLicencia {
     @JsonIgnore
     private Licencia licencia;
 
-    private LocalDate FechaLog;
+    private LocalDateTime FechaLog;
 
     private String mensaje;
 }

@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.business;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class LogLicenciaService implements ILogLicenciaService {
         LogLicencia log = new LogLicencia();
         log.setLicencia(licencia);
         log.setMensaje(mensaje);
-        log.setFechaLog(LocalDate.now());
+        log.setFechaLog(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
         
         return logLicenciaRepository.save(log);
     }
