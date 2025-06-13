@@ -159,4 +159,8 @@ public class LicenciaService implements ILicenciaService {
         return licenciaRepository.findByPersonaAndYear(persona, year);
     }
 
+    public List<Licencia> findLicenciasActivasEnFecha(LocalDate fecha) {
+        return licenciaRepository.findLicenciasActivasEnFecha(fecha);
+    }
+
 }

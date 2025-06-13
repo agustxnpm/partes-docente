@@ -95,4 +95,13 @@ public interface LicenciaRepository extends JpaRepository<Licencia, Long> {
         @Query("SELECT l FROM Licencia l WHERE l.persona = :persona")
         List<Licencia> findByPersona(@Param("persona") Persona persona);
 
+        /**
+         * Busca todas las licencias VÁLIDAS activas en una fecha específica
+         */
+        @Query("SELECT l FROM Licencia l WHERE l.estado = 'VALIDA' " +
+                        "AND l.pedidoDesde <= :fecha " +
+                        "AND l.pedidoHasta >= :fecha " +
+                        "ORDER BY l.persona.apellido, l.persona.nombre")
+        List<Licencia> findLicenciasActivasEnFecha(@Param("fecha") LocalDate fecha);
+
 }

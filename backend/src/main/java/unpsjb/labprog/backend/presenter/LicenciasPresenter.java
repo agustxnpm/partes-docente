@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
 import unpsjb.labprog.backend.business.interfaces.ILogLicenciaService;
+import unpsjb.labprog.backend.business.interfaces.IParteDiarioService;
+import unpsjb.labprog.backend.dto.ParteDiarioDTO;
 import unpsjb.labprog.backend.model.EstadoLicencia;
 import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.LogLicencia;
@@ -29,6 +33,9 @@ public class LicenciasPresenter {
 
     @Autowired
     private ILogLicenciaService logLicenciaService;
+
+    @Autowired
+    private IParteDiarioService parteDiarioService;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createLicencia(@RequestBody Licencia licencia) {
@@ -122,6 +129,29 @@ public class LicenciasPresenter {
         } catch (IllegalArgumentException e) {
             return Response.notFound("Licencia con ID " + id + " no encontrada.");
         }
+    }
+
+    @RequestMapping(value = "/parte-diario/{fecha}", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerParteDiario(
+            @PathVariable("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        try {            
+            return Response.ok(new ParteDiarioResponse(parteDiarioService.generarParteDiario(fecha)));
+        } catch (Exception e) {
+            return Response.internalServerError(null, "Error al generar parte diario: " + e.getMessage());
+        }
+    }
+
+    // Clase wrapper para la respuesta del parte diario
+    // Crear la estructura de respuesta que espera el test
+    // El test espera { "ParteDiario": { "Fecha": "...", "Docentes": [...] } }
+    private static class ParteDiarioResponse {
+        @JsonProperty("ParteDiario")
+        private final ParteDiarioDTO parteDiario;
+        
+        public ParteDiarioResponse(ParteDiarioDTO parteDiario) {
+            this.parteDiario = parteDiario;
+        }
+        
     }
 
 }

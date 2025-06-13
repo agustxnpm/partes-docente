@@ -91,4 +91,9 @@ public interface ILicenciaService {
             LocalDate fechaInicio,
             LocalDate fechaFin);
 
+    /**
+     * Obtiene todas las licencias activas para una fecha específica
+     */
+    List<Licencia> findLicenciasActivasEnFecha(LocalDate fecha);
+
 }
