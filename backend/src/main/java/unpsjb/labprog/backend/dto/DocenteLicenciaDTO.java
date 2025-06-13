@@ -24,10 +24,10 @@ public class DocenteLicenciaDTO {
     @JsonProperty("Apellido")
     private String apellido;
     
-    @JsonProperty("Artículo")
+    @JsonProperty("Articulo")
     private String articulo;
     
-    @JsonProperty("Descripción")
+    @JsonProperty("Descripcion")
     private String descripcion;
     
     @JsonProperty("Desde")

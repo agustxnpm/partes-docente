@@ -10,6 +10,7 @@ import { DesignacionesComponent } from "./designaciones/designaciones.component"
 import { DesignacionesDetailComponent } from "./designaciones/designaciones-detail.component";
 import { LicenciaComponent } from "./licencias/licencia.component";
 import { LicenciaDetailComponent } from "./licencias/licencia-detail.component";
+import { ParteDiarioComponent } from "./licencias/parte-diario.component";
 
 export const routes: Routes = [
   { path: "personas", component: PersonaComponent }, // Ruta para listar personas
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: "designaciones", component: DesignacionesComponent }, // Ruta para listar designaciones
   { path: "designaciones/:id", component: DesignacionesDetailComponent }, // Ruta para crear o editar designación
   { path: "licencias", component: LicenciaComponent},
+  { path: "licencias/parte-diario", component: ParteDiarioComponent},
   { path: "licencias/:id", component: LicenciaDetailComponent},
   { path: "", redirectTo: "/home", pathMatch: "full" }, // Redirigir a la ruta de inicio
 ];

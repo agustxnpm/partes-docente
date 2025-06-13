@@ -99,9 +99,9 @@ Then("el sistema responde", function (docString) {
       `Nombre incorrecto para DNI ${expectedDocente.DNI}`);
     assert.equal(actualDocente.Apellido, expectedDocente.Apellido,
       `Apellido incorrecto para DNI ${expectedDocente.DNI}`);
-    assert.equal(actualDocente.Artículo, expectedDocente.Artículo,
+    assert.equal(actualDocente.Articulo, expectedDocente.Artículo,
       `Artículo incorrecto para DNI ${expectedDocente.DNI}`);
-    assert.equal(actualDocente.Descripción, expectedDocente.Descripción,
+    assert.equal(actualDocente.Descripcion, expectedDocente.Descripción,
       `Descripción incorrecta para DNI ${expectedDocente.DNI}`);
     assert.equal(actualDocente.Desde, expectedDocente.Desde,
       `Fecha desde incorrecta para DNI ${expectedDocente.DNI}`);

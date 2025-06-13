@@ -1,0 +1,169 @@
+<div class="container mt-5">
+  <div class="bg-white border border-2 border-dark-subtle rounded shadow-sm p-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-calendar-check text-dark fs-3 me-2"></i>
+        <h3 class="m-0">Parte Diario de Licencias</h3>
+      </div>
+      <button 
+        class="btn btn-outline-secondary"
+        (click)="limpiarConsulta()"
+        title="Limpiar consulta">
+        <i class="bi bi-arrow-clockwise me-1"></i>
+        Limpiar
+      </button>
+    </div>
+
+    <!-- Formulario de consulta -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <label for="fechaConsulta" class="form-label fw-semibold">
+          <i class="bi bi-calendar3 me-1"></i>
+          Fecha a consultar
+        </label>
+        <input 
+          type="date" 
+          id="fechaConsulta"
+          class="form-control"
+          [(ngModel)]="fechaConsulta"
+          [disabled]="loading">
+      </div>
+      <div class="col-md-8 d-flex align-items-end">
+        <button 
+          class="btn btn-primary me-2"
+          (click)="consultarParteDiario()"
+          [disabled]="loading || !fechaConsulta">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          <i *ngIf="!loading" class="bi bi-search me-1"></i>
+          {{ loading ? 'Consultando...' : 'Consultar Parte Diario' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Mensajes -->
+    <div *ngIf="mensaje" 
+         class="alert alert-dismissible fade show mb-4"
+         [ngClass]="{
+           'alert-success': tipoMensaje === 'success',
+           'alert-danger': tipoMensaje === 'error', 
+           'alert-info': tipoMensaje === 'info'
+         }">
+      <i class="bi me-1" 
+         [ngClass]="{
+           'bi-check-circle': tipoMensaje === 'success',
+           'bi-exclamation-triangle': tipoMensaje === 'error',
+           'bi-info-circle': tipoMensaje === 'info'
+         }"></i>
+      {{ mensaje }}
+      <button type="button" class="btn-close" (click)="mensaje = ''"></button>
+    </div>
+
+    <!-- Información del parte diario -->
+    <div *ngIf="parteDiario" class="mb-4">
+      <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+        <div>
+          <h5 class="mb-1">
+            <i class="bi bi-calendar-event text-primary me-2"></i>
+            Parte Diario - {{ formatearFecha(parteDiario.Fecha) }}
+          </h5>
+          <p class="text-muted mb-0">
+            <i class="bi bi-people me-1"></i>
+            {{ docentes.length }} docente(s) con licencia activa
+          </p>
+        </div>
+        <span class="badge bg-primary fs-6">
+          {{ docentes.length }} registro(s)
+        </span>
+      </div>
+    </div>
+
+    <!-- Tabla de resultados -->
+    <div *ngIf="docentes.length > 0" class="table-responsive">
+      <table class="table table-bordered table-hover align-middle mb-0">
+        <thead class="table-light text-center">
+          <tr>
+            <th>#</th>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Artículo</th>
+            <th>Descripción</th>
+            <th>Desde</th>
+            <th>Hasta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let docente of docentes; let i = index">
+            <td class="text-center">{{ i + 1 }}</td>
+            
+            <td class="text-center">
+              <span class="dni-text">{{ docente.DNI }}</span>
+            </td>
+            
+            <td>
+              <div class="persona-nombre-subtle">
+                {{ docente.Nombre }}
+              </div>
+            </td>
+            
+            <td>
+              <div class="persona-nombre-subtle">
+                {{ docente.Apellido }}
+              </div>
+            </td>
+            
+            <td class="text-center">
+              <span class="badge bg-info text-dark">
+                <i class="bi bi-journal-text me-1"></i>
+                Art. {{ docente.Articulo }}
+              </span>
+            </td>
+            
+            <td>
+              <small class="text-muted">{{ docente.Descripcion }}</small>
+            </td>
+            
+            <td class="text-center">
+              <small class="text-success fw-semibold">
+                <i class="bi bi-calendar-plus me-1"></i>
+                {{ formatearFecha(docente.Desde) }}
+              </small>
+            </td>
+            
+            <td class="text-center">
+              <small class="text-danger fw-semibold">
+                <i class="bi bi-calendar-x me-1"></i>
+                {{ formatearFecha(docente.Hasta) }}
+              </small>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Estado vacío -->
+    <div *ngIf="!loading && docentes.length === 0 && parteDiario" 
+         class="text-center py-5">
+      <div class="mb-3">
+        <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
+      </div>
+      <h5 class="text-muted mb-2">Sin licencias activas</h5>
+      <p class="text-muted mb-0">
+        No hay licencias activas para la fecha {{ formatearFecha(fechaConsulta) }}.
+      </p>
+    </div>
+
+    <!-- Estado inicial -->
+    <div *ngIf="!parteDiario && !loading && !mensaje" 
+         class="text-center py-5">
+      <div class="mb-3">
+        <i class="bi bi-calendar-check text-muted" style="font-size: 4rem;"></i>
+      </div>
+      <h5 class="text-muted mb-2">Consultar Parte Diario</h5>
+      <p class="text-muted mb-0">
+        Seleccione una fecha y haga clic en "Consultar Parte Diario" para ver las licencias activas.
+      </p>
+    </div>
+  </div>
+</div>

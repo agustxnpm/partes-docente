@@ -60,4 +60,13 @@ export class LicenciaService {
   getLogsByLicenciaId(licenciaId: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.url}/${licenciaId}/logs`);
   }
+
+  /**
+   * Obtiene el parte diario de licencias para una fecha específica.
+   * Corresponde a: GET /licencias/parte-diario/{fecha}
+   * @param fecha Fecha en formato YYYY-MM-DD
+   */
+  obtenerParteDiario(fecha: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.url}/parte-diario/${fecha}`);
+  }
 }
