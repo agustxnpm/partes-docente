@@ -23,4 +23,11 @@ Característica: Gestión de cargos institucionales
       | Tecnología     | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   4 |      3 | Informática | Mañana |    200 | Espacio curricular Tecnología para la división 4º 3º Turno Mañana ingresado correctamente|
       | Matemática     | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   1 |      2 | Informática | Tarde  |    200 | Espacio curricular Matemática para la división 1º 2º Turno Tarde ingresado correctamente|
       | Matemática     | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   1 |      1 | Informática | Tarde  |    200 | Espacio curricular Matemática para la división 1º 1º Turno Tarde ingresado correctamente|
-    
+      | Matemática     | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   1 |      3 | Informática | Mañana |    200 | Espacio curricular Matemática para la división 1º 3º Turno Mañana ingresado correctamente|
+      | Física         | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   2 |      1 | Naturales   | Tarde  |    200 | Espacio curricular Física para la división 2º 1º Turno Tarde ingresado correctamente   |
+      | Química        | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   3 |      4 | Naturales   | Mañana |    200 | Espacio curricular Química para la división 3º 4º Turno Mañana ingresado correctamente |
+      | Biología       | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   4 |      1 | Naturales   | Tarde  |    200 | Espacio curricular Biología para la división 4º 1º Turno Tarde ingresado correctamente |
+      | Historia       | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   5 |      1 | Sociales    | Mañana |    200 | Espacio curricular Historia para la división 5º 1º Turno Mañana ingresado correctamente |
+      | Lengua         | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   1 |      2 | Informática | Tarde  |    200 | Espacio curricular Lengua para la división 1º 2º Turno Tarde ingresado correctamente   |
+      | Arte           | ESPACIO_CURRICULAR |           30 | 2020-03-01 |            |   2 |      4 | Artística   | Mañana |    200 | Espacio curricular Arte para la división 2º 4º Turno Mañana ingresado correctamente    |
+      | Educación Física| ESPACIO_CURRICULAR|           30 | 2020-03-01 |            |   3 |      3 | Deportiva   | Tarde  |    200 | Espacio curricular Educación Física para la división 3º 3º Turno Tarde ingresado correctamente|

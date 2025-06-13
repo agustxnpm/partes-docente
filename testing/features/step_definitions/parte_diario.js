@@ -1,7 +1,6 @@
 const { Given, When, Then } = require("@cucumber/cucumber");
 const PersonaExistente = require("../../support/PersonaExistente");
 const HttpRequestPost = require("../../support/HttpRequestPost");
-const ResponseValidator = require("../../support/ResponseValidator");
 const HttpRequestGet = require("../../support/HttpRequestGet");
 const assert = require("assert");
 
@@ -35,9 +34,9 @@ Given("que se otorgan las siguientes nuevas licencias", function (dataTable) {
   const nuevasLicencias = dataTable.hashes();
   
   nuevasLicencias.forEach(licencia => {
-    // Verificar si la persona existe, si no existe, crearla
-    let persona = PersonaExistente.findByDni(parseInt(licencia.DNI));
-
+    // Verificar que la persona existe
+    let personaEncontrada = PersonaExistente.findByDni(parseInt(licencia.DNI));
+  
     
     // Obtener el artículo de licencia
     const articuloResponse = HttpRequestGet.get(`articulos-licencias/codigo/${licencia.Artículo}`);
@@ -47,7 +46,7 @@ Given("que se otorgan las siguientes nuevas licencias", function (dataTable) {
     
     // Crear la licencia
     const licenciaData = {
-      persona: { dni: parseInt(licencia.DNI) },
+      persona: personaEncontrada,
       articuloLicencia: articuloResponse.data,
       pedidoDesde: licencia.Desde,
       pedidoHasta: licencia.Hasta,
@@ -55,7 +54,7 @@ Given("que se otorgan las siguientes nuevas licencias", function (dataTable) {
     };
     
     const licenciaResponse = HttpRequestPost.post("licencias", licenciaData);
-    if (licenciaResponse.status !== 201) {
+    if (licenciaResponse.status !== 200) {
       throw new Error(`Error al crear licencia para DNI ${licencia.DNI}: ${licenciaResponse.message}`);
     }
   });
@@ -64,7 +63,7 @@ Given("que se otorgan las siguientes nuevas licencias", function (dataTable) {
 // Step para solicitar el parte diario
 When("se solicita el parte diario para la fecha {string}", function (fecha) {
   this.fechaConsulta = fecha;
-  this.parteDiarioResponse = HttpRequestGet.get(`partes-diarios/${fecha}`);
+  this.parteDiarioResponse = HttpRequestGet.get(`licencias/parte-diario/${fecha}`);
 });
 
 // Step para validar la respuesta del sistema

@@ -13,11 +13,7 @@ class HttpRequestGet {
       return JSON.parse(res.getBody("utf8"));
     } catch (error) {
       console.error(`Error en petición GET a ${endpoint}:`, error.message);
-      return {
-        status: error.response.status,
-        message: error.message,
-        data: null
-      };
+      throw error;
     }
   }
 }
