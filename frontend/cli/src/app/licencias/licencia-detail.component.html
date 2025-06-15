@@ -407,8 +407,8 @@
       <div
         class="row mt-4"
         *ngIf="
-          licencia.persona ||
-          licencia.articuloLicencia ||
+          licencia.persona.id ||
+          licencia.articuloLicencia.id ||
           licencia.pedidoDesde ||
           licencia.pedidoHasta
         "
