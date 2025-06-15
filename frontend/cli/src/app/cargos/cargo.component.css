@@ -1,0 +1,148 @@
+/* Estilos específicos para el componente de cargos */
+
+.card {
+  border: none !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+
+/* Animación suave para filtros */
+.card-body {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Mejorar apariencia de botones */
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+/* Estilo para indicadores de filtros */
+.badge.bg-info,
+.badge.bg-secondary {
+  font-size: 0.7rem;
+  padding: 0.25em 0.6em;
+}
+
+/* Loading state */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .col-md-3 .form-check {
+    margin-top: 0.5rem;
+  }
+  
+  .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+  
+  /* Ajustes para botones en header en móviles */
+  .d-flex.align-items-center.gap-3 {
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+  }
+  
+  .d-flex.align-items-center.gap-3 .btn {
+    font-size: 0.875rem;
+  }
+}
+
+/* Estilo específico para el botón Nuevo Cargo */
+.btn-success {
+  background-color: #155f3d;
+  border-color: #198754;
+  font-weight: 400;
+}
+
+.btn-success:hover {
+  background-color: #157347;
+  border-color: #146c43;
+  transform: translateY(-1px);
+  box-shadow: 0 0.25rem 0.75rem rgba(25, 135, 84, 0.25);
+}
+
+/* Clase para botones de tamaño uniforme */
+.btn-uniform {
+  min-width: 140px;
+  height: 40px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* Consistent icon spacing in uniform buttons */
+.btn-uniform i {
+  margin-right: 0.5rem;
+  width: 16px;
+  text-align: center;
+}
+
+/* Botón deshabilitado para contador de registros */
+.btn-uniform:disabled {
+  opacity: 1;
+  pointer-events: none;
+}
+
+.btn-uniform:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive adjustments for uniform buttons */
+@media (max-width: 768px) {
+  .btn-uniform {
+    min-width: 110px;
+    height: 36px;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .d-flex.align-items-center.gap-3 {
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+  }
+  
+  .col-md-3 .form-check {
+    margin-top: 0.5rem;
+  }
+  
+  .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+}
+
+
+
+/* Estilos específicos para los badges de carga horaria */
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+/* Estilos para las fechas */
+.text-success {
+  color: #198754 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}

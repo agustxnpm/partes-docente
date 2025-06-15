@@ -7,9 +7,131 @@
         <i class="bi bi-briefcase-fill text-dark fs-3 me-2"></i>
         <h3 class="m-0">Lista de Cargos</h3>
       </div>
-      <span class="badge bg-dark text-white fs-6">
-        {{ resultsPage.totalElements }} registro(s)
-      </span>
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-dark btn-uniform" disabled>
+          <i class="bi bi-list-ul me-2"></i>
+          {{ resultsPage.totalElements }} registro(s)
+        </button>
+        <button 
+          class="btn btn-success btn-uniform"
+          [routerLink]="['/cargos/new']"
+          title="Crear nuevo cargo">
+          <i class="bi bi-plus-circle me-2"></i>
+          Nuevo Cargo
+        </button>
+        <button 
+          class="btn btn-outline-secondary btn-uniform"
+          (click)="limpiarFiltros()"
+          title="Limpiar filtros">
+          <i class="bi bi-arrow-clockwise me-2"></i>
+          Limpiar
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtros y ordenamiento -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="mb-3 d-flex align-items-center text-primary">
+          <i class="bi bi-funnel me-2"></i>
+          Filtros y Ordenamiento
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-2">
+            <label for="filtroTexto" class="form-label fw-bold">
+              <i class="bi bi-search text-primary me-2"></i>
+              Buscar por nombre
+            </label>
+            <input 
+              type="text" 
+              id="filtroTexto"
+              class="form-control border-2"
+              [(ngModel)]="filtroTexto"
+              (ngModelChange)="aplicarFiltrosYOrden()"
+              placeholder="Ej: Matemática, Lengua...">
+          </div>
+          <div class="col-md-2">
+            <label for="filtroTipoDesignacion" class="form-label fw-bold">
+              <i class="bi bi-briefcase text-primary me-2"></i>
+              Tipo de designación
+            </label>
+            <select 
+              id="filtroTipoDesignacion"
+              class="form-select border-2"
+              [(ngModel)]="filtroTipoDesignacion"
+              (ngModelChange)="aplicarFiltrosYOrden()">
+              <option value="">Todos</option>
+              <option value="CARGO">Cargo</option>
+              <option value="ESPACIO_CURRICULAR">Espacio Curricular</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label for="filtroVigencia" class="form-label fw-bold">
+              <i class="bi bi-calendar-check text-primary me-2"></i>
+              Vigencia
+            </label>
+            <select 
+              id="filtroVigencia"
+              class="form-select border-2"
+              [(ngModel)]="filtroVigencia"
+              (ngModelChange)="aplicarFiltrosYOrden()">
+              <option value="">Todos</option>
+              <option value="vigente">Vigente</option>
+              <option value="vencido">Vencido</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="ordenarPor" class="form-label fw-bold">
+              <i class="bi bi-sort-alpha-down text-primary me-2"></i>
+              Ordenar por
+            </label>
+            <select 
+              id="ordenarPor"
+              class="form-select border-2"
+              [(ngModel)]="ordenActual"
+              (ngModelChange)="ordenarPor($event)">
+              <option value="">Seleccionar...</option>
+              <option value="nombre">Nombre</option>
+              <option value="cargaHoraria">Carga Horaria</option>
+              <option value="fechaInicio">Fecha de Inicio</option>
+              <option value="fechaFin">Fecha de Fin</option>
+              <option value="tipoDesignacion">Tipo de Designación</option>
+            </select>
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="ordenDescendente"
+                [checked]="direccionOrden === 'desc'"
+                (change)="toggleOrdenDireccion()">
+              <label class="form-check-label fw-bold" for="ordenDescendente">
+                <i class="bi bi-sort-down me-1"></i>
+                Descendente
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información de filtros aplicados -->
+    <div class="d-flex justify-content-between align-items-center mb-3" 
+         *ngIf="filtroTexto || filtroTipoDesignacion || filtroVigencia">
+      <div class="text-muted">
+        <small>
+          <i class="bi bi-funnel-fill me-1"></i>
+          Filtros aplicados:
+          <span *ngIf="filtroTexto" class="badge bg-info ms-1">Texto: "{{ filtroTexto }}"</span>
+          <span *ngIf="filtroTipoDesignacion" class="badge bg-secondary ms-1">
+            Tipo: {{ filtroTipoDesignacion === 'CARGO' ? 'Cargo' : 'Espacio Curricular' }}
+          </span>
+          <span *ngIf="filtroVigencia" class="badge bg-warning text-dark ms-1">
+            Vigencia: {{ filtroVigencia === 'vigente' ? 'Vigente' : 'Vencido' }}
+          </span>
+        </small>
+      </div>
     </div>
 
     <div class="table-responsive">
@@ -158,5 +280,7 @@
       >
       </app-pagination>
     </div>
+
+
   </div>
 </div>
