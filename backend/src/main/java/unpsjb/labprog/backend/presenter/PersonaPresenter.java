@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.interfaces.IPersonaService;
+import unpsjb.labprog.backend.business.interfaces.IReporteConceptoService;
+import unpsjb.labprog.backend.dto.ReporteConceptoDTO;
 import unpsjb.labprog.backend.model.Persona;
 
 @RestController
@@ -21,6 +23,9 @@ public class PersonaPresenter {
 
     @Autowired
     private IPersonaService personaService;
+
+    @Autowired
+    private IReporteConceptoService reporteConceptoService;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createPersona(@RequestBody Persona persona) {
@@ -90,6 +95,50 @@ public class PersonaPresenter {
         } catch (Exception e) {
             return Response.internalServerError(
                     "Error en la búsqueda: " + e.getMessage(), null);
+        }
+    }
+
+    // === ENDPOINTS PARA REPORTE DE CONCEPTO ===
+
+    /**
+     * Genera el reporte de concepto anual para todas las personas
+     */
+    @RequestMapping(value = "/reporte-concepto/{anio}", method = RequestMethod.GET)
+    public ResponseEntity<Object> generarReporteConceptoAnual(@PathVariable("anio") int anio) {
+        try {
+            ReporteConceptoDTO reporte = reporteConceptoService.generarReporteConcepto(anio);
+            return Response.ok(reporte, "Reporte de concepto generado exitosamente");
+        } catch (Exception e) {
+            return Response.internalServerError(
+                    "Error al generar el reporte de concepto: " + e.getMessage(), null);
+        }
+    }
+
+
+    /**
+     * Exporta el reporte de concepto a formato CSV
+     */
+    @RequestMapping(value = "/reporte-concepto/{anio}/export/csv", method = RequestMethod.GET)
+    public ResponseEntity<Object> exportarReporteCSV(@PathVariable("anio") int anio) {
+        try {
+            String csvContent = reporteConceptoService.exportarReporteCSV(anio);
+            return Response.ok(csvContent.getBytes(), "Archivo CSV generado exitosamente: reporte-concepto-" + anio + ".csv");
+        } catch (Exception e) {
+            return Response.internalServerError("Error al generar el archivo", null);
+        }
+    }
+
+    /**
+     * Exporta el reporte de concepto a formato PDF
+     */
+    @RequestMapping(value = "/reporte-concepto/{anio}/export/pdf", method = RequestMethod.GET)
+    public ResponseEntity<Object> exportarReportePDF(@PathVariable("anio") int anio) {
+        try {
+            byte[] pdfContent = reporteConceptoService.exportarReportePDF(anio);
+            
+            return Response.ok(pdfContent, "Archivo PDF generado exitosamente: reporte-concepto-" + anio + ".pdf");
+        } catch (Exception e) {
+            return Response.internalServerError("Error al generar el archivo", null);
         }
     }
 

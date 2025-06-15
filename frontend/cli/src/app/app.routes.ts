@@ -11,9 +11,11 @@ import { DesignacionesDetailComponent } from "./designaciones/designaciones-deta
 import { LicenciaComponent } from "./licencias/licencia.component";
 import { LicenciaDetailComponent } from "./licencias/licencia-detail.component";
 import { ParteDiarioComponent } from "./licencias/parte-diario.component";
+import { ReporteConceptoComponent } from "./personas/reporte-concepto.component";
 
 export const routes: Routes = [
   { path: "personas", component: PersonaComponent }, // Ruta para listar personas
+  { path: "personas/reporte-concepto", component: ReporteConceptoComponent }, // Ruta para reporte de concepto
   { path: "personas/:id", component: PersonasDetailComponent }, // Ruta para crear o editar persona
   { path: "home", component: HomeComponent },
   { path: "divisiones", component: DivisionComponent },
