@@ -22,9 +22,13 @@ export class CargoComponent {
   currentPage: number = 1;
   mensaje: string = "";
   
-  // Datos originales y filtrados
+  // Datos para enfoque híbrido
   allCargos: Cargo[] = [];
   filteredCargos: Cargo[] = [];
+  loading: boolean = false;
+  
+  // Control del modo híbrido
+  usandoFiltros: boolean = false;
   
   // Filtros
   filtroTexto: string = '';
@@ -47,7 +51,38 @@ export class CargoComponent {
   ) {}
 
   ngOnInit(): void {
-    this.getCargos();
+    this.cargarCargosPaginados();
+  }
+
+  // Cargar cargos con paginación de servidor (orden natural: más recientes primero)
+  cargarCargosPaginados(): void {
+    this.loading = true;
+    this.cargoService.byPage(this.currentPage, this.itemsPorPagina).subscribe({
+      next: (response) => {
+        this.resultsPage = <ResultsPage>response.data;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar cargos:', error);
+        this.loading = false;
+      }
+    });
+  }
+
+  // Cargar todos los cargos para filtrado local
+  cargarTodosLosCargos(): void {
+    this.loading = true;
+    this.cargoService.findAll().subscribe({
+      next: (response) => {
+        this.allCargos = Array.isArray(response.data) ? response.data : [];
+        this.aplicarFiltrosYOrden();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar todos los cargos:', error);
+        this.loading = false;
+      }
+    });
   }
 
   getCargos(): void {
@@ -55,6 +90,34 @@ export class CargoComponent {
       this.allCargos = Array.isArray(response.data) ? response.data : [];
       this.aplicarFiltrosYOrden();
     });
+  }
+
+  // Detectar si hay filtros aplicados
+  get hayFiltrosAplicados(): boolean {
+    return this.filtroTexto.trim() !== '' || 
+           this.filtroTipoDesignacion !== '' || 
+           this.filtroVigencia !== '' ||
+           this.ordenActual !== '' ||
+           this.direccionOrden === 'desc'; // Incluir cuando se cambia la dirección por defecto
+  }
+
+  // Manejar cambios en filtros
+  onFiltroChange(): void {
+    const hayFiltros = this.hayFiltrosAplicados;
+
+    if (hayFiltros && !this.usandoFiltros) {
+      // Cambiar a modo filtros: cargar todos los datos
+      this.usandoFiltros = true;
+      this.cargarTodosLosCargos();
+    } else if (!hayFiltros && this.usandoFiltros) {
+      // Volver a modo paginado: cargar primera página
+      this.usandoFiltros = false;
+      this.currentPage = 1;
+      this.cargarCargosPaginados();
+    } else if (hayFiltros && this.usandoFiltros) {
+      // Ya estamos en modo filtros: solo aplicar filtros
+      this.aplicarFiltrosYOrden();
+    }
   }
 
   aplicarFiltrosYOrden(): void {
@@ -123,6 +186,11 @@ export class CargoComponent {
 
         return this.direccionOrden === 'desc' ? -resultado : resultado;
       });
+    } else {
+      // Ordenamiento por defecto: por ID (más recientes primero o último según dirección)
+      cargosFiltrados.sort((a, b) => {
+        return this.direccionOrden === 'desc' ? a.id - b.id : b.id - a.id;
+      });
     }
 
     this.filteredCargos = cargosFiltrados;
@@ -158,9 +226,7 @@ export class CargoComponent {
 
   toggleOrdenDireccion(): void {
     this.direccionOrden = this.direccionOrden === 'asc' ? 'desc' : 'asc';
-    if (this.ordenActual) {
-      this.aplicarFiltrosYOrden();
-    }
+    this.onFiltroChange();
   }
 
   ordenarPor(campo: string): void {
@@ -171,7 +237,7 @@ export class CargoComponent {
         this.ordenActual = campo;
         this.direccionOrden = 'asc';
       }
-      this.aplicarFiltrosYOrden();
+      this.onFiltroChange();
     }
   }
 
@@ -182,7 +248,7 @@ export class CargoComponent {
     this.ordenActual = '';
     this.direccionOrden = 'asc';
     this.currentPage = 1;
-    this.aplicarFiltrosYOrden();
+    this.onFiltroChange();
   }
 
   eliminarCargo(cargo: Cargo): void {
@@ -200,7 +266,11 @@ export class CargoComponent {
               if (response.status === 200) {
                 this.modalService.alert("Éxito", this.mensaje);
                 // Recargar datos después de eliminar
-                this.getCargos();
+                if (this.usandoFiltros) {
+                  this.cargarTodosLosCargos();
+                } else {
+                  this.cargarCargosPaginados();
+                }
               } else {
                 this.modalService.alert("Error", this.mensaje);
               }
@@ -220,6 +290,12 @@ export class CargoComponent {
 
   onPageChangeRequested(page: number): void {
     this.currentPage = page;
-    this.actualizarPaginacion();
+    if (this.usandoFiltros) {
+      // En modo filtros: solo actualizar paginación local
+      this.actualizarPaginacion();
+    } else {
+      // En modo servidor: cargar nueva página
+      this.cargarCargosPaginados();
+    }
   }
 }

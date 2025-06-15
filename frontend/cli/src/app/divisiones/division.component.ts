@@ -24,13 +24,17 @@ export class DivisionComponent {
   filtroTexto: string = '';
   filtroTurno: string = '';
   filtroAnio: string = '';
-  ordenarPor: 'anio' | 'numDivision' | 'orientacion' | 'turno' = 'anio';
-  ordenDescendente: boolean = false;
+  ordenActual: string = '';
+  direccionOrden: 'asc' | 'desc' = 'asc';
 
-  // Datos para filtrado local
+  // Datos para enfoque híbrido
   todasLasDivisiones: Division[] = [];
   divisionesFiltradas: Division[] = [];
   loading: boolean = false;
+  
+  // Control del modo híbrido
+  usandoFiltros: boolean = false;
+  itemsPorPagina: number = 7;
 
   // Enum para template
   Turno = Turno;
@@ -41,7 +45,22 @@ export class DivisionComponent {
   ) {}
 
   ngOnInit(): void {
-    this.cargarTodasLasDivisiones();
+    this.cargarDivisionesPaginadas();
+  }
+
+  // Cargar divisiones con paginación de servidor (orden natural: más recientes primero)
+  cargarDivisionesPaginadas(): void {
+    this.loading = true;
+    this.divisionService.byPage(this.currentPage, this.itemsPorPagina).subscribe({
+      next: (response) => {
+        this.resultsPage = <ResultsPage>response.data;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar divisiones:', error);
+        this.loading = false;
+      }
+    });
   }
 
   cargarTodasLasDivisiones(): void {
@@ -58,6 +77,34 @@ export class DivisionComponent {
         this.loading = false;
       }
     });
+  }
+
+  // Detectar si hay filtros aplicados
+  get hayFiltrosAplicados(): boolean {
+    return this.filtroTexto.trim() !== '' || 
+           this.filtroTurno !== '' || 
+           this.filtroAnio !== '' ||
+           this.ordenActual !== '' ||
+           this.direccionOrden === 'desc'; // Incluir cuando se cambia la dirección por defecto
+  }
+
+  // Manejar cambios en filtros
+  onFiltroChange(): void {
+    const hayFiltros = this.hayFiltrosAplicados;
+
+    if (hayFiltros && !this.usandoFiltros) {
+      // Cambiar a modo filtros: cargar todos los datos
+      this.usandoFiltros = true;
+      this.cargarTodasLasDivisiones();
+    } else if (!hayFiltros && this.usandoFiltros) {
+      // Volver a modo paginado: cargar primera página
+      this.usandoFiltros = false;
+      this.currentPage = 1;
+      this.cargarDivisionesPaginadas();
+    } else if (hayFiltros && this.usandoFiltros) {
+      // Ya estamos en modo filtros: solo aplicar filtros
+      this.aplicarFiltrosYOrdenamiento();
+    }
   }
 
   aplicarFiltrosYOrdenamiento(): void {
@@ -83,38 +130,45 @@ export class DivisionComponent {
     }
 
     // Aplicar ordenamiento
-    divisiones.sort((a, b) => {
-      let valorA: any, valorB: any;
-      
-      switch (this.ordenarPor) {
-        case 'anio':
-          valorA = a.anio || 0;
-          valorB = b.anio || 0;
-          break;
-        case 'numDivision':
-          valorA = a.numDivision || 0;
-          valorB = b.numDivision || 0;
-          break;
-        case 'orientacion':
-          valorA = a.orientacion;
-          valorB = b.orientacion;
-          break;
-        case 'turno':
-          valorA = a.turno || '';
-          valorB = b.turno || '';
-          break;
-        default:
-          return 0;
-      }
+    if (this.ordenActual) {
+      divisiones.sort((a, b) => {
+        let valorA: any, valorB: any;
+        
+        switch (this.ordenActual) {
+          case 'anio':
+            valorA = a.anio || 0;
+            valorB = b.anio || 0;
+            break;
+          case 'numDivision':
+            valorA = a.numDivision || 0;
+            valorB = b.numDivision || 0;
+            break;
+          case 'orientacion':
+            valorA = a.orientacion;
+            valorB = b.orientacion;
+            break;
+          case 'turno':
+            valorA = a.turno || '';
+            valorB = b.turno || '';
+            break;
+          default:
+            return 0;
+        }
 
-      if (typeof valorA === 'string') {
-        valorA = valorA.toLowerCase();
-        valorB = valorB.toLowerCase();
-      }
+        if (typeof valorA === 'string') {
+          valorA = valorA.toLowerCase();
+          valorB = valorB.toLowerCase();
+        }
 
-      let resultado = valorA < valorB ? -1 : valorA > valorB ? 1 : 0;
-      return this.ordenDescendente ? -resultado : resultado;
-    });
+        let resultado = valorA < valorB ? -1 : valorA > valorB ? 1 : 0;
+        return this.direccionOrden === 'desc' ? -resultado : resultado;
+      });
+    } else {
+      // Ordenamiento por defecto: por ID (más recientes primero o último según dirección)
+      divisiones.sort((a, b) => {
+        return this.direccionOrden === 'desc' ? a.id - b.id : b.id - a.id;
+      });
+    }
 
     this.divisionesFiltradas = divisiones;
     this.actualizarPaginacion();
@@ -122,7 +176,7 @@ export class DivisionComponent {
 
   actualizarPaginacion(): void {
     const totalElements = this.divisionesFiltradas.length;
-    const size = 7; // Tamaño de página
+    const size = this.itemsPorPagina;
     const totalPages = Math.ceil(totalElements / size);
     
     // Ajustar página actual si es necesario
@@ -146,19 +200,31 @@ export class DivisionComponent {
     };
   }
 
-  onFiltroChange(): void {
-    this.currentPage = 1;
-    this.aplicarFiltrosYOrdenamiento();
+  ordenarPor(campo: string): void {
+    if (campo) {
+      if (this.ordenActual === campo) {
+        this.direccionOrden = this.direccionOrden === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.ordenActual = campo;
+        this.direccionOrden = 'asc';
+      }
+      this.onFiltroChange();
+    }
+  }
+
+  toggleOrdenDireccion(): void {
+    this.direccionOrden = this.direccionOrden === 'asc' ? 'desc' : 'asc';
+    this.onFiltroChange();
   }
 
   limpiarFiltros(): void {
     this.filtroTexto = '';
     this.filtroTurno = '';
     this.filtroAnio = '';
-    this.ordenarPor = 'anio';
-    this.ordenDescendente = false;
+    this.ordenActual = '';
+    this.direccionOrden = 'asc';
     this.currentPage = 1;
-    this.aplicarFiltrosYOrdenamiento();
+    this.onFiltroChange();
   }
 
   // Mantener método original para compatibilidad si es necesario
@@ -186,7 +252,12 @@ export class DivisionComponent {
               } else {
                 this.modalService.alert("Error", this.mensaje);
               }
-              this.cargarTodasLasDivisiones(); // Recargar datos después de eliminar
+              // Recargar datos después de eliminar
+              if (this.usandoFiltros) {
+                this.cargarTodasLasDivisiones();
+              } else {
+                this.cargarDivisionesPaginadas();
+              }
             },
             error: (err) => {
               console.error("Error al eliminar la división:", err);
@@ -204,6 +275,12 @@ export class DivisionComponent {
 
   onPageChangeRequested(page: number): void {
     this.currentPage = page;
-    this.actualizarPaginacion();
+    if (this.usandoFiltros) {
+      // En modo filtros: solo actualizar paginación local
+      this.actualizarPaginacion();
+    } else {
+      // En modo servidor: cargar nueva página
+      this.cargarDivisionesPaginadas();
+    }
   }
 }

@@ -47,7 +47,7 @@
               id="filtroTexto"
               class="form-control border-2"
               [(ngModel)]="filtroTexto"
-              (ngModelChange)="aplicarFiltrosYOrden()"
+              (ngModelChange)="onFiltroChange()"
               placeholder="Ej: Matemática, Lengua...">
           </div>
           <div class="col-md-2">
@@ -59,7 +59,7 @@
               id="filtroTipoDesignacion"
               class="form-select border-2"
               [(ngModel)]="filtroTipoDesignacion"
-              (ngModelChange)="aplicarFiltrosYOrden()">
+              (ngModelChange)="onFiltroChange()">
               <option value="">Todos</option>
               <option value="CARGO">Cargo</option>
               <option value="ESPACIO_CURRICULAR">Espacio Curricular</option>
@@ -74,7 +74,7 @@
               id="filtroVigencia"
               class="form-select border-2"
               [(ngModel)]="filtroVigencia"
-              (ngModelChange)="aplicarFiltrosYOrden()">
+              (ngModelChange)="onFiltroChange()">
               <option value="">Todos</option>
               <option value="vigente">Vigente</option>
               <option value="vencido">Vencido</option>
@@ -89,8 +89,8 @@
               id="ordenarPor"
               class="form-select border-2"
               [(ngModel)]="ordenActual"
-              (ngModelChange)="ordenarPor($event)">
-              <option value="">Seleccionar...</option>
+              (ngModelChange)="onFiltroChange()">
+              <option value="">Más reciente</option>
               <option value="nombre">Nombre</option>
               <option value="cargaHoraria">Carga Horaria</option>
               <option value="fechaInicio">Fecha de Inicio</option>

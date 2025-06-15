@@ -94,8 +94,9 @@
             <select 
               id="ordenarPor"
               class="form-select border-2"
-              [(ngModel)]="ordenarPor"
+              [(ngModel)]="ordenActual"
               (ngModelChange)="onFiltroChange()">
+              <option value="">Mas reciente</option>
               <option value="anio">Año</option>
               <option value="numDivision">División</option>
               <option value="orientacion">Orientación</option>
@@ -108,8 +109,8 @@
                 class="form-check-input" 
                 type="checkbox" 
                 id="ordenDescendente"
-                [(ngModel)]="ordenDescendente"
-                (ngModelChange)="onFiltroChange()">
+                [checked]="direccionOrden === 'desc'"
+                (change)="toggleOrdenDireccion()">
               <label class="form-check-label fw-bold" for="ordenDescendente">
                 <i class="bi bi-sort-down me-1"></i>
                 Descendente

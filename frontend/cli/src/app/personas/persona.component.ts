@@ -23,13 +23,17 @@ export class PersonaComponent {
   // Propiedades para filtros y ordenamiento
   filtroTexto: string = '';
   filtroSexo: string = '';
-  ordenarPor: 'nombre' | 'apellido' | 'dni' | 'cuil' = 'apellido';
-  ordenDescendente: boolean = false;
+  ordenActual: string = '';
+  direccionOrden: 'asc' | 'desc' = 'asc';
 
-  // Datos para filtrado local
+  // Datos para enfoque híbrido
   todasLasPersonas: Persona[] = [];
   personasFiltradas: Persona[] = [];
   loading: boolean = false;
+  
+  // Control del modo híbrido
+  usandoFiltros: boolean = false;
+  itemsPorPagina: number = 7;
 
   constructor(
     private personaService: PersonaService,
@@ -37,7 +41,22 @@ export class PersonaComponent {
   ) {}
 
   ngOnInit(): void {
-    this.cargarTodasLasPersonas();
+    this.cargarPersonasPaginadas();
+  }
+
+  // Cargar personas con paginación de servidor (orden natural: más recientes primero)
+  cargarPersonasPaginadas(): void {
+    this.loading = true;
+    this.personaService.byPage(this.currentPage, this.itemsPorPagina).subscribe({
+      next: (response) => {
+        this.resultsPage = <ResultsPage>response.data;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar personas:', error);
+        this.loading = false;
+      }
+    });
   }
 
   cargarTodasLasPersonas(): void {
@@ -54,6 +73,33 @@ export class PersonaComponent {
         this.loading = false;
       }
     });
+  }
+
+  // Detectar si hay filtros aplicados
+  get hayFiltrosAplicados(): boolean {
+    return this.filtroTexto.trim() !== '' || 
+           this.filtroSexo !== '' ||
+           this.ordenActual !== '' ||
+           this.direccionOrden === 'desc'; // Incluir cuando se cambia la dirección por defecto
+  }
+
+  // Manejar cambios en filtros
+  onFiltroChange(): void {
+    const hayFiltros = this.hayFiltrosAplicados;
+
+    if (hayFiltros && !this.usandoFiltros) {
+      // Cambiar a modo filtros: cargar todos los datos
+      this.usandoFiltros = true;
+      this.cargarTodasLasPersonas();
+    } else if (!hayFiltros && this.usandoFiltros) {
+      // Volver a modo paginado: cargar primera página
+      this.usandoFiltros = false;
+      this.currentPage = 1;
+      this.cargarPersonasPaginadas();
+    } else if (hayFiltros && this.usandoFiltros) {
+      // Ya estamos en modo filtros: solo aplicar filtros
+      this.aplicarFiltrosYOrdenamiento();
+    }
   }
 
   aplicarFiltrosYOrdenamiento(): void {
@@ -76,38 +122,45 @@ export class PersonaComponent {
     }
 
     // Aplicar ordenamiento
-    personas.sort((a, b) => {
-      let valorA: any, valorB: any;
-      
-      switch (this.ordenarPor) {
-        case 'nombre':
-          valorA = a.nombre;
-          valorB = b.nombre;
-          break;
-        case 'apellido':
-          valorA = a.apellido;
-          valorB = b.apellido;
-          break;
-        case 'dni':
-          valorA = a.dni;
-          valorB = b.dni;
-          break;
-        case 'cuil':
-          valorA = a.cuil;
-          valorB = b.cuil;
-          break;
-        default:
-          return 0;
-      }
+    if (this.ordenActual) {
+      personas.sort((a, b) => {
+        let valorA: any, valorB: any;
+        
+        switch (this.ordenActual) {
+          case 'nombre':
+            valorA = a.nombre;
+            valorB = b.nombre;
+            break;
+          case 'apellido':
+            valorA = a.apellido;
+            valorB = b.apellido;
+            break;
+          case 'dni':
+            valorA = a.dni;
+            valorB = b.dni;
+            break;
+          case 'cuil':
+            valorA = a.cuil;
+            valorB = b.cuil;
+            break;
+          default:
+            return 0;
+        }
 
-      if (typeof valorA === 'string') {
-        valorA = valorA.toLowerCase();
-        valorB = valorB.toLowerCase();
-      }
+        if (typeof valorA === 'string') {
+          valorA = valorA.toLowerCase();
+          valorB = valorB.toLowerCase();
+        }
 
-      let resultado = valorA < valorB ? -1 : valorA > valorB ? 1 : 0;
-      return this.ordenDescendente ? -resultado : resultado;
-    });
+        let resultado = valorA < valorB ? -1 : valorA > valorB ? 1 : 0;
+        return this.direccionOrden === 'desc' ? -resultado : resultado;
+      });
+    } else {
+      // Ordenamiento por defecto: por ID (más recientes primero o último según dirección)
+      personas.sort((a, b) => {
+        return this.direccionOrden === 'desc' ? a.id - b.id : b.id - a.id;
+      });
+    }
 
     this.personasFiltradas = personas;
     this.actualizarPaginacion();
@@ -115,7 +168,7 @@ export class PersonaComponent {
 
   actualizarPaginacion(): void {
     const totalElements = this.personasFiltradas.length;
-    const size = 7; // Tamaño de página
+    const size = this.itemsPorPagina;
     const totalPages = Math.ceil(totalElements / size);
     
     // Ajustar página actual si es necesario
@@ -139,18 +192,30 @@ export class PersonaComponent {
     };
   }
 
-  onFiltroChange(): void {
-    this.currentPage = 1;
-    this.aplicarFiltrosYOrdenamiento();
+  ordenarPor(campo: string): void {
+    if (campo) {
+      if (this.ordenActual === campo) {
+        this.direccionOrden = this.direccionOrden === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.ordenActual = campo;
+        this.direccionOrden = 'asc';
+      }
+      this.onFiltroChange();
+    }
+  }
+
+  toggleOrdenDireccion(): void {
+    this.direccionOrden = this.direccionOrden === 'asc' ? 'desc' : 'asc';
+    this.onFiltroChange();
   }
 
   limpiarFiltros(): void {
     this.filtroTexto = '';
     this.filtroSexo = '';
-    this.ordenarPor = 'apellido';
-    this.ordenDescendente = false;
+    this.ordenActual = '';
+    this.direccionOrden = 'asc';
     this.currentPage = 1;
-    this.aplicarFiltrosYOrdenamiento();
+    this.onFiltroChange();
   }
 
   // Mantener método original para compatibilidad si es necesario
@@ -178,7 +243,12 @@ export class PersonaComponent {
               } else {
               this.modalService.alert("Error", this.mensaje);
               }
-              this.cargarTodasLasPersonas(); // Recargar datos después de eliminar
+              // Recargar datos después de eliminar
+              if (this.usandoFiltros) {
+                this.cargarTodasLasPersonas();
+              } else {
+                this.cargarPersonasPaginadas();
+              }
             },
             error: (err) => {
               console.error("Error al eliminar la persona:", err);
@@ -196,6 +266,12 @@ export class PersonaComponent {
 
   onPageChangeRequested(page: number): void {
     this.currentPage = page;
-    this.actualizarPaginacion();
+    if (this.usandoFiltros) {
+      // En modo filtros: solo actualizar paginación local
+      this.actualizarPaginacion();
+    } else {
+      // En modo servidor: cargar nueva página
+      this.cargarPersonasPaginadas();
+    }
   }
 }
