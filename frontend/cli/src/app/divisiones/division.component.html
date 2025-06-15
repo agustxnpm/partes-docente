@@ -8,13 +8,141 @@
         <h3 class="m-0">Lista de Divisiones</h3>
       </div>
       <div class="d-flex align-items-center gap-3">
-        <span class="badge bg-dark text-white fs-6">
+        <button class="btn btn-dark btn-uniform" disabled>
+          <i class="bi bi-list-ul me-2"></i>
           {{ resultsPage.totalElements }} registro(s)
-        </span>
+        </button>
+        <button 
+          class="btn btn-success btn-uniform"
+          [routerLink]="['/divisiones/new']"
+          title="Crear nueva división">
+          <i class="bi bi-plus-circle me-2"></i>
+          Nueva División
+        </button>
+        <button 
+          class="btn btn-outline-secondary btn-uniform"
+          (click)="limpiarFiltros()"
+          title="Limpiar filtros">
+          <i class="bi bi-arrow-clockwise me-2"></i>
+          Limpiar
+        </button>
       </div>
     </div>
 
-    <div class="table-responsive">
+    <!-- Filtros y ordenamiento -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="mb-3 d-flex align-items-center text-primary">
+          <i class="bi bi-funnel me-2"></i>
+          Filtros y Ordenamiento
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label for="filtroTexto" class="form-label fw-bold">
+              <i class="bi bi-search text-primary me-2"></i>
+              Buscar orientación
+            </label>
+            <input 
+              type="text" 
+              id="filtroTexto"
+              class="form-control border-2"
+              [(ngModel)]="filtroTexto"
+              (ngModelChange)="onFiltroChange()"
+              placeholder="Ej: Ciencias Naturales...">
+          </div>
+          <div class="col-md-2">
+            <label for="filtroAnio" class="form-label fw-bold">
+              <i class="bi bi-calendar-event text-primary me-2"></i>
+              Año
+            </label>
+            <select 
+              id="filtroAnio"
+              class="form-select border-2"
+              [(ngModel)]="filtroAnio"
+              (ngModelChange)="onFiltroChange()">
+              <option value="">Todos</option>
+              <option value="1">1°</option>
+              <option value="2">2°</option>
+              <option value="3">3°</option>
+              <option value="4">4°</option>
+              <option value="5">5°</option>
+              <option value="6">6°</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label for="filtroTurno" class="form-label fw-bold">
+              <i class="bi bi-clock text-primary me-2"></i>
+              Turno
+            </label>
+            <select 
+              id="filtroTurno"
+              class="form-select border-2"
+              [(ngModel)]="filtroTurno"
+              (ngModelChange)="onFiltroChange()">
+              <option value="">Todos</option>
+              <option value="Mañana">Mañana</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Vespertino">Vespertino</option>
+              <option value="Noche">Noche</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="ordenarPor" class="form-label fw-bold">
+              <i class="bi bi-sort-alpha-down text-primary me-2"></i>
+              Ordenar por
+            </label>
+            <select 
+              id="ordenarPor"
+              class="form-select border-2"
+              [(ngModel)]="ordenarPor"
+              (ngModelChange)="onFiltroChange()">
+              <option value="anio">Año</option>
+              <option value="numDivision">División</option>
+              <option value="orientacion">Orientación</option>
+              <option value="turno">Turno</option>
+            </select>
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="ordenDescendente"
+                [(ngModel)]="ordenDescendente"
+                (ngModelChange)="onFiltroChange()">
+              <label class="form-check-label fw-bold" for="ordenDescendente">
+                <i class="bi bi-sort-down me-1"></i>
+                Descendente
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información de filtros aplicados -->
+    <div class="d-flex justify-content-between align-items-center mb-3" 
+         *ngIf="filtroTexto || filtroTurno || filtroAnio">
+      <div class="text-muted">
+        <small>
+          <i class="bi bi-funnel-fill me-1"></i>
+          Filtros aplicados:
+          <span *ngIf="filtroTexto" class="badge bg-info ms-1">Orientación: "{{ filtroTexto }}"</span>
+          <span *ngIf="filtroAnio" class="badge bg-secondary ms-1">Año: {{ filtroAnio }}°</span>
+          <span *ngIf="filtroTurno" class="badge bg-warning text-dark ms-1">Turno: {{ filtroTurno }}</span>
+        </small>
+      </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div *ngIf="loading" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2 text-muted">Cargando divisiones...</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading">
       <table class="table table-bordered table-hover align-middle mb-0">
         <thead class="table-light text-center">
           <tr>
@@ -75,10 +203,19 @@
           </tr>
           <tr *ngIf="!resultsPage.content || resultsPage.content.length === 0">
             <td colspan="6" class="text-center fst-italic text-muted py-4">
-              <i
-                class="bi bi-mortarboard-fill fs-1 d-block mb-2 text-muted"
-              ></i>
-              No hay divisiones para mostrar.
+              <div *ngIf="filtroTexto || filtroTurno || filtroAnio; else sinDatos">
+                <i class="bi bi-search me-2"></i>
+                No se encontraron divisiones que coincidan con los filtros aplicados.
+                <br>
+                <button class="btn btn-link btn-sm p-0 mt-2" (click)="limpiarFiltros()">
+                  <i class="bi bi-arrow-clockwise me-1"></i>
+                  Limpiar filtros
+                </button>
+              </div>
+              <ng-template #sinDatos>
+                <i class="bi bi-mortarboard-fill fs-1 d-block mb-2 text-muted"></i>
+                No hay divisiones para mostrar.
+              </ng-template>
             </td>
           </tr>
         </tbody>
