@@ -1,0 +1,53 @@
+/* Estilos específicos para el componente de personas */
+
+.card {
+  border: none !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+
+/* Animación suave para filtros */
+.card-body {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Mejorar apariencia de botones */
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+/* Estilo para indicadores de filtros */
+.badge.bg-info,
+.badge.bg-secondary {
+  font-size: 0.7rem;
+  padding: 0.25em 0.6em;
+}
+
+/* Loading state */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .col-md-3 .form-check {
+    margin-top: 0.5rem;
+  }
+  
+  .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+}
