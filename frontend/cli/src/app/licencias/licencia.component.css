@@ -1,0 +1,95 @@
+/* Estilos específicos para el componente de licencias */
+
+.card {
+  border: none !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+
+/* Animación suave para filtros */
+.card-body {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Mejorar apariencia de botones */
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+/* Clase para botones de tamaño uniforme */
+.btn-uniform {
+  min-width: 140px;
+  height: 40px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* Botón deshabilitado para contador de registros */
+.btn-uniform:disabled {
+  opacity: 1;
+  pointer-events: none;
+}
+
+.btn-uniform:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Filtros aplicados */
+.badge-filtro {
+  font-size: 0.8rem;
+  margin: 0.2rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+}
+
+.badge-filtro .btn-close {
+  font-size: 0.6rem;
+  margin-left: 0.5rem;
+}
+
+.persona-nombre-subtle {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.fecha-designacion {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+
+
+.btn-success {
+  background-color: #155f3d;
+  border-color: #155f3d;
+  font-weight: 500;
+}
+
+.btn-success:hover {
+  background-color: #157347;
+  border-color: #146c43;
+  transform: translateY(-1px);
+  box-shadow: 0 0.25rem 0.75rem rgba(25, 135, 84, 0.25);
+}
+
+
+
+
+
