@@ -48,9 +48,9 @@ export class ParteDiarioComponent implements OnInit {
           this.docentes = this.parteDiario.Docentes || [];
           
           if (this.docentes.length === 0) {
-            this.mostrarMensaje(`No hay licencias activas para la fecha ${this.fechaConsulta}.`, "info");
+            this.mostrarMensaje(`No hay licencias activas para la fecha ${this.formatearFecha(this.fechaConsulta)}.`, "info");
           } else {
-            this.mostrarMensaje(`Se encontraron ${this.docentes.length} licencia(s) activa(s) para la fecha ${this.fechaConsulta}.`, "success");
+            this.mostrarMensaje(`Se encontraron ${this.docentes.length} licencia(s) activa(s) para la fecha ${this.formatearFecha(this.fechaConsulta)}.`, "success");
           }
         } else {
           this.mostrarMensaje("No se pudieron obtener los datos del parte diario.", "error");
@@ -78,7 +78,11 @@ export class ParteDiarioComponent implements OnInit {
 
   formatearFecha(fecha: string): string {
     if (!fecha) return '';
-    const date = new Date(fecha);
+    
+    // Parsear la fecha como fecha local para evitar problemas de zona horaria
+    const [year, month, day] = fecha.split('-').map(Number);
+    const date = new Date(year, month - 1, day); // month es 0-indexado en JavaScript
+    
     return date.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit', 
