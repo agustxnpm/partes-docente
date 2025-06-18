@@ -287,10 +287,8 @@ export class DesignacionesComponent {
   onPageChangeRequested(page: number): void {
     this.currentPage = page;
     if (this.usandoFiltros) {
-      // En modo filtros: solo actualizar paginación local
       this.actualizarPaginacion();
     } else {
-      // En modo servidor: cargar nueva página
       this.cargarDesignacionesPaginadas();
     }
   }

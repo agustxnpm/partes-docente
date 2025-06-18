@@ -97,8 +97,8 @@ export class CargoComponent {
     return this.filtroTexto.trim() !== '' || 
            this.filtroTipoDesignacion !== '' || 
            this.filtroVigencia !== '' ||
-           this.ordenActual !== '' ||
-           this.direccionOrden === 'desc'; // Incluir cuando se cambia la dirección por defecto
+           this.ordenActual !== '' || 
+           this.direccionOrden === 'desc';
   }
 
   // Manejar cambios en filtros
