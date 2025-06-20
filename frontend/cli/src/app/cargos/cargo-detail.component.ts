@@ -4,9 +4,11 @@ import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CargoService } from "./cargo.service";
 import { DivisionService } from "../divisiones/division.service";
+import { HorarioService } from "../horarios/horario.service";
 import { Cargo } from "./cargo";
 import { TipoDesignacion } from "./tipoDesignacion";
 import { Division } from "../divisiones/division";
+import { Horario } from "../horarios/horario";
 import { ModalService } from "../modal/modal.service";
 import { TipoDesignacionFormatPipe } from "../shared/pipes/tipo-designacion-format.pipe";
 
@@ -38,10 +40,18 @@ export class CargoDetailComponent {
   minFechaFin: string = "";
   maxFechaInicio: string | null = null;
   fechaActual: string = new Date().toISOString().split("T")[0];
+  
+  // Propiedades para manejo de horarios
+  diaSeleccionado: string = "";
+  horaSeleccionada: number | null = null;
+  horariosDisponibles: Horario[] = [];
+  horasUnicas: number[] = [];
+  cargosEnDivision: Cargo[] = []; // Para validación de conflictos
 
   constructor(
     private cargoService: CargoService,
     private divisionService: DivisionService,
+    private horarioService: HorarioService,
     private modalService: ModalService,
     private route: ActivatedRoute,
     private router: Router,
@@ -51,6 +61,7 @@ export class CargoDetailComponent {
   ngOnInit(): void {
     this.getCargo();
     this.getDivisiones();
+    this.cargarHorariosDisponibles();
   }
 
   getCargo(): void {
@@ -65,6 +76,14 @@ export class CargoDetailComponent {
         this.cargoService.findById(Number(id)).subscribe({
           next: (response) => {
             this.cargo = response.data as Cargo;
+            // Asegurar que horario sea siempre un array
+            if (!this.cargo.horario) {
+              this.cargo.horario = [];
+            }
+            // Cargar cargos de la división si es un espacio curricular
+            if (this.cargo.tipoDesignacion === 'ESPACIO_CURRICULAR' && this.cargo.division) {
+              this.cargarCargosEnDivision();
+            }
           },
           error: (err) => {
             console.error("Error al obtener el cargo:", err);
@@ -133,9 +152,30 @@ export class CargoDetailComponent {
   }
 
   onTipoDesignacionChange(): void {
-    // Si no es ESPACIO_CURRICULAR, limpiar la división
+    // Si no es ESPACIO_CURRICULAR, limpiar la división y horarios
     if (this.cargo.tipoDesignacion !== TipoDesignacion.ESPACIO_CURRICULAR) {
       this.cargo.division = null;
+      this.cargo.horario = []; // Limpiar horarios también
+      this.cargosEnDivision = []; // Limpiar cargos en división
+    } else {
+      // Si es ESPACIO_CURRICULAR, asegurar que horario sea un array
+      if (!this.cargo.horario) {
+        this.cargo.horario = [];
+      }
+      // Cargar cargos de la división si ya hay una seleccionada
+      if (this.cargo.division) {
+        this.cargarCargosEnDivision();
+      }
+    }
+  }
+
+  /**
+   * Maneja el cambio de división seleccionada
+   */
+  onDivisionChange(): void {
+    // Cargar cargos de la nueva división para validación de conflictos
+    if (this.cargo.tipoDesignacion === TipoDesignacion.ESPACIO_CURRICULAR) {
+      this.cargarCargosEnDivision();
     }
   }
 
@@ -223,6 +263,10 @@ export class CargoDetailComponent {
     this.mensaje = "";
     this.isError = false;
     this.isValidDateRange = true;
+    
+    // Limpiar campos de horarios
+    this.diaSeleccionado = "";
+    this.horaSeleccionada = null;
   }
 
   scrollToMessage(): void {
@@ -230,5 +274,123 @@ export class CargoDetailComponent {
     if (messageElement) {
       messageElement.scrollIntoView({ behavior: "smooth" });
     }
+  }
+  
+  // Métodos para manejo de horarios
+  
+  cargarHorariosDisponibles(): void {
+    this.horarioService.obtenerHorariosDisponibles().subscribe({
+      next: (response) => {
+        this.horariosDisponibles = response.data as Horario[];
+        // Extraer las horas únicas disponibles
+        this.horasUnicas = [...new Set(this.horariosDisponibles.map(h => h.hora))].sort((a, b) => a - b);
+      },
+      error: (err) => {
+        console.error('Error al cargar horarios disponibles:', err);
+        this.modalService.alert('Error', 'Error al cargar los horarios disponibles.');
+      }
+    });
+  }
+  
+  /**
+   * Carga los cargos existentes de la misma división para validación de conflictos
+   */
+  cargarCargosEnDivision(): void {
+    if (!this.cargo.division) {
+      this.cargosEnDivision = [];
+      return;
+    }
+    
+    this.cargoService.findAll().subscribe({
+      next: (response) => {
+        const todosCargos = response.data as Cargo[];
+        // Filtrar solo los cargos de tipo ESPACIO_CURRICULAR de la misma división
+        this.cargosEnDivision = todosCargos.filter(c => 
+          c.tipoDesignacion === 'ESPACIO_CURRICULAR' &&
+          c.division && 
+          c.division.id === this.cargo.division?.id &&
+          c.id !== this.cargo.id && // Excluir el cargo actual
+          c.horario && 
+          c.horario.length > 0
+        );
+      },
+      error: (err) => {
+        console.error('Error al cargar cargos de la división:', err);
+        this.cargosEnDivision = [];
+      }
+    });
+  }
+  
+  /**
+   * Valida si existe conflicto de horarios con otros cargos de la misma división
+   */
+  validarConflictoHorario(dia: string, hora: number): { hayConflicto: boolean, cargoConflicto?: string } {
+    for (const cargoExistente of this.cargosEnDivision) {
+      if (cargoExistente.horario) {
+        for (const horarioExistente of cargoExistente.horario) {
+          if (horarioExistente.dia === dia && horarioExistente.hora === hora) {
+            return {
+              hayConflicto: true,
+              cargoConflicto: cargoExistente.nombre
+            };
+          }
+        }
+      }
+    }
+    return { hayConflicto: false };
+  }
+  
+  agregarHorario(): void {
+    if (!this.diaSeleccionado || !this.horaSeleccionada) {
+      return;
+    }
+    
+    // Asegurar que horario sea un array
+    if (!this.cargo.horario) {
+      this.cargo.horario = [];
+    }
+    
+    // Verificar si el horario ya existe
+    const horarioExistente = this.cargo.horario.find(
+      h => h.dia === this.diaSeleccionado && h.hora === this.horaSeleccionada
+    );
+    
+    if (horarioExistente) {
+      this.modalService.alert('Atención', 'Este horario ya está asignado al cargo.');
+      return;
+    }
+    
+    // Validar conflictos con otros cargos de la misma división (solo para espacios curriculares)
+    if (this.cargo.tipoDesignacion === 'ESPACIO_CURRICULAR' && this.cargo.division) {
+      const conflicto = this.validarConflictoHorario(this.diaSeleccionado, this.horaSeleccionada);
+      if (conflicto.hayConflicto) {
+        const division = this.cargo.division;
+        const turno = division.turno ? division.turno.toLowerCase() : 'sin turno';
+        this.modalService.alert(
+          'Conflicto de Horarios', 
+          `El ${this.diaSeleccionado.toLowerCase()} a la ${this.horaSeleccionada}º hora ya está ocupado por "${conflicto.cargoConflicto}" en la división ${division.anio}º${division.numDivision}º ${turno}.`
+        );
+        return;
+      }
+    }
+    
+    // Agregar el nuevo horario (el ID será generado por el backend)
+    this.cargo.horario.push({
+      id: 0, // Temporal, será generado por el backend
+      dia: this.diaSeleccionado,
+      hora: this.horaSeleccionada
+    });
+    
+    // Limpiar selección
+    this.diaSeleccionado = "";
+    this.horaSeleccionada = null;
+  }
+  
+  eliminarHorario(index: number): void {
+    if (!this.cargo.horario) {
+      this.cargo.horario = [];
+      return;
+    }
+    this.cargo.horario.splice(index, 1);
   }
 }

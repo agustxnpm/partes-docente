@@ -12,6 +12,7 @@ import { LicenciaComponent } from "./licencias/licencia.component";
 import { LicenciaDetailComponent } from "./licencias/licencia-detail.component";
 import { ParteDiarioComponent } from "./licencias/parte-diario.component";
 import { ReporteConceptoComponent } from "./personas/reporte-concepto.component";
+import { MapaHorarioComponent } from "./horarios/mapa-horario.component";
 
 export const routes: Routes = [
   { path: "personas", component: PersonaComponent }, // Ruta para listar personas
@@ -27,5 +28,6 @@ export const routes: Routes = [
   { path: "licencias", component: LicenciaComponent},
   { path: "licencias/parte-diario", component: ParteDiarioComponent},
   { path: "licencias/:id", component: LicenciaDetailComponent},
+  { path: "mapa-horarios", component: MapaHorarioComponent}, // Ruta para mapa de horarios
   { path: "", redirectTo: "/home", pathMatch: "full" }, // Redirigir a la ruta de inicio
 ];

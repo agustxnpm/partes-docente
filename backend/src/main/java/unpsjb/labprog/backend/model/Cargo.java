@@ -3,8 +3,6 @@ package unpsjb.labprog.backend.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -49,7 +47,6 @@ public class Cargo {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cargo_id", referencedColumnName = "id")
-    @JsonIgnore
     private List<Horario> horario;
 
     @Enumerated(EnumType.STRING)

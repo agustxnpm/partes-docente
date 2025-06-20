@@ -1,16 +1,20 @@
 package unpsjb.labprog.backend.presenter;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.interfaces.IHorarioService;
+import unpsjb.labprog.backend.dto.MapaHorarioSemanalDTO;
+import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Horario;
 
 @RestController
@@ -20,52 +24,49 @@ public class HorarioPresenter {
     @Autowired
     private IHorarioService horarioService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Object> createHorario(@RequestBody Horario horario) {
+    
+    // Endpoints para mapa de horarios
+    
+    @RequestMapping(value = "/mapa", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerMapaHorarioSemanal(
+            @RequestParam("divisionId") Long divisionId,
+            @RequestParam("fechaInicio") String fechaInicioStr,
+            @RequestParam("fechaFin") String fechaFinStr) {
         try {
-            horarioService.save(horario);
-            return Response.ok(horario, horarioService.getMensajeExito(horario));
-        } catch (DataIntegrityViolationException e) {
-            return Response.duplicateError(horario, e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return Response.notImplemented(horario, e.getMessage());
+            LocalDate fechaInicio = LocalDate.parse(fechaInicioStr, DateTimeFormatter.ISO_LOCAL_DATE);
+            LocalDate fechaFin = LocalDate.parse(fechaFinStr, DateTimeFormatter.ISO_LOCAL_DATE);
+            
+            // Buscar la división
+            List<Division> divisiones = horarioService.obtenerDivisionesParaMapa();
+            Division division = divisiones.stream()
+                .filter(d -> d.getId() == divisionId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("División no encontrada"));
+            
+            MapaHorarioSemanalDTO mapa = horarioService.generarMapaHorarioSemanal(division, fechaInicio, fechaFin);
+            return Response.ok(mapa);
+        } catch (Exception e) {
+            return Response.badRequest(null, "Error al generar mapa de horarios: " + e.getMessage());
         }
     }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Object> listarHorarios() {
-        return Response.ok(horarioService.findAll());
-
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> updateHorario(@RequestBody Horario horario) {
+    
+    @RequestMapping(value = "/divisiones", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerDivisionesDisponibles() {
         try {
-            horarioService.save(horario);
-            return Response.ok(horario, horarioService.getMensajeExitoActualizacion(horario));
-        } catch (IllegalArgumentException e) {
-            return Response.badRequest(horario, e.getMessage());
+            List<Division> divisiones = horarioService.obtenerDivisionesParaMapa();
+            return Response.ok(divisiones);
+        } catch (Exception e) {
+            return Response.badRequest(null, "Error al obtener divisiones: " + e.getMessage());
         }
     }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteHorario(@PathVariable("id") Long id) {
+    
+    @RequestMapping(value = "/disponibles", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerHorariosDisponibles() {
         try {
-            Horario horario = horarioService.findById(id);
-            horarioService.delete(horario);
-            return Response.ok(horario, horarioService.getMensajeExitoBorrado(horario));
-        } catch (IllegalArgumentException e) {
-            return Response.badRequest(e, e.getMessage());
-        }
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Object> getHorarioById(@RequestBody Long id) {
-        try {
-            Horario horario = horarioService.findById(id);
-            return Response.ok(horario);
-        } catch (IllegalArgumentException e) {
-            return Response.badRequest(id, e.getMessage());
+            List<Horario> horarios = horarioService.findAll();
+            return Response.ok(horarios);
+        } catch (Exception e) {
+            return Response.badRequest(null, "Error al obtener horarios: " + e.getMessage());
         }
     }
 }

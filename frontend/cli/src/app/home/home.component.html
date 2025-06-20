@@ -45,9 +45,35 @@
     <div class="col-md-3">
       <div class="card bg-gradient-warning text-white h-100 shadow-sm">
         <div class="card-body text-center">
-          <i class="bi bi-file-earmark-text-fill fs-1 mb-2"></i>
-          <h5 class="card-title">Reportes</h5>
-          <p class="card-text">Informes y partes diarios de novedades</p>
+          <i class="bi bi-calendar-week fs-1 mb-2"></i>
+          <h5 class="card-title">Horarios</h5>
+          <p class="card-text">Mapas de horarios semanales por división</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acceso Rápido a Horarios -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm bg-light">
+        <div class="card-body text-center py-4">
+          <div class="mb-3">
+            <i class="bi bi-calendar-week text-warning" style="font-size: 3rem;"></i>
+          </div>
+          <h4 class="fw-bold text-dark mb-3">Mapa de Horarios Semanal</h4>
+          <p class="text-muted mb-4">
+            Visualice la distribución de clases por división, incluyendo docentes titulares, 
+            suplencias activas y horas libres en una vista semanal completa.
+          </p>
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <a routerLink="/mapa-horarios" class="btn btn-warning btn-lg w-100">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+                Ver Mapa de Horarios
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -232,23 +258,23 @@
           <h6 class="fw-bold text-primary mb-3">Informes Disponibles:</h6>
           
           <div class="d-grid gap-2 mb-3">
-            <button class="btn btn-outline-warning text-start" disabled>
+            <a routerLink="/licencias/parte-diario" class="btn btn-outline-warning text-start">
               <i class="bi bi-calendar-day me-2"></i>
               <strong>Parte Diario de Novedades</strong>
               <small class="d-block text-muted">Licencias y novedades del día</small>
-            </button>
+            </a>
             
-            <button class="btn btn-outline-warning text-start" disabled>
+            <a routerLink="/personas/reporte-concepto" class="btn btn-outline-warning text-start">
               <i class="bi bi-person-check me-2"></i>
               <strong>Concepto Anual del Personal</strong>
               <small class="d-block text-muted">Evaluación anual por docente</small>
-            </button>
+            </a>
             
-            <button class="btn btn-outline-warning text-start" disabled>
+            <a routerLink="/mapa-horarios" class="btn btn-outline-warning text-start">
               <i class="bi bi-calendar-week me-2"></i>
               <strong>Mapa de Horarios por División</strong>
               <small class="d-block text-muted">Distribución semanal de clases</small>
-            </button>
+            </a>
             
             <button class="btn btn-outline-warning text-start" disabled>
               <i class="bi bi-exclamation-triangle me-2"></i>

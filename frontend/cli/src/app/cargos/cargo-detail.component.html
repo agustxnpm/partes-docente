@@ -172,6 +172,7 @@
             [(ngModel)]="cargo.division"
             name="division"
             #division="ngModel"
+            (change)="onDivisionChange()"
             required
           >
             <option [ngValue]="null">Seleccione una división</option>
@@ -198,6 +199,98 @@
             *ngIf="division.invalid && (division.dirty || division.touched)"
           >
             Campo obligatorio para espacios curriculares
+          </small>
+        </div>
+
+        <!-- Horarios (solo para ESPACIO_CURRICULAR) -->
+        <div
+          class="col-12"
+          *ngIf="cargo.tipoDesignacion === TipoDesignacion.ESPACIO_CURRICULAR && cargo.division"
+        >
+          <label class="form-label">
+            <i class="bi bi-calendar-week text-primary me-1"></i>
+            Asignar Horarios
+          </label>
+          
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label for="diaSeleccionado" class="form-label">Día</label>
+              <select
+                class="form-select"
+                [(ngModel)]="diaSeleccionado"
+                name="diaSeleccionado"
+              >
+                <option value="">Seleccione un día</option>
+                <option value="LUNES">Lunes</option>
+                <option value="MARTES">Martes</option>
+                <option value="MIERCOLES">Miércoles</option>
+                <option value="JUEVES">Jueves</option>
+                <option value="VIERNES">Viernes</option>
+              </select>
+            </div>
+            
+            <div class="col-md-3">
+              <label for="horaSeleccionada" class="form-label">Hora</label>
+              <select
+                class="form-select"
+                [(ngModel)]="horaSeleccionada"
+                name="horaSeleccionada"
+              >
+                <option [ngValue]="null">Seleccione una hora</option>
+                <option *ngFor="let hora of horasUnicas" [ngValue]="hora">
+                  {{ hora }}° hora
+                </option>
+              </select>
+            </div>
+            
+            <div class="col-md-3 d-flex align-items-end">
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="agregarHorario()"
+                [disabled]="!diaSeleccionado || !horaSeleccionada"
+              >
+                <i class="bi bi-plus-circle me-1"></i>
+                Agregar
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista de horarios asignados -->
+          <div class="card" *ngIf="cargo.horario && cargo.horario.length > 0">
+            <div class="card-header">
+              <h6 class="mb-0">
+                <i class="bi bi-clock-fill me-2"></i>
+                Horarios Asignados
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row g-2">
+                <div
+                  class="col-md-6 col-lg-4"
+                  *ngFor="let horario of cargo.horario; let i = index"
+                >
+                  <div class="alert alert-info d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <strong>{{ horario.dia }}</strong> - {{ horario.hora }}° hora
+                    </div>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="eliminarHorario(i)"
+                      title="Eliminar horario"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <small class="text-muted mt-2 d-block">
+            <i class="bi bi-info-circle me-1"></i>
+            Seleccione los días y horas en que se dictará este espacio curricular.
           </small>
         </div>
 

@@ -1,0 +1,384 @@
+/* Estilos para el mapa de horarios */
+
+/* Tabla de horarios con diseño moderno */
+.horario-table {
+  font-size: 0.9rem;
+  width: 100%;
+  table-layout: fixed;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e5e9;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.hora-column {
+  width: 12%;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-right: 2px solid #dee2e6;
+}
+
+/* Encabezados de días de la semana */
+.horario-table thead .dia-column {
+  width: 17.6%;
+  background: #213252;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+  border-bottom: 2px solid #6c757d;
+}
+
+.hora-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: #495057;
+  font-weight: bold;
+  vertical-align: middle;
+  text-align: center;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Celdas del horario */
+.horario-cell {
+  padding: 8px;
+  vertical-align: top;
+  height: 80px;
+  position: relative;
+  border: 1px solid #dee2e6;
+  transition: all 0.2s ease;
+}
+
+.horario-cell:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+.cell-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4px;
+}
+
+.espacio-curricular {
+  font-size: 0.95rem;
+  line-height: 1.2;
+  margin-bottom: 4px;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.docente {
+  font-size: 0.85rem;
+  line-height: 1.1;
+  opacity: 0.9;
+}
+
+/* Estados de las celdas con mejor contraste y diseño moderno */
+.hora-ocupada {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-color: #90caf9;
+  color: #0d47a1;
+  border-left: 4px solid #2196f3;
+}
+
+.hora-ocupada .espacio-curricular {
+  color: #0d47a1;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+
+.hora-ocupada .docente {
+  color: #1565c0;
+  font-weight: 500;
+}
+
+.hora-suplencia {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  border-color: #ffcc02;
+  color: #e65100;
+  border-left: 4px solid #ff9800;
+}
+
+.hora-suplencia .espacio-curricular {
+  color: #e65100;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+
+.hora-suplencia .docente {
+  color: #f57c00;
+  font-weight: 500;
+}
+
+.hora-libre {
+  background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+  border-color: #e0e0e0;
+  color: #757575;
+  font-style: italic;
+  border-left: 4px solid #bdbdbd;
+}
+
+.hora-vacia {
+  background-color: #ffffff;
+  border-color: #e1e5e9;
+  color: #495057;
+}
+
+/* Celdas del horario con mejor contraste */
+.horario-cell {
+  padding: 8px;
+  vertical-align: top;
+  height: 80px;
+  position: relative;
+  border: 1px solid #dee2e6;
+  transition: all 0.2s ease;
+}
+
+.horario-cell:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+/* Leyenda con nuevos colores */
+.legend-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.legend-box.ocupada {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-color: #90caf9;
+  border-left: 4px solid #2196f3;
+}
+
+.legend-box.suplencia {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  border-color: #ffcc02;
+  border-left: 4px solid #ff9800;
+}
+
+.legend-box.libre {
+  background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+  border-color: #e0e0e0;
+  border-left: 4px solid #bdbdbd;
+}
+
+.legend-box.vacia {
+  background-color: #ffffff;
+  border-color: #e1e5e9;
+}
+
+/* Estilos mejorados para la leyenda */
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.legend-text {
+  color: #495057;
+  font-weight: 500;
+}
+
+/* Navegación de semana */
+.semana-nav {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* Asegurar que las celdas del cuerpo tengan el mismo ancho que los encabezados */
+.horario-table tbody td:first-child {
+  width: 12%;
+}
+
+.horario-table tbody td:not(:first-child) {
+  width: 17.6%;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .horario-table {
+    font-size: 0.75rem;
+  }
+  
+  .horario-cell {
+    height: 60px;
+    padding: 4px;
+  }
+  
+  .espacio-curricular {
+    font-size: 0.8rem;
+  }
+  
+  .docente {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hora-column {
+    width: 40px;
+  }
+  
+  .dia-column {
+    width: calc((100% - 40px) / 5);
+    font-size: 0.8rem;
+  }
+  
+  .horario-cell {
+    height: 50px;
+    padding: 2px;
+  }
+  
+  .espacio-curricular {
+    font-size: 0.75rem;
+  }
+  
+  .docente {
+    font-size: 0.7rem;
+  }
+}
+
+/* Animaciones */
+.horario-cell {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.horario-cell:hover {
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Mejoras visuales */
+.card {
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+  border-bottom: none;
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+
+/* Estados de loading */
+.loading-overlay {
+  position: relative;
+}
+
+.loading-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Estilos para botones */
+.btn-outline-primary:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+.btn-outline-secondary:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+/* Scroll horizontal en móviles */
+.table-responsive {
+  border-radius: 0.375rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  border: none;
+}
+
+.table-responsive .horario-table {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: auto !important;
+}
+
+/* Eliminar cualquier margen o padding extra solo para la tabla */
+.card-body.p-0 {
+  padding: 0 !important;
+}
+
+.table-responsive {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  width: 100%;
+}
+
+/* Mejora para el selector de división */
+.form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Estilo para el badge de suplente */
+.badge.bg-warning {
+  font-size: 0.65rem;
+  padding: 0.25em 0.4em;
+}
+
+/* Estilo para iconos */
+.bi {
+  font-size: 1em;
+}
+
+/* Espaciado para elementos flex */
+.d-flex.gap-2 > * {
+  margin-right: 0.5rem;
+}
+
+.d-flex.gap-2 > *:last-child {
+  margin-right: 0;
+}
+
+/* Sobrescribir estilos de Bootstrap para asegurar layout correcto */
+.horario-table.table {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+.horario-table.table th,
+.horario-table.table td {
+  border: 1px solid #dee2e6 !important;
+  padding: 8px !important;
+  vertical-align: middle;
+}
+
+.horario-table.table thead th {
+  border-bottom: 2px solid #6c757d !important;
+  vertical-align: middle !important;
+}
+
+/* Reset del contenedor de la tabla */
+.card-body.p-0 {
+  padding: 0 !important;
+  overflow: hidden;
+}
