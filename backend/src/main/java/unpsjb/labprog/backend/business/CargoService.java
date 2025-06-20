@@ -16,6 +16,7 @@ import unpsjb.labprog.backend.business.interfaces.ICargoValidator;
 import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Division;
+import unpsjb.labprog.backend.model.Horario;
 
 /**
  * Implementación del servicio de cargos.
@@ -37,32 +38,84 @@ public class CargoService implements ICargoService {
 
     @Transactional
     public Cargo save(Cargo cargo) {
-        if (cargo.getId() != 0) { // Es una actualización
-            // Obtener el cargo existente
-            Cargo cargoExistente = findById(cargo.getId());
-
-            cargoExistente.setNombre(cargo.getNombre());
-            cargoExistente.setCargaHoraria(cargo.getCargaHoraria());
-            cargoExistente.setFechaInicio(cargo.getFechaInicio());
-            cargoExistente.setFechaFin(cargo.getFechaFin());
-            cargoExistente.setTipoDesignacion(cargo.getTipoDesignacion());
-            cargoExistente.setDivision(cargo.getDivision());
-
-            // Manejar la colección horario correctamente
-            if (cargo.getHorario() != null) {
-                // Limpiar la lista existente
-                cargoExistente.getHorario().clear();
-                // Agregar los nuevos elementos
-                cargoExistente.getHorario().addAll(cargo.getHorario());
-            }
-
-            cargoValidator.validarCargo(cargoExistente);
-            return cargoRepository.save(cargoExistente);
+        if (cargo.getId() != 0) {
+            return actualizarCargo(cargo);
         } else {
-            // Es una creación nueva
-            cargoValidator.validarCargo(cargo);
-            return cargoRepository.save(cargo);
+            return crearCargo(cargo);
         }
+    }
+    
+    private Cargo actualizarCargo(Cargo cargo) {
+        Cargo cargoExistente = findById(cargo.getId());
+        actualizarDatosCargo(cargoExistente, cargo);
+        actualizarHorarios(cargoExistente, cargo.getHorario());
+        cargoValidator.validarCargo(cargoExistente);
+        return cargoRepository.save(cargoExistente);
+    }
+    
+    private Cargo crearCargo(Cargo cargo) {
+        cargoValidator.validarCargo(cargo);
+        return cargoRepository.save(cargo);
+    }
+    
+    private void actualizarDatosCargo(Cargo cargoExistente, Cargo cargoNuevo) {
+        cargoExistente.setNombre(cargoNuevo.getNombre());
+        cargoExistente.setCargaHoraria(cargoNuevo.getCargaHoraria());
+        cargoExistente.setFechaInicio(cargoNuevo.getFechaInicio());
+        cargoExistente.setFechaFin(cargoNuevo.getFechaFin());
+        cargoExistente.setTipoDesignacion(cargoNuevo.getTipoDesignacion());
+        cargoExistente.setDivision(cargoNuevo.getDivision());
+    }
+    
+    private void actualizarHorarios(Cargo cargoExistente, List<Horario> horariosNuevos) {
+        if (horariosNuevos == null) return;
+        
+        List<Horario> horariosActualizados = procesarHorarios(cargoExistente, horariosNuevos);
+        cargoExistente.getHorario().clear();
+        cargoExistente.getHorario().addAll(horariosActualizados);
+    }
+    
+    private List<Horario> procesarHorarios(Cargo cargoExistente, List<Horario> horariosNuevos) {
+        List<Horario> horariosActualizados = new ArrayList<>();
+        
+        for (Horario horarioNuevo : horariosNuevos) {
+            if (esHorarioExistente(horarioNuevo)) {
+                Horario horarioActualizado = actualizarHorarioExistente(cargoExistente, horarioNuevo);
+                if (horarioActualizado != null) {
+                    horariosActualizados.add(horarioActualizado);
+                } else {
+                    // Si no se encuentra, crear uno nuevo con los mismos datos
+                    horariosActualizados.add(crearNuevoHorario(horarioNuevo));
+                }
+            } else {
+                horariosActualizados.add(crearNuevoHorario(horarioNuevo));
+            }
+        }
+        
+        return horariosActualizados;
+    }
+    
+    private boolean esHorarioExistente(Horario horario) {
+        return horario.getId() != 0;
+    }
+    
+    private Horario actualizarHorarioExistente(Cargo cargoExistente, Horario horarioNuevo) {
+        return cargoExistente.getHorario().stream()
+            .filter(h -> h.getId() == horarioNuevo.getId())
+            .findFirst()
+            .map(horarioExistente -> {
+                horarioExistente.setDia(horarioNuevo.getDia());
+                horarioExistente.setHora(horarioNuevo.getHora());
+                return horarioExistente;
+            })
+            .orElse(null);
+    }
+    
+    private Horario crearNuevoHorario(Horario horarioBase) {
+        Horario nuevoHorario = new Horario();
+        nuevoHorario.setDia(horarioBase.getDia());
+        nuevoHorario.setHora(horarioBase.getHora());
+        return nuevoHorario;
     }
 
     @Transactional
