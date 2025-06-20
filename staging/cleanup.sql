@@ -6,7 +6,6 @@ TRUNCATE TABLE
   cargo,
   designacion,
   division,
-  horario,
   persona,
   licencia,
   licencia_designacion,

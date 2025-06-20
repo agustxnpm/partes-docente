@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.interfaces.IDivisionService;
 import unpsjb.labprog.backend.business.interfaces.IDivisionValidator;
-import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.mensajes.IDivisionMensajeBuilder;
 import unpsjb.labprog.backend.model.Division;
 
 /**
@@ -26,8 +26,9 @@ public class DivisionService implements IDivisionService {
     @Autowired
     private DivisionRepository divisionRepository;
 
+    // Aplicando DIP: Dependemos de la abstracción específica IDivisionMensajeBuilder
     @Autowired
-    private MensajeBuilder mensajeBuilder;
+    private IDivisionMensajeBuilder divisionMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica IDivisionValidator
     @Autowired
@@ -62,15 +63,15 @@ public class DivisionService implements IDivisionService {
     }
 
     public String getMensajeExito(Division division) {
-        return mensajeBuilder.generarMensajeExitoDivisionCreada(division);
+        return divisionMensajeBuilder.generarMensajeExitoCreacion(division);
     }
 
     public String getMensajeExitoActualizacion(Division division) {
-        return mensajeBuilder.generarMensajeExitoDivisionActualizada(division);
+        return divisionMensajeBuilder.generarMensajeExitoActualizacion(division);
     }
 
     public String getMensajeExitoBorrado(Division division) {
-        return mensajeBuilder.generarMensajeExitoDivisionBorrada(division);
+        return divisionMensajeBuilder.generarMensajeExitoBorrado(division);
     }
 
     public Division buscarDivisionExistente(Division division) {

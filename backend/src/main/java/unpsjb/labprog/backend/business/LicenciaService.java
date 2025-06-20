@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.interfaces.IDesignacionService;
 import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
 import unpsjb.labprog.backend.business.interfaces.ILicenciaValidator;
-import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.mensajes.ILicenciaMensajeBuilder;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.EstadoLicencia;
@@ -38,8 +38,9 @@ public class LicenciaService implements ILicenciaService {
     @Autowired
     private LogLicenciaService logLicenciaService;
 
+    // Aplicando DIP: Dependemos de la abstracción específica ILicenciaMensajeBuilder
     @Autowired
-    private MensajeBuilder mensajeBuilder;
+    private ILicenciaMensajeBuilder licenciaMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica ILicenciaValidator
     @Autowired
@@ -143,11 +144,11 @@ public class LicenciaService implements ILicenciaService {
     }
 
     public String getMensajeExitoLicenciaOtorgada(Licencia licencia) {
-        return mensajeBuilder.generarMensajeExitoLicenciaOtorgada(licencia);
+        return licenciaMensajeBuilder.generarMensajeExitoLicenciaOtorgada(licencia);
     }
 
     public String getMensajeExitoLicenciaActualizada(Licencia licencia) {
-        return mensajeBuilder.generarMensajeExitoLicenciaActualizada(licencia);
+        return licenciaMensajeBuilder.generarMensajeExitoActualizacion(licencia);
     }
 
     public List<Licencia> findLicenciasQueCubrenPeriodoCompleto(Cargo cargo, Persona persona, LocalDate fechaInicio,

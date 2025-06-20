@@ -15,7 +15,7 @@ import unpsjb.labprog.backend.business.interfaces.IDivisionService;
 import unpsjb.labprog.backend.business.interfaces.IHorarioService;
 import unpsjb.labprog.backend.business.interfaces.IHorarioValidator;
 import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
-import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.mensajes.IHorarioMensajeBuilder;
 import unpsjb.labprog.backend.dto.HorarioMapaDTO;
 import unpsjb.labprog.backend.dto.MapaHorarioSemanalDTO;
 import unpsjb.labprog.backend.model.Cargo;
@@ -37,8 +37,9 @@ public class HorarioService implements IHorarioService {
     @Autowired
     private HorarioRepository horarioRepository;
 
+    // Aplicando DIP: Dependemos de la abstracción específica IHorarioMensajeBuilder
     @Autowired
-    private MensajeBuilder mensajeBuilder;
+    private IHorarioMensajeBuilder horarioMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica IHorarioValidator
     @Autowired
@@ -88,15 +89,15 @@ public class HorarioService implements IHorarioService {
     }
 
     public String getMensajeExito(Horario horario) {
-        return mensajeBuilder.generarMensajeExitoHorarioCreado(horario);
+        return horarioMensajeBuilder.generarMensajeExitoCreacion(horario);
     }
 
     public String getMensajeExitoBorrado(Horario horario) {
-        return mensajeBuilder.generarMensajeExitoHorarioBorrado(horario);
+        return horarioMensajeBuilder.generarMensajeExitoBorrado(horario);
     }
 
     public String getMensajeExitoActualizacion(Horario horario) {
-        return mensajeBuilder.generarMensajeExitoHorarioActualizado(horario);
+        return horarioMensajeBuilder.generarMensajeExitoActualizacion(horario);
     }
     
     // Métodos para el mapa de horarios

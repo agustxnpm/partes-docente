@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.interfaces.IPersonaService;
 import unpsjb.labprog.backend.business.interfaces.IPersonaValidator;
-import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.mensajes.IPersonaMensajeBuilder;
 import unpsjb.labprog.backend.model.Persona;
 
 /**
@@ -27,8 +27,9 @@ public class PersonaService implements IPersonaService {
     @Autowired
     private PersonaRepository personaRepository;
 
+    // Aplicando DIP: Dependemos de la abstracción específica IPersonaMensajeBuilder
     @Autowired
-    private MensajeBuilder mensajeBuilder;
+    private IPersonaMensajeBuilder personaMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica IPersonaValidator
     @Autowired
@@ -91,15 +92,15 @@ public class PersonaService implements IPersonaService {
     }
 
     public String getMensajeExito(Persona persona) {
-        return mensajeBuilder.generarMensajeExitoPersonaCreada(persona);
+        return personaMensajeBuilder.generarMensajeExitoCreacion(persona);
     }
 
     public String getMensajeExitoActualizacion(Persona persona) {
-        return mensajeBuilder.generarMensajeExitoPersonaActualizada(persona);
+        return personaMensajeBuilder.generarMensajeExitoActualizacion(persona);
     }
 
     public String getMensajeExitoBorrado(Persona persona) {
-        return mensajeBuilder.generarMensajeExitoPersonaBorrada(persona);
+        return personaMensajeBuilder.generarMensajeExitoBorrado(persona);
     }
 
     public List<Persona> search(String term) {

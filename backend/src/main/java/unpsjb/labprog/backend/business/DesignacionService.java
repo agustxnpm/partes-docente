@@ -14,7 +14,7 @@ import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.interfaces.IDesignacionService;
 import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
 import unpsjb.labprog.backend.business.interfaces.IDesignacionValidator;
-import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.mensajes.IDesignacionMensajeBuilder;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Licencia;
@@ -31,8 +31,9 @@ public class DesignacionService implements IDesignacionService {
     @Autowired
     private DesignacionRepository designacionRepository;
 
+    // Aplicando DIP: Dependemos de la abstracción específica IDesignacionMensajeBuilder
     @Autowired
-    private MensajeBuilder mensajeBuilder;
+    private IDesignacionMensajeBuilder designacionMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica IDesignacionValidator
     @Autowired
@@ -82,24 +83,25 @@ public class DesignacionService implements IDesignacionService {
     }
 
     public String getMensajeExitoActualizacion(Designacion designacion) {
-        return mensajeBuilder.generarMensajeExitoDesignacionActualizada(designacion);
+        return designacionMensajeBuilder.generarMensajeExitoActualizacion(designacion);
     }
 
     public String getMensajeExitoBorrado(Designacion designacion) {
-        return mensajeBuilder.generarMensajeExitoDesignacionBorrada(designacion);
+        return designacionMensajeBuilder.generarMensajeExitoBorrado(designacion);
     }
 
     public String getMensajeExito(Designacion designacion) {
-        return mensajeBuilder.generarMensajeExitoDesignacionCreada(designacion);
+        return designacionMensajeBuilder.generarMensajeExitoCreacion(designacion);
     }
 
     public String getMensajeExitoDesignacionSuplencia(Designacion designacionSuplantada, Persona personaSuplantada) {
-        return mensajeBuilder.generarMensajeExitoDesignacionSuplencia(designacionSuplantada, personaSuplantada);
+        return designacionMensajeBuilder.generarMensajeExitoDesignacionSuplencia(designacionSuplantada, personaSuplantada);
     }
 
     /**
      * Determina el mensaje de éxito apropiado para una designación guardada
      */
+    @Transactional
     public String determinarMensajeExito(Designacion designacionGuardada) {
         if ("Suplente".equalsIgnoreCase(designacionGuardada.getSituacionRevista())) {
             Persona personaReemplazada = encontrarPersonaReemplazada(designacionGuardada);

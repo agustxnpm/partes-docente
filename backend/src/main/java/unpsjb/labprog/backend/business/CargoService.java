@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import unpsjb.labprog.backend.business.interfaces.ICargoService;
 import unpsjb.labprog.backend.business.interfaces.ICargoValidator;
-import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.mensajes.ICargoMensajeBuilder;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Horario;
@@ -29,8 +29,9 @@ public class CargoService implements ICargoService {
     @Autowired
     private CargoRepository cargoRepository;
 
+    // Aplicando DIP: Dependemos de la abstracción específica ICargoMensajeBuilder
     @Autowired
-    private MensajeBuilder mensajeBuilder;
+    private ICargoMensajeBuilder cargoMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica ICargoValidator
     @Autowired
@@ -156,15 +157,15 @@ public class CargoService implements ICargoService {
     }
 
     public String getMensajeExito(Cargo cargo) {
-        return mensajeBuilder.generarMensajeExitoCargoCreado(cargo);
+        return cargoMensajeBuilder.generarMensajeExitoCreacion(cargo);
     }
 
     public String getMensajeExitoActualizacion(Cargo cargo) {
-        return mensajeBuilder.generarMensajeExitoCargoActualizado(cargo);
+        return cargoMensajeBuilder.generarMensajeExitoActualizacion(cargo);
     }
 
     public String getMensajeExitoBorrado(Cargo cargo) {
-        return mensajeBuilder.generarMensajeExitoCargoBorrado(cargo);
+        return cargoMensajeBuilder.generarMensajeExitoBorrado(cargo);
     }
 
     public boolean existsByDivisionId(long id) {

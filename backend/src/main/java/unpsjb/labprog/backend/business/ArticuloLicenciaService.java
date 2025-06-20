@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.business.interfaces.IArticuloLicenciaService;
-import unpsjb.labprog.backend.business.utilidades.MensajeBuilder;
 import unpsjb.labprog.backend.model.ArticuloLicencia;
 
 @Service
@@ -15,8 +14,7 @@ public class ArticuloLicenciaService implements IArticuloLicenciaService {
     @Autowired
     private ArticuloLicenciaRepository articuloLicenciaRepository;
 
-    @Autowired
-    private MensajeBuilder mensajeBuilder;
+    // Aplicando DIP: Dependemos de la abstracción específica IArticuloLicenciaMensajeBuilder
 
     public ArticuloLicencia findById(Long id) {
         return articuloLicenciaRepository.findById(id)
@@ -30,18 +28,6 @@ public class ArticuloLicenciaService implements IArticuloLicenciaService {
     public ArticuloLicencia findByArticulo(String codigo) {
         return articuloLicenciaRepository.findByArticulo(codigo)
                 .orElseThrow(() -> new IllegalArgumentException("ArticuloLicencia no encontrado"));
-    }
-
-    public String getMensajeExito(ArticuloLicencia articuloLicencia) {
-        return mensajeBuilder.generarMensajeExitoArticuloLicenciaCreado(articuloLicencia);
-    }
-
-    public String getMensajeExitoBorrado(ArticuloLicencia articuloLicencia) {
-        return mensajeBuilder.generarMensajeExitoArticuloLicenciaBorrado(articuloLicencia);
-    }
-
-    public String getMensajeExitoActualizacion(ArticuloLicencia articuloLicencia) {
-        return mensajeBuilder.generarMensajeExitoArticuloLicenciaActualizado(articuloLicencia);
     }
 
 }

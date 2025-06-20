@@ -29,24 +29,5 @@ public interface IArticuloLicenciaService {
      */
     ArticuloLicencia findByArticulo(String codigo);
     
-    /**
-     * Genera mensaje de éxito para creación de artículo de licencia.
-     * @param articuloLicencia El artículo de licencia creado
-     * @return Mensaje de éxito
-     */
-    String getMensajeExito(ArticuloLicencia articuloLicencia);
-    
-    /**
-     * Genera mensaje de éxito para borrado de artículo de licencia.
-     * @param articuloLicencia El artículo de licencia borrado
-     * @return Mensaje de éxito
-     */
-    String getMensajeExitoBorrado(ArticuloLicencia articuloLicencia);
-    
-    /**
-     * Genera mensaje de éxito para actualización de artículo de licencia.
-     * @param articuloLicencia El artículo de licencia actualizado
-     * @return Mensaje de éxito
-     */
-    String getMensajeExitoActualizacion(ArticuloLicencia articuloLicencia);
+
 }
