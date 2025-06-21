@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.mensajes.IDesignacionMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.IDesignacionService;
 import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
 import unpsjb.labprog.backend.business.interfaces.validaciones.IDesignacionValidator;
@@ -22,16 +21,16 @@ import unpsjb.labprog.backend.model.Persona;
  * Implementación del servicio de designaciones.
  * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
  * en lugar de implementaciones concretas.
+ * 
+ * Nota: Se removieron los métodos de generación de mensajes para eliminar la indirección
+ * innecesaria. Los mensajes ahora se generan directamente en el presenter usando
+ * IDesignacionMensajeBuilder, aplicando mejor el principio SRP.
  */
 @Service
 public class DesignacionService implements IDesignacionService {
 
     @Autowired
     private DesignacionRepository designacionRepository;
-
-    // Aplicando DIP: Dependemos de la abstracción específica IDesignacionMensajeBuilder
-    @Autowired
-    private IDesignacionMensajeBuilder designacionMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica IDesignacionValidator
     @Autowired
@@ -78,51 +77,6 @@ public class DesignacionService implements IDesignacionService {
             Persona personaTitular, Long designacionId) {
         return designacionRepository.findSuplenciasEnPeriodo(cargoId, fechaInicio, fechaFin, personaTitular,
                 designacionId);
-    }
-
-    public String getMensajeExitoActualizacion(Designacion designacion) {
-        return designacionMensajeBuilder.generarMensajeExitoActualizacion(designacion);
-    }
-
-    public String getMensajeExitoBorrado(Designacion designacion) {
-        return designacionMensajeBuilder.generarMensajeExitoBorrado(designacion);
-    }
-
-    public String getMensajeExito(Designacion designacion) {
-        return designacionMensajeBuilder.generarMensajeExitoCreacion(designacion);
-    }
-
-    public String getMensajeExitoDesignacionSuplencia(Designacion designacionSuplantada, Persona personaSuplantada) {
-        return designacionMensajeBuilder.generarMensajeExitoDesignacionSuplencia(designacionSuplantada, personaSuplantada);
-    }
-
-    /**
-     * Determina el mensaje de éxito apropiado para una designación guardada
-     */
-    public String determinarMensajeExito(Designacion designacionGuardada) {
-        if (esSuplente(designacionGuardada)) {
-            return determinarMensajeParaSuplente(designacionGuardada);
-        }
-        return getMensajeExito(designacionGuardada);
-    }
-
-    /**
-     * Verifica si la designación es de tipo suplente
-     */
-    private boolean esSuplente(Designacion designacion) {
-        return "Suplente".equalsIgnoreCase(designacion.getSituacionRevista());
-    }
-
-    /**
-     * Determina el mensaje apropiado para una designación suplente
-     */
-    private String determinarMensajeParaSuplente(Designacion designacionGuardada) {
-        Persona personaReemplazada = encontrarPersonaReemplazada(designacionGuardada);
-        
-        if (personaReemplazada != null) {
-            return getMensajeExitoDesignacionSuplencia(designacionGuardada, personaReemplazada);
-        }
-        return getMensajeExito(designacionGuardada);
     }
 
     /**

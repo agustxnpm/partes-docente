@@ -12,6 +12,7 @@ import unpsjb.labprog.backend.model.Persona;
  * Interfaz para el servicio de designaciones.
  * Aplica el principio DIP (Dependency Inversion Principle) proporcionando una abstracción
  * que permite desacoplar las clases cliente de la implementación concreta.
+ * 
  */
 public interface IDesignacionService {
     
@@ -49,31 +50,6 @@ public interface IDesignacionService {
      * Busca suplencias en un período
      */
     List<Designacion> findSuplenciasEnPeriodo(Long cargoId, LocalDate fechaInicio, LocalDate fechaFin, Persona personaTitular, Long designacionId);
-    
-    /**
-     * Obtiene mensaje de éxito para actualización
-     */
-    String getMensajeExitoActualizacion(Designacion designacion);
-    
-    /**
-     * Obtiene mensaje de éxito para borrado
-     */
-    String getMensajeExitoBorrado(Designacion designacion);
-    
-    /**
-     * Obtiene mensaje de éxito general
-     */
-    String getMensajeExito(Designacion designacion);
-    
-    /**
-     * Obtiene mensaje de éxito para suplencia
-     */
-    String getMensajeExitoDesignacionSuplencia(Designacion designacionSuplantada, Persona personaSuplantada);
-    
-    /**
-     * Determina el mensaje de éxito apropiado
-     */
-    String determinarMensajeExito(Designacion designacionGuardada);
     
     /**
      * Encuentra la persona que está siendo reemplazada por una suplencia

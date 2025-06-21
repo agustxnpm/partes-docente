@@ -56,21 +56,6 @@ public interface ICargoService {
     Optional<Cargo> findByNombreAndDivisionExacta(String nombre, Division division);
     
     /**
-     * Obtiene mensaje de éxito para cargo creado
-     */
-    String getMensajeExito(Cargo cargo);
-    
-    /**
-     * Obtiene mensaje de éxito para cargo actualizado
-     */
-    String getMensajeExitoActualizacion(Cargo cargo);
-    
-    /**
-     * Obtiene mensaje de éxito para cargo borrado
-     */
-    String getMensajeExitoBorrado(Cargo cargo);
-    
-    /**
      * Verifica si existen cargos para una división
      */
     boolean existsByDivisionId(long id);

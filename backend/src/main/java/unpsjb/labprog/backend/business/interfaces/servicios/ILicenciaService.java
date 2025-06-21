@@ -65,16 +65,6 @@ public interface ILicenciaService {
     List<Licencia> getAllLicencias();
 
     /**
-     * Obtiene mensaje de éxito para licencia otorgada
-     */
-    String getMensajeExitoLicenciaOtorgada(Licencia licencia);
-
-    /**
-     * Obtiene mensaje de éxito para licencia actualizada
-     */
-    String getMensajeExitoLicenciaActualizada(Licencia licencia);
-
-    /**
      * Busca licencias que cubren un período completo
      */
     List<Licencia> findLicenciasQueCubrenPeriodoCompleto(Cargo cargo, Persona persona, LocalDate fechaInicio,

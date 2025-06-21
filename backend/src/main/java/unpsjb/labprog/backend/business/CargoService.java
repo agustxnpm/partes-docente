@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.mensajes.ICargoMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.ICargoService;
 import unpsjb.labprog.backend.business.interfaces.validaciones.ICargoValidator;
 import unpsjb.labprog.backend.model.Cargo;
@@ -22,16 +21,13 @@ import unpsjb.labprog.backend.model.Horario;
  * Implementación del servicio de cargos.
  * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
  * en lugar de implementaciones concretas.
+ * 
  */
 @Service
 public class CargoService implements ICargoService {
 
     @Autowired
     private CargoRepository cargoRepository;
-
-    // Aplicando DIP: Dependemos de la abstracción específica ICargoMensajeBuilder
-    @Autowired
-    private ICargoMensajeBuilder cargoMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica ICargoValidator
     @Autowired
@@ -154,18 +150,6 @@ public class CargoService implements ICargoService {
                 division.getAnio(),
                 division.getNumDivision(),
                 division.getTurno());
-    }
-
-    public String getMensajeExito(Cargo cargo) {
-        return cargoMensajeBuilder.generarMensajeExitoCreacion(cargo);
-    }
-
-    public String getMensajeExitoActualizacion(Cargo cargo) {
-        return cargoMensajeBuilder.generarMensajeExitoActualizacion(cargo);
-    }
-
-    public String getMensajeExitoBorrado(Cargo cargo) {
-        return cargoMensajeBuilder.generarMensajeExitoBorrado(cargo);
     }
 
     public boolean existsByDivisionId(long id) {

@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.mensajes.IDivisionMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.IDivisionService;
 import unpsjb.labprog.backend.business.interfaces.validaciones.IDivisionValidator;
 import unpsjb.labprog.backend.model.Division;
@@ -19,16 +18,13 @@ import unpsjb.labprog.backend.model.Division;
  * Implementación del servicio de divisiones.
  * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
  * en lugar de implementaciones concretas.
+ * 
  */
 @Service
 public class DivisionService implements IDivisionService {
 
     @Autowired
     private DivisionRepository divisionRepository;
-
-    // Aplicando DIP: Dependemos de la abstracción específica IDivisionMensajeBuilder
-    @Autowired
-    private IDivisionMensajeBuilder divisionMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica IDivisionValidator
     @Autowired
@@ -60,18 +56,6 @@ public class DivisionService implements IDivisionService {
     public Division findById(Long id) {
         return divisionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Division no encontrada"));
-    }
-
-    public String getMensajeExito(Division division) {
-        return divisionMensajeBuilder.generarMensajeExitoCreacion(division);
-    }
-
-    public String getMensajeExitoActualizacion(Division division) {
-        return divisionMensajeBuilder.generarMensajeExitoActualizacion(division);
-    }
-
-    public String getMensajeExitoBorrado(Division division) {
-        return divisionMensajeBuilder.generarMensajeExitoBorrado(division);
     }
 
     public Division buscarDivisionExistente(Division division) {

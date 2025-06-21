@@ -10,9 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.interfaces.mensajes.IDesignacionMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.IDesignacionService;
 import unpsjb.labprog.backend.model.Designacion;
 
+/**
+ * Presenter para la gestión de designaciones.
+ * Aplica el principio DIP (Dependency Inversion Principle) 
+ */
 @RestController
 @RequestMapping("designaciones")
 public class DesignacionPresenter {
@@ -20,12 +25,15 @@ public class DesignacionPresenter {
     @Autowired
     private IDesignacionService designacionService;
 
+    @Autowired
+    private IDesignacionMensajeBuilder designacionMensajeBuilder;
+
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> designarCargo(@RequestBody Designacion designacion) {
         try {
             Designacion designacionGuardada = designacionService.save(designacion);
-            String mensajeExito = designacionService.determinarMensajeExito(designacionGuardada);
+            String mensajeExito = designacionMensajeBuilder.determinarMensajeExitoCreacion(designacionGuardada);
             
             return Response.ok(designacionGuardada, mensajeExito);
         } catch (IllegalArgumentException e) {
@@ -39,7 +47,7 @@ public class DesignacionPresenter {
             Designacion designacion = designacionService.findById(id);
             designacionService.delete(designacion);
             return Response.ok(designacion,
-                    designacionService.getMensajeExitoBorrado(designacion));
+                    designacionMensajeBuilder.generarMensajeExitoBorrado(designacion));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(e, e.getMessage());
         }
@@ -75,7 +83,7 @@ public class DesignacionPresenter {
     public ResponseEntity<Object> updateCargo(@PathVariable("id") Long id, @RequestBody Designacion designacion) {
         try {
             designacionService.save(designacion);
-            return Response.ok(designacion, designacionService.getMensajeExitoActualizacion(designacion));
+            return Response.ok(designacion, designacionMensajeBuilder.generarMensajeExitoActualizacion(designacion));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(designacion, e.getMessage());
         }

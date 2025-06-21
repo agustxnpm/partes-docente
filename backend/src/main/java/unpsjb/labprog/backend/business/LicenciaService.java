@@ -23,7 +23,8 @@ import unpsjb.labprog.backend.model.Persona;
 
 /**
  * Implementación del servicio de licencias.
- * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
+ * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de
+ * abstracciones
  * en lugar de implementaciones concretas.
  */
 @Service
@@ -38,11 +39,13 @@ public class LicenciaService implements ILicenciaService {
     @Autowired
     private LogLicenciaService logLicenciaService;
 
-    // Aplicando DIP: Dependemos de la abstracción específica ILicenciaMensajeBuilder
+    // Aplicando DIP: Dependemos de la abstracción específica
+    // ILicenciaMensajeBuilder
     @Autowired
     private ILicenciaMensajeBuilder licenciaMensajeBuilder;
 
-    // Aplicando DIP e ISP: Dependemos de la abstracción específica ILicenciaValidator
+    // Aplicando DIP e ISP: Dependemos de la abstracción específica
+    // ILicenciaValidator
     @Autowired
     private ILicenciaValidator licenciaValidator;
 
@@ -84,7 +87,8 @@ public class LicenciaService implements ILicenciaService {
 
             licencia.setEstado(EstadoLicencia.VALIDA);
             licenciaRepository.save(licencia);
-            agregarLog(licencia, EstadoLicencia.VALIDA, getMensajeExitoLicenciaOtorgada(licencia));
+            agregarLog(licencia, EstadoLicencia.VALIDA,
+                    licenciaMensajeBuilder.generarMensajeExitoLicenciaOtorgada(licencia));
             return licencia;
         } catch (IllegalArgumentException e) {
             licencia.setEstado(EstadoLicencia.INVALIDA);
@@ -111,7 +115,8 @@ public class LicenciaService implements ILicenciaService {
     }
 
     /**
-     * Actualiza los campos de una licencia existente con los valores de otra licencia
+     * Actualiza los campos de una licencia existente con los valores de otra
+     * licencia
      */
     private void actualizarCamposLicencia(Licencia licenciaExistente, Licencia licenciaActualizar) {
         licenciaExistente.setPedidoDesde(licenciaActualizar.getPedidoDesde());
@@ -153,14 +158,6 @@ public class LicenciaService implements ILicenciaService {
         return licenciaRepository.findAll();
     }
 
-    public String getMensajeExitoLicenciaOtorgada(Licencia licencia) {
-        return licenciaMensajeBuilder.generarMensajeExitoLicenciaOtorgada(licencia);
-    }
-
-    public String getMensajeExitoLicenciaActualizada(Licencia licencia) {
-        return licenciaMensajeBuilder.generarMensajeExitoActualizacion(licencia);
-    }
-
     public List<Licencia> findLicenciasQueCubrenPeriodoCompleto(Cargo cargo, Persona persona, LocalDate fechaInicio,
             LocalDate fechaFin) {
         return licenciaRepository.findLicenciasQueCubrenPeriodoCompleto(cargo, persona, fechaInicio, fechaFin);
@@ -177,7 +174,7 @@ public class LicenciaService implements ILicenciaService {
     public boolean licenciasCubrenPeriodoCompleto(Persona persona, Cargo cargo,
             LocalDate fechaInicio, LocalDate fechaFin) {
         List<Licencia> licenciasEnPeriodo = obtenerLicenciasValidasEnPeriodo(persona, cargo, fechaInicio, fechaFin);
-        
+
         if (licenciasEnPeriodo.isEmpty()) {
             return false;
         }
@@ -188,8 +185,8 @@ public class LicenciaService implements ILicenciaService {
     /**
      * Obtiene todas las licencias válidas de una persona en un período específico
      */
-    private List<Licencia> obtenerLicenciasValidasEnPeriodo(Persona persona, Cargo cargo, 
-                                                           LocalDate fechaInicio, LocalDate fechaFin) {
+    private List<Licencia> obtenerLicenciasValidasEnPeriodo(Persona persona, Cargo cargo,
+            LocalDate fechaInicio, LocalDate fechaFin) {
         return findLicenciasEnPeriodo(cargo, persona, fechaInicio, fechaFin);
     }
 
@@ -221,8 +218,8 @@ public class LicenciaService implements ILicenciaService {
      * Verifica si una fecha está dentro del rango de una licencia
      */
     private boolean fechaEstaEnRangoLicencia(LocalDate fecha, Licencia licencia) {
-        return !fecha.isBefore(licencia.getPedidoDesde()) && 
-               !fecha.isAfter(licencia.getPedidoHasta());
+        return !fecha.isBefore(licencia.getPedidoDesde()) &&
+                !fecha.isAfter(licencia.getPedidoHasta());
     }
 
 }

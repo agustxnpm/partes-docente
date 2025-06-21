@@ -1,7 +1,6 @@
 package unpsjb.labprog.backend.business.interfaces.mensajes;
 
 import unpsjb.labprog.backend.model.Designacion;
-import unpsjb.labprog.backend.model.Persona;
 
 /**
  * Interfaz para constructor de mensajes específicos de Designacion.
@@ -12,8 +11,15 @@ public interface IDesignacionMensajeBuilder extends IMensajeBuilder<Designacion>
     /**
      * Genera mensaje específico para designación de suplencia.
      * @param suplente La designación del suplente
-     * @param reemplazado La persona reemplazada
      * @return Mensaje de éxito para suplencia
      */
-    String generarMensajeExitoDesignacionSuplencia(Designacion suplente, Persona reemplazado);
+    String generarMensajeExitoDesignacionSuplencia(Designacion suplente);
+
+    /**
+     * Determina automáticamente el mensaje de éxito apropiado para una designación,
+     * considerando si es titular o suplente.
+     * @param designacion La designación guardada
+     * @return Mensaje de éxito apropiado
+     */
+    String determinarMensajeExitoCreacion(Designacion designacion);
 }

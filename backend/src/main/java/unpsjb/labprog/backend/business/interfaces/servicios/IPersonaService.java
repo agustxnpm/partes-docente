@@ -58,19 +58,4 @@ public interface IPersonaService {
      * Busca personas por término de búsqueda
      */
     List<Persona> search(String term);
-    
-    /**
-     * Obtiene mensaje de éxito para persona creada
-     */
-    String getMensajeExito(Persona persona);
-    
-    /**
-     * Obtiene mensaje de éxito para persona actualizada
-     */
-    String getMensajeExitoActualizacion(Persona persona);
-    
-    /**
-     * Obtiene mensaje de éxito para persona borrada
-     */
-    String getMensajeExitoBorrado(Persona persona);
 }

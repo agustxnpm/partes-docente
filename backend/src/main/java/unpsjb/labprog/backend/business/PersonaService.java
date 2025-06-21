@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.mensajes.IPersonaMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.IPersonaService;
 import unpsjb.labprog.backend.business.interfaces.validaciones.IPersonaValidator;
 import unpsjb.labprog.backend.model.Persona;
@@ -20,16 +19,13 @@ import unpsjb.labprog.backend.model.Persona;
  * Implementación del servicio de personas.
  * Aplica el principio DIP (Dependency Inversion Principle) dependiendo de abstracciones
  * en lugar de implementaciones concretas.
+ * 
  */
 @Service
 public class PersonaService implements IPersonaService {
 
     @Autowired
     private PersonaRepository personaRepository;
-
-    // Aplicando DIP: Dependemos de la abstracción específica IPersonaMensajeBuilder
-    @Autowired
-    private IPersonaMensajeBuilder personaMensajeBuilder;
 
     // Aplicando DIP e ISP: Dependemos de la abstracción específica IPersonaValidator
     @Autowired
@@ -93,18 +89,6 @@ public class PersonaService implements IPersonaService {
 
     public Optional<Persona> findByCuil(String cuil) {
         return personaRepository.findByCuil(cuil);
-    }
-
-    public String getMensajeExito(Persona persona) {
-        return personaMensajeBuilder.generarMensajeExitoCreacion(persona);
-    }
-
-    public String getMensajeExitoActualizacion(Persona persona) {
-        return personaMensajeBuilder.generarMensajeExitoActualizacion(persona);
-    }
-
-    public String getMensajeExitoBorrado(Persona persona) {
-        return personaMensajeBuilder.generarMensajeExitoBorrado(persona);
     }
 
     public List<Persona> search(String term) {

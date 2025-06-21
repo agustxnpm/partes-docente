@@ -11,9 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.interfaces.mensajes.IDivisionMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.IDivisionService;
 import unpsjb.labprog.backend.model.Division;
 
+/**
+ * Presenter para la gestión de divisiones.
+ * Aplica el principio DIP (Dependency Inversion Principle) 
+ */
 @RestController
 @RequestMapping("divisiones")
 public class DivisionPresenter {
@@ -21,11 +26,14 @@ public class DivisionPresenter {
     @Autowired
     private IDivisionService divisionService;
 
+    @Autowired
+    private IDivisionMensajeBuilder divisionMensajeBuilder;
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createDivision(@RequestBody Division division) {
         try {
             divisionService.save(division);
-            return Response.ok(division, divisionService.getMensajeExito(division));
+            return Response.ok(division, divisionMensajeBuilder.generarMensajeExitoCreacion(division));
         } catch (DataIntegrityViolationException e) {
             return Response.duplicateError(division, e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -53,7 +61,7 @@ public class DivisionPresenter {
     public ResponseEntity<Object> updateDivision(@PathVariable("id") Long id, @RequestBody Division division) {
         try {
             divisionService.save(division);
-            return Response.ok(division, divisionService.getMensajeExitoActualizacion(division));
+            return Response.ok(division, divisionMensajeBuilder.generarMensajeExitoActualizacion(division));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(division, e.getMessage());
         }
@@ -64,7 +72,7 @@ public class DivisionPresenter {
         try {
             Division division = divisionService.findById(id);
             divisionService.delete(division);
-            return Response.ok(division, divisionService.getMensajeExitoBorrado(division));
+            return Response.ok(division, divisionMensajeBuilder.generarMensajeExitoBorrado(division));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(null, e.getMessage());
         }

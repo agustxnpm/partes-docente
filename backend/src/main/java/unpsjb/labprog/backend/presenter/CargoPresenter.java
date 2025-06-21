@@ -13,9 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.interfaces.mensajes.ICargoMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.ICargoService;
 import unpsjb.labprog.backend.model.Cargo;
 
+/**
+ * Presenter para la gestión de cargos.
+ * Aplica el principio DIP (Dependency Inversion Principle)
+ */
 @RestController
 @RequestMapping("cargos")
 public class CargoPresenter {
@@ -23,12 +28,15 @@ public class CargoPresenter {
     @Autowired
     private ICargoService cargoService;
 
+    @Autowired
+    private ICargoMensajeBuilder cargoMensajeBuilder;
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> createCargo(@RequestBody Cargo cargo) {
 
         try {
             cargoService.save(cargo);
-            return Response.ok(cargo, cargoService.getMensajeExito(cargo));
+            return Response.ok(cargo, cargoMensajeBuilder.generarMensajeExitoCreacion(cargo));
         } catch (DataIntegrityViolationException e) {
             return Response.duplicateError(cargo, e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -56,7 +64,7 @@ public class CargoPresenter {
     public ResponseEntity<Object> updateCargo(@PathVariable("id") Long id, @RequestBody Cargo cargo) {
         try {
             cargoService.save(cargo);
-            return Response.ok(cargo, cargoService.getMensajeExitoActualizacion(cargo));
+            return Response.ok(cargo, cargoMensajeBuilder.generarMensajeExitoActualizacion(cargo));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(cargo, e.getMessage());
         }
@@ -67,7 +75,7 @@ public class CargoPresenter {
         try {
             Cargo cargo = cargoService.findById(id);
             cargoService.delete(cargo);
-            return Response.ok(cargo, cargoService.getMensajeExitoBorrado(cargo));
+            return Response.ok(cargo, cargoMensajeBuilder.generarMensajeExitoBorrado(cargo));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(e, e.getMessage());
         } catch (DataIntegrityViolationException e) {

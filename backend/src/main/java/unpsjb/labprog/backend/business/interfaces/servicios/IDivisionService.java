@@ -39,21 +39,6 @@ public interface IDivisionService {
     Division findById(Long id);
     
     /**
-     * Obtiene mensaje de éxito para división creada
-     */
-    String getMensajeExito(Division division);
-    
-    /**
-     * Obtiene mensaje de éxito para división actualizada
-     */
-    String getMensajeExitoActualizacion(Division division);
-    
-    /**
-     * Obtiene mensaje de éxito para división borrada
-     */
-    String getMensajeExitoBorrado(Division division);
-    
-    /**
      * Busca división existente por criterios completos
      */
     Division buscarDivisionExistente(Division division);

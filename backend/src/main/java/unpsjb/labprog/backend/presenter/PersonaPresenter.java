@@ -12,17 +12,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.interfaces.mensajes.IPersonaMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.IPersonaService;
 import unpsjb.labprog.backend.business.interfaces.servicios.IReporteConceptoService;
 import unpsjb.labprog.backend.dto.ReporteConceptoDTO;
 import unpsjb.labprog.backend.model.Persona;
 
+/**
+ * Presenter para la gestión de personas.
+ * Aplica el principio DIP (Dependency Inversion Principle) 
+ */
 @RestController
 @RequestMapping("personas")
 public class PersonaPresenter {
 
     @Autowired
     private IPersonaService personaService;
+
+    @Autowired
+    private IPersonaMensajeBuilder personaMensajeBuilder;
 
     @Autowired
     private IReporteConceptoService reporteConceptoService;
@@ -32,7 +40,7 @@ public class PersonaPresenter {
 
         try {
             personaService.save(persona);
-            return Response.ok(persona, personaService.getMensajeExito(persona));
+            return Response.ok(persona, personaMensajeBuilder.generarMensajeExitoCreacion(persona));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(persona, e.getMessage());
         }
@@ -60,7 +68,7 @@ public class PersonaPresenter {
         try {
             persona.setId(id);
             Persona updatedPersona = personaService.update(persona);
-            return Response.ok(updatedPersona, personaService.getMensajeExitoActualizacion(updatedPersona));
+            return Response.ok(updatedPersona, personaMensajeBuilder.generarMensajeExitoActualizacion(updatedPersona));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(persona, e.getMessage());
         }
@@ -71,7 +79,7 @@ public class PersonaPresenter {
         try {
             Persona persona = personaService.findById(id);
             personaService.delete(persona);
-            return Response.ok(persona, personaService.getMensajeExitoBorrado(persona));
+            return Response.ok(persona, personaMensajeBuilder.generarMensajeExitoBorrado(persona));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(null, e.getMessage());
         }
