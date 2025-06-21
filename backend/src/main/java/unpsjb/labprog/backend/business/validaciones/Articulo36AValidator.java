@@ -23,51 +23,94 @@ public class Articulo36AValidator implements ArticuloLicenciaValidator {
         @Override
         public void validate(Licencia nuevaLicencia, List<Licencia> licenciasExistentesAnioPersona)
                         throws IllegalArgumentException {
-                long diasSolicitados = ChronoUnit.DAYS.between(nuevaLicencia.getPedidoDesde(),
-                                nuevaLicencia.getPedidoHasta())
-                                + 1;
+                long diasSolicitados = calcularDiasSolicitados(nuevaLicencia);
+                
+                validarTopeMensual(nuevaLicencia, licenciasExistentesAnioPersona, diasSolicitados);
+                validarTopeAnual(nuevaLicencia, licenciasExistentesAnioPersona, diasSolicitados);
+        }
 
-                // 1. Validar tope mensual
-                List<Licencia> licencias36AEnMesSolicitud = licenciasExistentesAnioPersona.stream()
-                                .filter(l -> "36A".equals(l.getArticuloLicencia().getArticulo()) &&
-                                                (nuevaLicencia.getId() == 0 || l.getId() != nuevaLicencia.getId()) &&
-                                                l.getPedidoDesde().getYear() == nuevaLicencia.getPedidoDesde().getYear()
-                                                &&
-                                                l.getPedidoDesde().getMonth() == nuevaLicencia.getPedidoDesde()
-                                                                .getMonth())
-                                .collect(Collectors.toList());
+        /**
+         * Calcula la cantidad de días solicitados en la nueva licencia.
+         */
+        private long calcularDiasSolicitados(Licencia nuevaLicencia) {
+                return ChronoUnit.DAYS.between(nuevaLicencia.getPedidoDesde(), nuevaLicencia.getPedidoHasta()) + 1;
+        }
 
-                long diasYaTomadosEnMes = licencias36AEnMesSolicitud.stream()
-                                .mapToLong(l -> ChronoUnit.DAYS.between(l.getPedidoDesde(), l.getPedidoHasta()) + 1)
-                                .sum();
+        /**
+         * Valida que la nueva licencia no supere el tope mensual de días permitidos.
+         */
+        private void validarTopeMensual(Licencia nuevaLicencia, List<Licencia> licenciasExistentesAnioPersona, 
+                        long diasSolicitados) throws IllegalArgumentException {
+                List<Licencia> licencias36AEnMes = filtrarLicenciasPorMes(nuevaLicencia, licenciasExistentesAnioPersona);
+                long diasYaTomadosEnMes = calcularDiasTomados(licencias36AEnMes);
 
                 if (diasYaTomadosEnMes + diasSolicitados > MAX_DIAS_POR_MES) {
-                        throw new IllegalArgumentException(
-                                        "NO se otorga Licencia artículo 36A a " + nuevaLicencia.getPersona().getNombre()
-                                                        + " " +
-                                                        nuevaLicencia.getPersona().getApellido() +
-                                                        " debido a que supera el tope de " + MAX_DIAS_POR_MES
-                                                        + " días de licencia por mes");
+                        throw new IllegalArgumentException(crearMensajeErrorMensual(nuevaLicencia));
                 }
+        }
 
-                // 2. Validar tope anual
-                List<Licencia> licencias36AEnAnio = licenciasExistentesAnioPersona.stream()
-                                .filter(l -> "36A".equals(l.getArticuloLicencia().getArticulo()) &&
-                                                (nuevaLicencia.getId() == 0 || l.getId() != nuevaLicencia.getId()))
-                                .collect(Collectors.toList());
-
-                long diasYaTomadosEnAnio = licencias36AEnAnio.stream()
-                                .filter(l -> l.getPedidoDesde().getYear() == nuevaLicencia.getPedidoDesde().getYear())
-                                .mapToLong(l -> ChronoUnit.DAYS.between(l.getPedidoDesde(), l.getPedidoHasta()) + 1)
-                                .sum();
+        /**
+         * Valida que la nueva licencia no supere el tope anual de días permitidos.
+         */
+        private void validarTopeAnual(Licencia nuevaLicencia, List<Licencia> licenciasExistentesAnioPersona, 
+                        long diasSolicitados) throws IllegalArgumentException {
+                List<Licencia> licencias36AEnAnio = filtrarLicenciasPorAnio(nuevaLicencia, licenciasExistentesAnioPersona);
+                long diasYaTomadosEnAnio = calcularDiasTomados(licencias36AEnAnio);
 
                 if (diasYaTomadosEnAnio + diasSolicitados > MAX_DIAS_POR_ANIO) {
-                        throw new IllegalArgumentException(
-                                        "NO se otorga Licencia artículo 36A a " + nuevaLicencia.getPersona().getNombre()
-                                                        + " " +
-                                                        nuevaLicencia.getPersona().getApellido() +
-                                                        " debido a que supera el tope de " + MAX_DIAS_POR_ANIO
-                                                        + " días de licencia por año");
+                        throw new IllegalArgumentException(crearMensajeErrorAnual(nuevaLicencia));
                 }
+        }
+
+        /**
+         * Filtra las licencias del artículo 36A correspondientes al mismo mes de la nueva licencia.
+         */
+        private List<Licencia> filtrarLicenciasPorMes(Licencia nuevaLicencia, List<Licencia> licenciasExistentes) {
+                return licenciasExistentes.stream()
+                                .filter(l -> "36A".equals(l.getArticuloLicencia().getArticulo()) &&
+                                                (nuevaLicencia.getId() == 0 || l.getId() != nuevaLicencia.getId()) &&
+                                                l.getPedidoDesde().getYear() == nuevaLicencia.getPedidoDesde().getYear() &&
+                                                l.getPedidoDesde().getMonth() == nuevaLicencia.getPedidoDesde().getMonth())
+                                .collect(Collectors.toList());
+        }
+
+        /**
+         * Filtra las licencias del artículo 36A correspondientes al mismo año de la nueva licencia.
+         */
+        private List<Licencia> filtrarLicenciasPorAnio(Licencia nuevaLicencia, List<Licencia> licenciasExistentes) {
+                return licenciasExistentes.stream()
+                                .filter(l -> "36A".equals(l.getArticuloLicencia().getArticulo()) &&
+                                                (nuevaLicencia.getId() == 0 || l.getId() != nuevaLicencia.getId()) &&
+                                                l.getPedidoDesde().getYear() == nuevaLicencia.getPedidoDesde().getYear())
+                                .collect(Collectors.toList());
+        }
+
+        /**
+         * Calcula el total de días tomados en una lista de licencias.
+         */
+        private long calcularDiasTomados(List<Licencia> licencias) {
+                return licencias.stream()
+                                .mapToLong(l -> ChronoUnit.DAYS.between(l.getPedidoDesde(), l.getPedidoHasta()) + 1)
+                                .sum();
+        }
+
+        /**
+         * Crea el mensaje de error para cuando se supera el tope mensual.
+         */
+        private String crearMensajeErrorMensual(Licencia nuevaLicencia) {
+                return "NO se otorga Licencia artículo 36A a " + nuevaLicencia.getPersona().getNombre()
+                                + " " + nuevaLicencia.getPersona().getApellido() +
+                                " debido a que supera el tope de " + MAX_DIAS_POR_MES
+                                + " días de licencia por mes";
+        }
+
+        /**
+         * Crea el mensaje de error para cuando se supera el tope anual.
+         */
+        private String crearMensajeErrorAnual(Licencia nuevaLicencia) {
+                return "NO se otorga Licencia artículo 36A a " + nuevaLicencia.getPersona().getNombre()
+                                + " " + nuevaLicencia.getPersona().getApellido() +
+                                " debido a que supera el tope de " + MAX_DIAS_POR_ANIO
+                                + " días de licencia por año";
         }
 }
