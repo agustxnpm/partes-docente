@@ -8,14 +8,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.mensajes.IHorarioMensajeBuilder;
 import unpsjb.labprog.backend.business.interfaces.servicios.ICargoService;
 import unpsjb.labprog.backend.business.interfaces.servicios.IDesignacionService;
 import unpsjb.labprog.backend.business.interfaces.servicios.IDivisionService;
 import unpsjb.labprog.backend.business.interfaces.servicios.IHorarioService;
 import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
-import unpsjb.labprog.backend.business.interfaces.validaciones.IHorarioValidator;
 import unpsjb.labprog.backend.dto.HorarioMapaDTO;
 import unpsjb.labprog.backend.dto.MapaHorarioSemanalDTO;
 import unpsjb.labprog.backend.model.Cargo;
