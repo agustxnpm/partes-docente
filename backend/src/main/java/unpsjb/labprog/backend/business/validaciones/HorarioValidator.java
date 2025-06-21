@@ -19,7 +19,7 @@ import unpsjb.labprog.backend.model.Horario;
  * 
  */
 @Component
-public class HorarioValidator implements IHorarioValidator {
+public class HorarioValidator  {
 
     @Autowired
     @Lazy
@@ -31,7 +31,7 @@ public class HorarioValidator implements IHorarioValidator {
     private static final int HORA_MINIMA_PERMITIDA = 1;
     private static final int HORA_MAXIMA_PERMITIDA = 8;
 
-    public void validarHorario(Horario horario) {
+   /*  public void validarHorario(Horario horario) {
         if (horario == null) {
             throw new IllegalArgumentException("El objeto Horario no puede ser nulo.");
         }
@@ -39,9 +39,9 @@ public class HorarioValidator implements IHorarioValidator {
         validarDia(horario.getDia());
         validarHora(horario.getHora());
 
-    }
+    } */
 
-    private void validarDia(String dia) {
+  /*   private void validarDia(String dia) {
         if (dia == null || dia.trim().isEmpty()) {
             throw new IllegalArgumentException("El día del horario no puede estar vacío.");
         }
@@ -49,16 +49,16 @@ public class HorarioValidator implements IHorarioValidator {
             throw new IllegalArgumentException("El día '" + dia
                     + "' no es un día válido para el horario. Días permitidos: " + DIAS_SEMANA_VALIDOS);
         }
-    }
+    } */
 
-    private void validarHora(int hora) {
+  /*   private void validarHora(int hora) {
         if (hora < HORA_MINIMA_PERMITIDA || hora > HORA_MAXIMA_PERMITIDA) {
             throw new IllegalArgumentException("La hora del horario debe estar entre " + HORA_MINIMA_PERMITIDA + " y "
                     + HORA_MAXIMA_PERMITIDA + ". Valor proporcionado: " + hora);
         }
-    }
+    } */
 
-    public void validarBorradoHorario(Horario horario) {
+/*     public void validarBorradoHorario(Horario horario) {
         if (horario == null || horario.getId() == 0) {
             throw new IllegalArgumentException("El horario a validar para borrado no puede ser nulo o no tener ID.");
         }
@@ -66,5 +66,5 @@ public class HorarioValidator implements IHorarioValidator {
             throw new IllegalArgumentException("No se puede borrar el horario de " + horario.getDia() + " a las "
                     + horario.getHora() + " hs. porque está asignado a uno o más cargos.");
         }
-    }
+    } */
 }
