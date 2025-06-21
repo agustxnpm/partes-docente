@@ -23,26 +23,85 @@ public class Articulo23AValidator implements ArticuloLicenciaValidator {
     public void validate(Licencia nuevaLicencia, List<Licencia> licenciasExistentesAnioPersona)
             throws IllegalArgumentException {
         
+        validarLimiteAnualDias(nuevaLicencia, licenciasExistentesAnioPersona);
+    }
 
-        // Validar tope anual de 30 días para el artículo 23A
-        List<Licencia> licencias23AExistentes = licenciasExistentesAnioPersona.stream()
-                .filter(l -> "23A".equals(l.getArticuloLicencia().getArticulo()) &&
-                        (nuevaLicencia.getId() == 0 || l.getId() != nuevaLicencia.getId()))
-                .collect(Collectors.toList());
+    /**
+     * Valida que los días solicitados no superen el límite anual permitido para el artículo 23A
+     */
+    private void validarLimiteAnualDias(Licencia nuevaLicencia, List<Licencia> licenciasExistentesAnioPersona) {
+        List<Licencia> licencias23AExistentes = filtrarLicencias23AExistentes(nuevaLicencia, licenciasExistentesAnioPersona);
+        
+        long diasSolicitados = calcularDiasSolicitados(nuevaLicencia);
+        long diasYaTomados = calcularDiasYaTomados(licencias23AExistentes, nuevaLicencia);
 
-        long diasSolicitados = ChronoUnit.DAYS.between(nuevaLicencia.getPedidoDesde(), nuevaLicencia.getPedidoHasta())
-                + 1;
-        long diasYaTomados23A = licencias23AExistentes.stream()
-                .filter(l -> l.getPedidoDesde().getYear() == nuevaLicencia.getPedidoDesde().getYear())
-                .mapToLong(l -> ChronoUnit.DAYS.between(l.getPedidoDesde(), l.getPedidoHasta()) + 1)
-                .sum();
-
-        if (diasYaTomados23A + diasSolicitados > MAX_DIAS_POR_ANIO) {
-            throw new IllegalArgumentException(
-                    "NO se otorga Licencia artículo 23A a " + nuevaLicencia.getPersona().getNombre() + " " +
-                            nuevaLicencia.getPersona().getApellido() + " debido a que supera el tope de " +
-                            MAX_DIAS_POR_ANIO+ " días de licencia"
-                            );
+        if (superaLimiteAnual(diasYaTomados, diasSolicitados)) {
+            lanzarExcepcionLimiteExcedido(nuevaLicencia);
         }
+    }
+
+    /**
+     * Filtra las licencias existentes para obtener solo las del artículo 23A del mismo año
+     */
+    private List<Licencia> filtrarLicencias23AExistentes(Licencia nuevaLicencia, List<Licencia> licenciasExistentes) {
+        return licenciasExistentes.stream()
+                .filter(l -> esLicencia23A(l))
+                .filter(l -> noEsLaMismaLicencia(l, nuevaLicencia))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Verifica si una licencia es del artículo 23A
+     */
+    private boolean esLicencia23A(Licencia licencia) {
+        return "23A".equals(licencia.getArticuloLicencia().getArticulo());
+    }
+
+    /**
+     * Verifica que no sea la misma licencia (para casos de actualización)
+     */
+    private boolean noEsLaMismaLicencia(Licencia licenciaExistente, Licencia nuevaLicencia) {
+        return nuevaLicencia.getId() == 0 || licenciaExistente.getId() != nuevaLicencia.getId();
+    }
+
+    /**
+     * Calcula los días solicitados en la nueva licencia
+     */
+    private long calcularDiasSolicitados(Licencia licencia) {
+        return ChronoUnit.DAYS.between(licencia.getPedidoDesde(), licencia.getPedidoHasta()) + 1;
+    }
+
+    /**
+     * Calcula los días ya tomados en licencias del artículo 23A en el mismo año
+     */
+    private long calcularDiasYaTomados(List<Licencia> licencias23AExistentes, Licencia nuevaLicencia) {
+        return licencias23AExistentes.stream()
+                .filter(l -> esMismoAnio(l, nuevaLicencia))
+                .mapToLong(this::calcularDiasSolicitados)
+                .sum();
+    }
+
+    /**
+     * Verifica si la licencia existente es del mismo año que la nueva licencia
+     */
+    private boolean esMismoAnio(Licencia licenciaExistente, Licencia nuevaLicencia) {
+        return licenciaExistente.getPedidoDesde().getYear() == nuevaLicencia.getPedidoDesde().getYear();
+    }
+
+    /**
+     * Verifica si los días totales superan el límite anual
+     */
+    private boolean superaLimiteAnual(long diasYaTomados, long diasSolicitados) {
+        return diasYaTomados + diasSolicitados > MAX_DIAS_POR_ANIO;
+    }
+
+    /**
+     * Lanza la excepción cuando se supera el límite anual de días
+     */
+    private void lanzarExcepcionLimiteExcedido(Licencia licencia) {
+        throw new IllegalArgumentException(
+                "NO se otorga Licencia artículo 23A a " + licencia.getPersona().getNombre() + " " +
+                        licencia.getPersona().getApellido() + " debido a que supera el tope de " +
+                        MAX_DIAS_POR_ANIO + " días de licencia");
     }
 }
