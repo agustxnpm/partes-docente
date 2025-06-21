@@ -1,7 +1,5 @@
 package unpsjb.labprog.backend.presenter;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +31,8 @@ public class HorarioPresenter {
             @RequestParam("fechaInicio") String fechaInicioStr,
             @RequestParam("fechaFin") String fechaFinStr) {
         try {
-            LocalDate fechaInicio = LocalDate.parse(fechaInicioStr, DateTimeFormatter.ISO_LOCAL_DATE);
-            LocalDate fechaFin = LocalDate.parse(fechaFinStr, DateTimeFormatter.ISO_LOCAL_DATE);
-            
-            // Buscar la división
-            List<Division> divisiones = horarioService.obtenerDivisionesParaMapa();
-            Division division = divisiones.stream()
-                .filter(d -> d.getId() == divisionId)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("División no encontrada"));
-            
-            MapaHorarioSemanalDTO mapa = horarioService.generarMapaHorarioSemanal(division, fechaInicio, fechaFin);
+            MapaHorarioSemanalDTO mapa = horarioService.generarMapaHorarioSemanal(
+                divisionId, fechaInicioStr, fechaFinStr);
             return Response.ok(mapa);
         } catch (Exception e) {
             return Response.badRequest(null, "Error al generar mapa de horarios: " + e.getMessage());

@@ -313,4 +313,36 @@ public class HorarioService implements IHorarioService {
         return null;
     }
 
+    @Override
+    public MapaHorarioSemanalDTO generarMapaHorarioSemanal(Long divisionId, String fechaInicioStr, String fechaFinStr) {
+        LocalDate fechaInicio = parsearFecha(fechaInicioStr);
+        LocalDate fechaFin = parsearFecha(fechaFinStr);
+        Division division = buscarDivisionPorId(divisionId);
+        
+        return generarMapaHorarioSemanal(division, fechaInicio, fechaFin);
+    }
+
+    /**
+     * Convierte una fecha en formato String a LocalDate.
+     */
+    private LocalDate parsearFecha(String fechaStr) {
+        try {
+            return LocalDate.parse(fechaStr, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Formato de fecha inválido: " + fechaStr + 
+                ". Debe ser formato ISO (YYYY-MM-DD)");
+        }
+    }
+
+    /**
+     * Busca una división por su ID.
+     */
+    private Division buscarDivisionPorId(Long divisionId) {
+        List<Division> divisiones = obtenerDivisionesParaMapa();
+        return divisiones.stream()
+            .filter(d -> d.getId() == divisionId.longValue())
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("División no encontrada con ID: " + divisionId));
+    }
+
 }

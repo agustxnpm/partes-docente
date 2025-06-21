@@ -32,6 +32,18 @@ public interface IHorarioService {
     MapaHorarioSemanalDTO generarMapaHorarioSemanal(Division division, LocalDate fechaInicio, LocalDate fechaFin);
 
     /**
+     * Genera un mapa de horarios semanal para una división específica.
+     * Este método maneja la conversión de parámetros y la búsqueda de la división.
+     * 
+     * @param divisionId     ID de la división para la cual generar el mapa
+     * @param fechaInicioStr Fecha de inicio en formato String (ISO_LOCAL_DATE)
+     * @param fechaFinStr    Fecha de fin en formato String (ISO_LOCAL_DATE)
+     * @return El mapa de horarios semanal
+     * @throws IllegalArgumentException si la división no se encuentra o las fechas son inválidas
+     */
+    MapaHorarioSemanalDTO generarMapaHorarioSemanal(Long divisionId, String fechaInicioStr, String fechaFinStr);
+
+    /**
      * Obtiene todas las divisiones disponibles para el mapa de horarios.
      * 
      * @return Lista de divisiones
