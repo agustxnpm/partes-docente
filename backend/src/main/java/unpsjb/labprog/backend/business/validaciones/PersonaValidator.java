@@ -45,24 +45,65 @@ public class PersonaValidator implements IPersonaValidator {
     private ILicenciaService licenciaService;
 
     public void validarPersona(Persona persona) {
-        if (persona.getDni() <= 0)
+        validarDni(persona);
+        validarNombre(persona);
+        validarApellido(persona);
+        validarUnicidadDni(persona);
+        validarUnicidadCuil(persona);
+    }
+
+    /**
+     * Valida que el DNI sea un número positivo.
+     */
+    private void validarDni(Persona persona) {
+        if (persona.getDni() <= 0) {
             throw new IllegalArgumentException("El DNI debe ser un número positivo");
+        }
+    }
 
-        if (persona.getNombre() == null || persona.getNombre().isEmpty())
+    /**
+     * Valida que el nombre no esté vacío o nulo.
+     */
+    private void validarNombre(Persona persona) {
+        if (persona.getNombre() == null || persona.getNombre().isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
+        }
+    }
 
-        if (persona.getApellido() == null || persona.getApellido().isEmpty())
+    /**
+     * Valida que el apellido no esté vacío o nulo.
+     */
+    private void validarApellido(Persona persona) {
+        if (persona.getApellido() == null || persona.getApellido().isEmpty()) {
             throw new IllegalArgumentException("El apellido no puede estar vacío");
+        }
+    }
 
+    /**
+     * Valida que no exista otra persona con el mismo DNI.
+     */
+    private void validarUnicidadDni(Persona persona) {
         Optional<Persona> existeDni = personaService.findByDni(persona.getDni());
-        if (existeDni.isPresent() && !existeDni.get().getId().equals(persona.getId())) {
+        if (existeDni.isPresent() && !esMismaPersona(existeDni.get(), persona)) {
             throw new IllegalArgumentException("Ya existe una persona con el DNI: " + persona.getDni());
         }
+    }
 
+    /**
+     * Valida que no exista otra persona con el mismo CUIL.
+     */
+    private void validarUnicidadCuil(Persona persona) {
         Optional<Persona> existeCuil = personaService.findByCuil(persona.getCuil());
-        if (existeCuil.isPresent() && !existeCuil.get().getId().equals(persona.getId())) {
+        if (existeCuil.isPresent() && !esMismaPersona(existeCuil.get(), persona)) {
             throw new IllegalArgumentException("Ya existe una persona con el CUIL: " + persona.getCuil());
         }
+    }
+
+    /**
+     * Verifica si dos personas son la misma (mismo ID).
+     */
+    private boolean esMismaPersona(Persona persona1, Persona persona2) {
+        return persona1.getId().equals(persona2.getId());
     }
 
     public void validarDni(Long dni) {
@@ -73,38 +114,120 @@ public class PersonaValidator implements IPersonaValidator {
     }
 
     public void validarBorradoPersona(Persona persona) {
-        if (persona.getDesignaciones() != null && !persona.getDesignaciones().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "No se puede eliminar a " + persona.getNombre() + " " + persona.getApellido()
-                            + " porque tiene designaciones asociadas.");
+        validarDesignacionesAsociadas(persona);
+        validarLicenciasAsociadas(persona);
+    }
+
+    /**
+     * Valida que la persona no tenga designaciones asociadas.
+     */
+    private void validarDesignacionesAsociadas(Persona persona) {
+        if (tieneDesignacionesAsociadas(persona)) {
+            String mensajeError = construirMensajeErrorDesignaciones(persona);
+            throw new IllegalArgumentException(mensajeError);
+        }
+    }
+
+    /**
+     * Verifica si la persona tiene designaciones asociadas.
+     */
+    private boolean tieneDesignacionesAsociadas(Persona persona) {
+        return persona.getDesignaciones() != null && !persona.getDesignaciones().isEmpty();
+    }
+
+    /**
+     * Construye el mensaje de error para designaciones asociadas.
+     */
+    private String construirMensajeErrorDesignaciones(Persona persona) {
+        return "No se puede eliminar a " + persona.getNombre() + " " + persona.getApellido()
+                + " porque tiene designaciones asociadas.";
+    }
+
+    /**
+     * Valida que la persona no tenga licencias asociadas.
+     */
+    private void validarLicenciasAsociadas(Persona persona) {
+        List<Licencia> todasLasLicencias = obtenerLicenciasPersona(persona);
+        
+        if (!todasLasLicencias.isEmpty()) {
+            ContadorLicencias contadores = contarLicenciasPorEstado(todasLasLicencias);
+            String mensajeError = construirMensajeErrorLicencias(persona, contadores);
+            throw new IllegalArgumentException(mensajeError);
+        }
+    }
+
+    /**
+     * Obtiene todas las licencias de la persona.
+     */
+    private List<Licencia> obtenerLicenciasPersona(Persona persona) {
+        return licenciaService.findByPersona(persona);
+    }
+
+    /**
+     * Cuenta las licencias por estado.
+     */
+    private ContadorLicencias contarLicenciasPorEstado(List<Licencia> licencias) {
+        long licenciasValidas = contarLicenciasPorEstado(licencias, EstadoLicencia.VALIDA);
+        long licenciasInvalidas = contarLicenciasPorEstado(licencias, EstadoLicencia.INVALIDA);
+        
+        return new ContadorLicencias(licenciasValidas, licenciasInvalidas);
+    }
+
+    /**
+     * Cuenta las licencias que tienen un estado específico.
+     */
+    private long contarLicenciasPorEstado(List<Licencia> licencias, EstadoLicencia estado) {
+        return licencias.stream()
+                .filter(l -> l.getEstado() == estado)
+                .count();
+    }
+
+    /**
+     * Construye el mensaje de error para licencias asociadas.
+     */
+    private String construirMensajeErrorLicencias(Persona persona, ContadorLicencias contadores) {
+        StringBuilder mensaje = new StringBuilder();
+        mensaje.append("No se puede eliminar a ").append(persona.getNombre())
+                .append(" ").append(persona.getApellido()).append(" porque tiene ");
+
+        if (contadores.tieneAmbosEstados()) {
+            mensaje.append(contadores.getLicenciasValidas()).append(" licencia(s) otorgada(s) y ")
+                    .append(contadores.getLicenciasInvalidas()).append(" licencia(s) en proceso.");
+        } else if (contadores.tieneLicenciasValidas()) {
+            mensaje.append(contadores.getLicenciasValidas()).append(" licencia(s) otorgada(s).");
+        } else {
+            mensaje.append(contadores.getLicenciasInvalidas()).append(" licencia(s) en proceso de validación.");
         }
 
-        // Obtener todas las licencias de la persona
-        List<Licencia> todasLasLicencias = licenciaService.findByPersona(persona);
+        return mensaje.toString();
+    }
 
-        if (!todasLasLicencias.isEmpty()) {
-            long licenciasValidas = todasLasLicencias.stream()
-                    .filter(l -> l.getEstado() == EstadoLicencia.VALIDA)
-                    .count();
+    /**
+     * Clase interna para encapsular los contadores de licencias por estado.
+     */
+    private static class ContadorLicencias {
+        private final long licenciasValidas;
+        private final long licenciasInvalidas;
 
-            long licenciasInvalidas = todasLasLicencias.stream()
-                    .filter(l -> l.getEstado() == EstadoLicencia.INVALIDA)
-                    .count();
+        public ContadorLicencias(long licenciasValidas, long licenciasInvalidas) {
+            this.licenciasValidas = licenciasValidas;
+            this.licenciasInvalidas = licenciasInvalidas;
+        }
 
-            StringBuilder mensaje = new StringBuilder();
-            mensaje.append("No se puede eliminar a ").append(persona.getNombre())
-                    .append(" ").append(persona.getApellido()).append(" porque tiene ");
+        public long getLicenciasValidas() {
+            return licenciasValidas;
+        }
 
-            if (licenciasValidas > 0 && licenciasInvalidas > 0) {
-                mensaje.append(licenciasValidas).append(" licencia(s) otorgada(s) y ")
-                        .append(licenciasInvalidas).append(" licencia(s) en proceso.");
-            } else if (licenciasValidas > 0) {
-                mensaje.append(licenciasValidas).append(" licencia(s) otorgada(s).");
-            } else {
-                mensaje.append(licenciasInvalidas).append(" licencia(s) en proceso de validación.");
-            }
+        public long getLicenciasInvalidas() {
+            return licenciasInvalidas;
+        }
 
-            throw new IllegalArgumentException(mensaje.toString());
+        public boolean tieneAmbosEstados() {
+            return licenciasValidas > 0 && licenciasInvalidas > 0;
+        }
+
+        public boolean tieneLicenciasValidas() {
+            return licenciasValidas > 0;
         }
     }
 }
