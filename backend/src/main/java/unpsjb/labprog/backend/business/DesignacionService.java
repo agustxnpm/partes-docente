@@ -100,17 +100,29 @@ public class DesignacionService implements IDesignacionService {
      * Determina el mensaje de éxito apropiado para una designación guardada
      */
     public String determinarMensajeExito(Designacion designacionGuardada) {
-        if ("Suplente".equalsIgnoreCase(designacionGuardada.getSituacionRevista())) {
-            Persona personaReemplazada = encontrarPersonaReemplazada(designacionGuardada);
-
-            if (personaReemplazada != null) {
-                return getMensajeExitoDesignacionSuplencia(designacionGuardada, personaReemplazada);
-            } else {
-                return getMensajeExito(designacionGuardada);
-            }
-        } else {
-            return getMensajeExito(designacionGuardada);
+        if (esSuplente(designacionGuardada)) {
+            return determinarMensajeParaSuplente(designacionGuardada);
         }
+        return getMensajeExito(designacionGuardada);
+    }
+
+    /**
+     * Verifica si la designación es de tipo suplente
+     */
+    private boolean esSuplente(Designacion designacion) {
+        return "Suplente".equalsIgnoreCase(designacion.getSituacionRevista());
+    }
+
+    /**
+     * Determina el mensaje apropiado para una designación suplente
+     */
+    private String determinarMensajeParaSuplente(Designacion designacionGuardada) {
+        Persona personaReemplazada = encontrarPersonaReemplazada(designacionGuardada);
+        
+        if (personaReemplazada != null) {
+            return getMensajeExitoDesignacionSuplencia(designacionGuardada, personaReemplazada);
+        }
+        return getMensajeExito(designacionGuardada);
     }
 
     /**
@@ -118,28 +130,57 @@ public class DesignacionService implements IDesignacionService {
      * basándose en las licencias que cubran el período
      */
     public Persona encontrarPersonaReemplazada(Designacion designacionGuardada) {
+        List<Designacion> posiblesOriginales = obtenerDesignacionesSuperpuestas(designacionGuardada);
+        return buscarPersonaConLicenciasCompletas(posiblesOriginales, designacionGuardada);
+    }
 
-        List<Designacion> posiblesOriginales = findDesignacionesSuperpuestas(
+    /**
+     * Obtiene las designaciones que se superponen con la designación guardada
+     */
+    private List<Designacion> obtenerDesignacionesSuperpuestas(Designacion designacionGuardada) {
+        return findDesignacionesSuperpuestas(
                 designacionGuardada.getCargo().getId(),
                 designacionGuardada.getFechaInicio(),
                 designacionGuardada.getFechaFin(),
                 designacionGuardada.getId());
+    }
 
-        for (Designacion designacionExistente : posiblesOriginales) {
-            LocalDate fechaFinNueva = designacionGuardada.getFechaFin() != null ? designacionGuardada.getFechaFin()
-                    : LocalDate.now().plusYears(100);
+    /**
+     * Busca entre las designaciones existentes aquella persona que tiene licencias que cubren todo el período
+     */
+    private Persona buscarPersonaConLicenciasCompletas(List<Designacion> designacionesExistentes, 
+                                                      Designacion designacionNueva) {
+        LocalDate fechaFinNueva = calcularFechaFinEfectiva(designacionNueva);
 
-            // Usar el método del servicio de licencias para verificar cobertura completa
-            if (licenciaService.licenciasCubrenPeriodoCompleto(
-                    designacionExistente.getPersona(),
-                    designacionGuardada.getCargo(),
-                    designacionGuardada.getFechaInicio(),
-                    fechaFinNueva)) {
+        for (Designacion designacionExistente : designacionesExistentes) {
+            if (personaTieneLicenciasCompletas(designacionExistente, designacionNueva, fechaFinNueva)) {
                 return designacionExistente.getPersona();
             }
         }
 
         return null; // No se encontró persona reemplazada
+    }
+
+    /**
+     * Calcula la fecha fin efectiva de la designación (maneja null)
+     */
+    private LocalDate calcularFechaFinEfectiva(Designacion designacion) {
+        return designacion.getFechaFin() != null 
+                ? designacion.getFechaFin() 
+                : LocalDate.now().plusYears(100);
+    }
+
+    /**
+     * Verifica si una persona tiene licencias que cubren completamente el período de suplencia
+     */
+    private boolean personaTieneLicenciasCompletas(Designacion designacionExistente, 
+                                                  Designacion designacionNueva, 
+                                                  LocalDate fechaFinNueva) {
+        return licenciaService.licenciasCubrenPeriodoCompleto(
+                designacionExistente.getPersona(),
+                designacionNueva.getCargo(),
+                designacionNueva.getFechaInicio(),
+                fechaFinNueva);
     }
 
     public List<Designacion> findAllByPersonaAndPeriodoVigente(Persona persona, LocalDate pedidoDesde,
