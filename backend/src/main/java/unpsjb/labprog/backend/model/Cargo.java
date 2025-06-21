@@ -43,7 +43,8 @@ public class Cargo {
     private Division division;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER) // para cargar todos los
-                                                                                             // horarios al momento de que
+                                                                                             // horarios al momento de
+                                                                                             // que
                                                                                              // jackson serialize el
                                                                                              // campo
     @JoinColumn(name = "cargo_id", referencedColumnName = "id")

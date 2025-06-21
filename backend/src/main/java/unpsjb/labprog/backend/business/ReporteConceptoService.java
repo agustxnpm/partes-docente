@@ -19,7 +19,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import unpsjb.labprog.backend.business.interfaces.IReporteConceptoService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IReporteConceptoService;
 import unpsjb.labprog.backend.dto.LicenciaReporteDTO;
 import unpsjb.labprog.backend.dto.PersonaConceptoDTO;
 import unpsjb.labprog.backend.dto.ReporteConceptoDTO;

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.interfaces.IDivisionService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IDivisionService;
 import unpsjb.labprog.backend.model.Division;
 
 @RestController

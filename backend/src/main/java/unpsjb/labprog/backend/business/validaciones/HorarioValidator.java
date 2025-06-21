@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import unpsjb.labprog.backend.business.interfaces.IHorarioService;
-import unpsjb.labprog.backend.business.interfaces.IHorarioValidator;
+import unpsjb.labprog.backend.business.interfaces.servicios.IHorarioService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.IHorarioValidator;
 import unpsjb.labprog.backend.model.Horario;
 
 /**

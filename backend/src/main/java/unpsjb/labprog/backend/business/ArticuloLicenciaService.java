@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import unpsjb.labprog.backend.business.interfaces.IArticuloLicenciaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IArticuloLicenciaService;
 import unpsjb.labprog.backend.model.ArticuloLicencia;
 
 @Service

@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
-import unpsjb.labprog.backend.business.interfaces.IParteDiarioService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IParteDiarioService;
 import unpsjb.labprog.backend.dto.DocenteLicenciaDTO;
 import unpsjb.labprog.backend.dto.ParteDiarioDTO;
 import unpsjb.labprog.backend.model.EstadoLicencia;

@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
-import unpsjb.labprog.backend.business.interfaces.ILogLicenciaService;
-import unpsjb.labprog.backend.business.interfaces.IParteDiarioService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ILogLicenciaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IParteDiarioService;
 import unpsjb.labprog.backend.dto.ParteDiarioDTO;
 import unpsjb.labprog.backend.model.EstadoLicencia;
 import unpsjb.labprog.backend.model.Licencia;

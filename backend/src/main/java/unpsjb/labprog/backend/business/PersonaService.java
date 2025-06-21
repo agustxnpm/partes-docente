@@ -11,9 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.IPersonaService;
-import unpsjb.labprog.backend.business.interfaces.IPersonaValidator;
 import unpsjb.labprog.backend.business.interfaces.mensajes.IPersonaMensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.servicios.IPersonaService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.IPersonaValidator;
 import unpsjb.labprog.backend.model.Persona;
 
 /**

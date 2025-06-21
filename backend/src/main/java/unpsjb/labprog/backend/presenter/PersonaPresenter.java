@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.interfaces.IPersonaService;
-import unpsjb.labprog.backend.business.interfaces.IReporteConceptoService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IPersonaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IReporteConceptoService;
 import unpsjb.labprog.backend.dto.ReporteConceptoDTO;
 import unpsjb.labprog.backend.model.Persona;
 

@@ -10,9 +10,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.IDivisionService;
-import unpsjb.labprog.backend.business.interfaces.IDivisionValidator;
 import unpsjb.labprog.backend.business.interfaces.mensajes.IDivisionMensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.servicios.IDivisionService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.IDivisionValidator;
 import unpsjb.labprog.backend.model.Division;
 
 /**

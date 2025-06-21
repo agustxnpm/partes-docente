@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.interfaces.IArticuloLicenciaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IArticuloLicenciaService;
 import unpsjb.labprog.backend.model.ArticuloLicencia;
 
 @RestController

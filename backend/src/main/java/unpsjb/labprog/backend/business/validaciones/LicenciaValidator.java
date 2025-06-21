@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
-import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
-import unpsjb.labprog.backend.business.interfaces.ILicenciaValidator;
-import unpsjb.labprog.backend.business.interfaces.IPersonaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IPersonaService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaValidator;
 import unpsjb.labprog.backend.business.utilidades.ValidadorArticuloRegistry;
 import unpsjb.labprog.backend.business.validaciones.LicenciaValidator;
 

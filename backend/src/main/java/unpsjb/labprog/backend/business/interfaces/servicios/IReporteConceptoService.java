@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business.interfaces;
+package unpsjb.labprog.backend.business.interfaces.servicios;
 
 import unpsjb.labprog.backend.dto.ReporteConceptoDTO;
 

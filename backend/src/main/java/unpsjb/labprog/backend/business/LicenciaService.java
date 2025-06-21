@@ -10,10 +10,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.IDesignacionService;
-import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
-import unpsjb.labprog.backend.business.interfaces.ILicenciaValidator;
 import unpsjb.labprog.backend.business.interfaces.mensajes.ILicenciaMensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.servicios.IDesignacionService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaValidator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.EstadoLicencia;

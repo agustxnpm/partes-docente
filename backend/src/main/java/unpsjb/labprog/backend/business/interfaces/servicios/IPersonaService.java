@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business.interfaces;
+package unpsjb.labprog.backend.business.interfaces.servicios;
 
 import java.util.List;
 import java.util.Optional;

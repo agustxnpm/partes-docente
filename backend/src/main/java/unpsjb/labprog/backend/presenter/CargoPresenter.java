@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.interfaces.ICargoService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ICargoService;
 import unpsjb.labprog.backend.model.Cargo;
 
 @RestController

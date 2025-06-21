@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import unpsjb.labprog.backend.business.interfaces.ICargoService;
-import unpsjb.labprog.backend.business.interfaces.ICargoValidator;
-import unpsjb.labprog.backend.business.interfaces.IDivisionService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ICargoService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IDivisionService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.ICargoValidator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Horario;

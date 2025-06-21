@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import unpsjb.labprog.backend.business.interfaces.ILogLicenciaService;
 import unpsjb.labprog.backend.model.LogLicencia;
 import unpsjb.labprog.backend.model.Licencia;
+import unpsjb.labprog.backend.business.interfaces.servicios.ILogLicenciaService;
 import unpsjb.labprog.backend.model.EstadoLicencia;
 
 @Service

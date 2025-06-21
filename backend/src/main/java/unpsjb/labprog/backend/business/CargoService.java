@@ -11,9 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import unpsjb.labprog.backend.business.interfaces.ICargoService;
-import unpsjb.labprog.backend.business.interfaces.ICargoValidator;
 import unpsjb.labprog.backend.business.interfaces.mensajes.ICargoMensajeBuilder;
+import unpsjb.labprog.backend.business.interfaces.servicios.ICargoService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.ICargoValidator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Horario;

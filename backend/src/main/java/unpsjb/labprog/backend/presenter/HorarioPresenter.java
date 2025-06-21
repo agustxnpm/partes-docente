@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.interfaces.IHorarioService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IHorarioService;
 import unpsjb.labprog.backend.dto.MapaHorarioSemanalDTO;
 import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.Horario;

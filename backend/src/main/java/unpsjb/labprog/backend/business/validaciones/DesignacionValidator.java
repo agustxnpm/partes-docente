@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import unpsjb.labprog.backend.business.interfaces.ICargoService;
-import unpsjb.labprog.backend.business.interfaces.IDesignacionService;
-import unpsjb.labprog.backend.business.interfaces.IDesignacionValidator;
-import unpsjb.labprog.backend.business.interfaces.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ICargoService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IDesignacionService;
+import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.IDesignacionValidator;
 import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
 import unpsjb.labprog.backend.model.Division;

@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business.interfaces;
+package unpsjb.labprog.backend.business.interfaces.validaciones;
 
 import unpsjb.labprog.backend.model.Cargo;
 
