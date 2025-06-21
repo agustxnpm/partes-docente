@@ -3,12 +3,11 @@ package unpsjb.labprog.backend.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,16 +24,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(
-    name = "cargo",
-    uniqueConstraints = @UniqueConstraint(
-        columnNames = {"nombre", "cargaHoraria", "fechaInicio", "tipoDesignacion", "division_id"}
-    )
-)
+@Table(name = "cargo", uniqueConstraints = @UniqueConstraint(columnNames = { "nombre", "cargaHoraria", "fechaInicio",
+        "tipoDesignacion", "division_id" }))
 public class Cargo {
-    
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)   
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String nombre;
@@ -47,9 +42,11 @@ public class Cargo {
     @ManyToOne
     private Division division;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER) // para cargar todos los
+                                                                                             // horarios al momento de que
+                                                                                             // jackson serialize el
+                                                                                             // campo
     @JoinColumn(name = "cargo_id", referencedColumnName = "id")
-    @JsonIgnore
     private List<Horario> horario;
 
     @Enumerated(EnumType.STRING)
