@@ -34,7 +34,6 @@ public class CargoValidator implements ICargoValidator {
      * Se usa @Lazy para evitar dependencias circulares.
      */
     @Autowired
-    @Lazy
     private IDivisionService divisionService;
 
     /**
@@ -95,14 +94,9 @@ public class CargoValidator implements ICargoValidator {
 
     }
     
-    /**
-     * Valida que no haya conflictos de horarios para la misma división.
-     * Un conflicto ocurre cuando dos espacios curriculares diferentes
-     * tienen asignado el mismo horario (día y hora) para la misma división.
-     */
+
     /**
      * Valida que no haya conflictos de horarios para la misma división
-     * Optimizado para complejidad O(n + m) usando HashSet para búsqueda eficiente
      */
     private void validarConflictosHorarios(Cargo cargo) {
         // Crear un mapa de horarios ocupados para búsqueda O(1)

@@ -55,10 +55,16 @@ public class PersonaService implements IPersonaService {
     @Transactional
     public Persona update(Persona personaActualizada) {
         personaValidator.validarPersona(personaActualizada);
-        // Obtener la persona existente con todas sus designaciones
         Persona personaExistente = findById(personaActualizada.getId());
+        actualizarCamposPersona(personaExistente, personaActualizada);
+        return personaRepository.save(personaExistente);
+    }
 
-        // Actualizar los campos simples
+
+    /**
+     * Actualiza todos los campos de la persona existente con los valores de la persona actualizada
+     */
+    private void actualizarCamposPersona(Persona personaExistente, Persona personaActualizada) {
         personaExistente.setNombre(personaActualizada.getNombre());
         personaExistente.setApellido(personaActualizada.getApellido());
         personaExistente.setDni(personaActualizada.getDni());
@@ -67,10 +73,8 @@ public class PersonaService implements IPersonaService {
         personaExistente.setSexo(personaActualizada.getSexo());
         personaExistente.setDomicilio(personaActualizada.getDomicilio());
         personaExistente.setTelefono(personaActualizada.getTelefono());
-
-
-        return personaRepository.save(personaExistente);
     }
+
 
     @Transactional
     public void delete(Persona persona) {

@@ -96,4 +96,10 @@ public interface ILicenciaService {
      */
     List<Licencia> findLicenciasActivasEnFecha(LocalDate fecha);
 
+    /**
+     * Verifica si las licencias de una persona cubren completamente un período dado
+     * Este método centraliza la lógica de verificación de cobertura de licencias
+     */
+    boolean licenciasCubrenPeriodoCompleto(Persona persona, Cargo cargo, LocalDate fechaInicio, LocalDate fechaFin);
+
 }

@@ -55,19 +55,26 @@ public class LicenciaService implements ILicenciaService {
 
     @Transactional
     public Licencia createLicencia(Licencia licencia) {
+        asociarDesignacionesVigentes(licencia);
+        return validarLicencia(licencia);
+    }
 
-        // Buscar todas las designaciones vigentes para la persona en el período de la
-        // licencia
-        List<Designacion> designacionesVigentes = designacionService.findAllByPersonaAndPeriodoVigente(
+    /**
+     * Asocia las designaciones vigentes de la persona en el período de la licencia
+     */
+    private void asociarDesignacionesVigentes(Licencia licencia) {
+        List<Designacion> designacionesVigentes = buscarDesignacionesVigentesParaLicencia(licencia);
+        licencia.setDesignaciones(designacionesVigentes);
+    }
+
+    /**
+     * Busca todas las designaciones vigentes para una licencia en su período
+     */
+    private List<Designacion> buscarDesignacionesVigentesParaLicencia(Licencia licencia) {
+        return designacionService.findAllByPersonaAndPeriodoVigente(
                 licencia.getPersona(),
                 licencia.getPedidoDesde(),
                 licencia.getPedidoHasta());
-
-        // Asociar estas designaciones a la licencia
-        licencia.setDesignaciones(designacionesVigentes);
-
-        return validarLicencia(licencia);
-
     }
 
     private Licencia validarLicencia(Licencia licencia) {
@@ -89,26 +96,29 @@ public class LicenciaService implements ILicenciaService {
 
     @Transactional
     public Licencia updateLicencia(Long id, Licencia licenciaActualizar) {
-        // 1. Verificar si la licencia existe
-        Licencia licenciaExistente = licenciaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Licencia con ID " + id + " no encontrada."));
+        Licencia licenciaExistente = buscarLicenciaExistente(id);
+        actualizarCamposLicencia(licenciaExistente, licenciaActualizar);
+        asociarDesignacionesVigentes(licenciaExistente);
+        return validarLicencia(licenciaExistente);
+    }
 
-        // 2. Actualizar los campos de licenciaExistente con los de licenciaActualizar
+    /**
+     * Busca una licencia existente por ID
+     */
+    private Licencia buscarLicenciaExistente(Long id) {
+        return licenciaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Licencia con ID " + id + " no encontrada."));
+    }
+
+    /**
+     * Actualiza los campos de una licencia existente con los valores de otra licencia
+     */
+    private void actualizarCamposLicencia(Licencia licenciaExistente, Licencia licenciaActualizar) {
         licenciaExistente.setPedidoDesde(licenciaActualizar.getPedidoDesde());
         licenciaExistente.setPedidoHasta(licenciaActualizar.getPedidoHasta());
         licenciaExistente.setDomicilio(licenciaActualizar.getDomicilio());
         licenciaExistente.setCertificadoMedico(licenciaActualizar.isCertificadoMedico());
         licenciaExistente.setArticuloLicencia(licenciaActualizar.getArticuloLicencia());
-
-        // Re-asociar designaciones si es necesario y validar
-        List<Designacion> designacionesVigentes = designacionService.findAllByPersonaAndPeriodoVigente(
-                licenciaExistente.getPersona(), // Usar la persona de la licencia existente
-                licenciaExistente.getPedidoDesde(),
-                licenciaExistente.getPedidoHasta());
-        licenciaExistente.setDesignaciones(designacionesVigentes);
-
-        return validarLicencia(licenciaExistente);
-
     }
 
     public List<Licencia> findLicenciasEnPeriodo(Cargo cargo, Persona persona, LocalDate fechaInicio,
@@ -162,6 +172,57 @@ public class LicenciaService implements ILicenciaService {
 
     public List<Licencia> findLicenciasActivasEnFecha(LocalDate fecha) {
         return licenciaRepository.findLicenciasActivasEnFecha(fecha);
+    }
+
+    public boolean licenciasCubrenPeriodoCompleto(Persona persona, Cargo cargo,
+            LocalDate fechaInicio, LocalDate fechaFin) {
+        List<Licencia> licenciasEnPeriodo = obtenerLicenciasValidasEnPeriodo(persona, cargo, fechaInicio, fechaFin);
+        
+        if (licenciasEnPeriodo.isEmpty()) {
+            return false;
+        }
+
+        return verificarCoberturaDiaria(licenciasEnPeriodo, fechaInicio, fechaFin);
+    }
+
+    /**
+     * Obtiene todas las licencias válidas de una persona en un período específico
+     */
+    private List<Licencia> obtenerLicenciasValidasEnPeriodo(Persona persona, Cargo cargo, 
+                                                           LocalDate fechaInicio, LocalDate fechaFin) {
+        return findLicenciasEnPeriodo(cargo, persona, fechaInicio, fechaFin);
+    }
+
+    /**
+     * Verifica si las licencias cubren todos los días del período especificado
+     */
+    private boolean verificarCoberturaDiaria(List<Licencia> licencias, LocalDate fechaInicio, LocalDate fechaFin) {
+        LocalDate fechaActual = fechaInicio;
+
+        while (!fechaActual.isAfter(fechaFin)) {
+            if (!fechaEstaCubiertaPorLicencias(fechaActual, licencias)) {
+                return false; // Encontramos un día no cubierto
+            }
+            fechaActual = fechaActual.plusDays(1);
+        }
+
+        return true; // Todos los días están cubiertos
+    }
+
+    /**
+     * Verifica si una fecha específica está cubierta por al menos una licencia
+     */
+    private boolean fechaEstaCubiertaPorLicencias(LocalDate fecha, List<Licencia> licencias) {
+        return licencias.stream()
+                .anyMatch(licencia -> fechaEstaEnRangoLicencia(fecha, licencia));
+    }
+
+    /**
+     * Verifica si una fecha está dentro del rango de una licencia
+     */
+    private boolean fechaEstaEnRangoLicencia(LocalDate fecha, Licencia licencia) {
+        return !fecha.isBefore(licencia.getPedidoDesde()) && 
+               !fecha.isAfter(licencia.getPedidoHasta());
     }
 
 }

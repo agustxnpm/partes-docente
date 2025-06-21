@@ -33,20 +33,48 @@ public class ParteDiarioService implements IParteDiarioService {
      */
     @Override
     public ParteDiarioDTO generarParteDiario(LocalDate fecha) {
-        // Obtener todas las licencias activas en la fecha específica
-        List<Licencia> licenciasActivas = licenciaService.findLicenciasActivasEnFecha(fecha);
-        
-        // Filtrar solo las licencias válidas
-        List<Licencia> licenciasValidas = licenciasActivas.stream()
+        List<Licencia> licenciasValidas = obtenerLicenciasValidasParaFecha(fecha);
+        List<DocenteLicenciaDTO> docentesDTO = convertirLicenciasADTOs(licenciasValidas);
+        return crearParteDiarioDTO(fecha, docentesDTO);
+    }
+
+    /**
+     * Obtiene todas las licencias válidas activas para una fecha específica
+     */
+    private List<Licencia> obtenerLicenciasValidasParaFecha(LocalDate fecha) {
+        List<Licencia> licenciasActivas = obtenerLicenciasActivasEnFecha(fecha);
+        return filtrarLicenciasValidas(licenciasActivas);
+    }
+
+    /**
+     * Obtiene todas las licencias activas en una fecha específica
+     */
+    private List<Licencia> obtenerLicenciasActivasEnFecha(LocalDate fecha) {
+        return licenciaService.findLicenciasActivasEnFecha(fecha);
+    }
+
+    /**
+     * Filtra las licencias para obtener solo las que tienen estado VÁLIDA
+     */
+    private List<Licencia> filtrarLicenciasValidas(List<Licencia> licencias) {
+        return licencias.stream()
                 .filter(licencia -> EstadoLicencia.VALIDA.equals(licencia.getEstado()))
                 .collect(Collectors.toList());
-        
-        // Convertir las licencias a DTOs de docente-licencia
-        List<DocenteLicenciaDTO> docentesDTO = licenciasValidas.stream()
+    }
+
+    /**
+     * Convierte una lista de licencias a una lista de DTOs de docente-licencia
+     */
+    private List<DocenteLicenciaDTO> convertirLicenciasADTOs(List<Licencia> licencias) {
+        return licencias.stream()
                 .map(this::convertirLicenciaADocenteLicenciaDTO)
                 .collect(Collectors.toList());
-        
-        // Crear y retornar el ParteDiarioDTO
+    }
+
+    /**
+     * Crea el DTO final del parte diario con la fecha y la lista de docentes
+     */
+    private ParteDiarioDTO crearParteDiarioDTO(LocalDate fecha, List<DocenteLicenciaDTO> docentesDTO) {
         return new ParteDiarioDTO(fecha, docentesDTO);
     }
     

@@ -15,9 +15,7 @@ import unpsjb.labprog.backend.business.interfaces.mensajes.IDesignacionMensajeBu
 import unpsjb.labprog.backend.business.interfaces.servicios.IDesignacionService;
 import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
 import unpsjb.labprog.backend.business.interfaces.validaciones.IDesignacionValidator;
-import unpsjb.labprog.backend.model.Cargo;
 import unpsjb.labprog.backend.model.Designacion;
-import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
 
 /**
@@ -101,7 +99,6 @@ public class DesignacionService implements IDesignacionService {
     /**
      * Determina el mensaje de éxito apropiado para una designación guardada
      */
-    @Transactional
     public String determinarMensajeExito(Designacion designacionGuardada) {
         if ("Suplente".equalsIgnoreCase(designacionGuardada.getSituacionRevista())) {
             Persona personaReemplazada = encontrarPersonaReemplazada(designacionGuardada);
@@ -132,8 +129,8 @@ public class DesignacionService implements IDesignacionService {
             LocalDate fechaFinNueva = designacionGuardada.getFechaFin() != null ? designacionGuardada.getFechaFin()
                     : LocalDate.now().plusYears(100);
 
-            // Usar el mismo método que usa el validator para verificar cobertura completa
-            if (licenciasCubrenPeriodoCompleto(
+            // Usar el método del servicio de licencias para verificar cobertura completa
+            if (licenciaService.licenciasCubrenPeriodoCompleto(
                     designacionExistente.getPersona(),
                     designacionGuardada.getCargo(),
                     designacionGuardada.getFechaInicio(),
@@ -144,42 +141,6 @@ public class DesignacionService implements IDesignacionService {
 
         return null; // No se encontró persona reemplazada
     }
-
-
-    /**
-     * Verifica si las licencias de una persona cubren completamente un período dado
-     * (Mismo método que está en DesignacionValidator)
-     */
-    private boolean licenciasCubrenPeriodoCompleto(Persona persona, Cargo cargo,
-            LocalDate fechaInicio, LocalDate fechaFin) {
-        // Obtener todas las licencias válidas de la persona en el período
-        List<Licencia> licenciasEnPeriodo = licenciaService.findLicenciasEnPeriodo(
-                cargo, persona, fechaInicio, fechaFin);
-
-        if (licenciasEnPeriodo.isEmpty()) {
-            return false;
-        }
-
-        // Verificar si las licencias cubren todo el período día por día
-        LocalDate fechaActual = fechaInicio;
-
-        while (!fechaActual.isAfter(fechaFin)) {
-            final LocalDate fecha = fechaActual;
-
-            boolean diaCubierto = licenciasEnPeriodo.stream()
-                    .anyMatch(licencia -> !fecha.isBefore(licencia.getPedidoDesde()) &&
-                            !fecha.isAfter(licencia.getPedidoHasta()));
-
-            if (!diaCubierto) {
-                return false; // Encontramos un día no cubierto
-            }
-
-            fechaActual = fechaActual.plusDays(1);
-        }
-
-        return true; // Todos los días están cubiertos
-    }
-
 
     public List<Designacion> findAllByPersonaAndPeriodoVigente(Persona persona, LocalDate pedidoDesde,
             LocalDate pedidoHasta) {
