@@ -45,7 +45,17 @@ public class CargoValidator implements ICargoValidator {
     private ICargoService cargoService;
 
     public void validarCargo(Cargo cargo) {
+        validarTipoDesignacionYDivision(cargo);
+        validarYAsignarDivisionExistente(cargo);
+        validarUnicidadCargo(cargo);
+        validarUnicidadEspacioCurricular(cargo);
+        validarHorariosEspacioCurricular(cargo);
+    }
 
+    /**
+     * Valida la coherencia entre el tipo de designación y la división asignada.
+     */
+    private void validarTipoDesignacionYDivision(Cargo cargo) {
         if (cargo.getTipoDesignacion() == TipoDesignacion.CARGO && cargo.getDivision() != null) {
             throw new IllegalArgumentException(
                     "Cargo de " + cargo.getNombre() + " es CARGO y no corresponde asignar división");
@@ -54,7 +64,12 @@ public class CargoValidator implements ICargoValidator {
         if (cargo.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR && cargo.getDivision() == null) {
             throw new IllegalArgumentException("Espacio curricular " + cargo.getNombre() + " falta asignar división");
         }
+    }
 
+    /**
+     * Valida que la división especificada exista y la asigna al cargo.
+     */
+    private void validarYAsignarDivisionExistente(Cargo cargo) {
         if (cargo.getDivision() != null) {
             Division divisionExistente = divisionService.buscarDivisionExistente(cargo.getDivision());
             if (divisionExistente != null) {
@@ -63,7 +78,12 @@ public class CargoValidator implements ICargoValidator {
                 throw new IllegalArgumentException("La división especificada no existe.");
             }
         }
+    }
 
+    /**
+     * Valida que no exista otro cargo con el mismo nombre.
+     */
+    private void validarUnicidadCargo(Cargo cargo) {
         if (cargo.getTipoDesignacion() == TipoDesignacion.CARGO) {
             cargoService.findByNombre(cargo.getNombre()).ifPresent(c -> {
                 // Solo lanzar excepción si es un cargo diferente (ID diferente)
@@ -72,72 +92,144 @@ public class CargoValidator implements ICargoValidator {
                 }
             });
         }
+    }
 
+    /**
+     * Valida que no exista otro espacio curricular con el mismo nombre en la misma división.
+     */
+    private void validarUnicidadEspacioCurricular(Cargo cargo) {
         if (cargo.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR) {
             cargoService.findByNombreAndDivision(cargo.getNombre(), cargo.getDivision()).ifPresent(c -> {
                 // Solo lanzar excepción si es un cargo diferente (ID diferente)
                 if (c.getId() != (cargo.getId())) {
                     throw new DataIntegrityViolationException(
-                            "El espacio curricular " + cargo.getNombre() + " en la division " + cargo.getDivision().getAnio() + "º"
-                                    + cargo.getDivision().getNumDivision() + "º" + " ya existe.");
+                            "El espacio curricular " + cargo.getNombre() + " en la division " 
+                            + cargo.getDivision().getAnio() + "º"
+                            + cargo.getDivision().getNumDivision() + "º" + " ya existe.");
                 }
             });
         }
-        
-        // Validar conflictos de horarios para espacios curriculares
+    }
+
+    /**
+     * Valida los conflictos de horarios para espacios curriculares.
+     */
+    private void validarHorariosEspacioCurricular(Cargo cargo) {
         if (cargo.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR && 
             cargo.getDivision() != null && 
             cargo.getHorario() != null && 
             !cargo.getHorario().isEmpty()) {
             validarConflictosHorarios(cargo);
         }
-
     }
     
 
     /**
-     * Valida que no haya conflictos de horarios para la misma división
+     * Valida que no haya conflictos de horarios para la misma división.
      */
     private void validarConflictosHorarios(Cargo cargo) {
-        // Crear un mapa de horarios ocupados para búsqueda O(1)
+        List<Cargo> cargosEnDivision = obtenerCargosEspaciosCurricularesEnDivision(cargo);
+        Map<String, String> horariosOcupados = construirMapaHorariosOcupados(cargosEnDivision);
+        verificarConflictosHorarios(cargo, horariosOcupados);
+    }
+
+    /**
+     * Obtiene todos los cargos de tipo ESPACIO_CURRICULAR para la misma división,
+     * excluyendo el cargo actual.
+     */
+    private List<Cargo> obtenerCargosEspaciosCurricularesEnDivision(Cargo cargo) {
+        return cargoService.findAll().stream()
+            .filter(c -> esEspacioCurricular(c))
+            .filter(c -> esMismaDivision(c, cargo))
+            .filter(c -> noEsElMismoCargo(c, cargo))
+            .filter(c -> tieneHorarios(c))
+            .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Verifica si un cargo es de tipo ESPACIO_CURRICULAR.
+     */
+    private boolean esEspacioCurricular(Cargo cargo) {
+        return cargo.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR;
+    }
+
+    /**
+     * Verifica si dos cargos pertenecen a la misma división.
+     */
+    private boolean esMismaDivision(Cargo cargoExistente, Cargo cargoNuevo) {
+        return cargoExistente.getDivision() != null && 
+               cargoNuevo.getDivision() != null &&
+               cargoExistente.getDivision().getId() == cargoNuevo.getDivision().getId();
+    }
+
+    /**
+     * Verifica que no sea el mismo cargo (para casos de actualización).
+     */
+    private boolean noEsElMismoCargo(Cargo cargoExistente, Cargo cargoNuevo) {
+        return cargoExistente.getId() != cargoNuevo.getId();
+    }
+
+    /**
+     * Verifica si un cargo tiene horarios asignados.
+     */
+    private boolean tieneHorarios(Cargo cargo) {
+        return cargo.getHorario() != null && !cargo.getHorario().isEmpty();
+    }
+
+    /**
+     * Construye un mapa con los horarios ocupados para búsqueda eficiente O(1).
+     * La clave es "dia-hora" y el valor es el nombre del cargo que ocupa ese horario.
+     */
+    private Map<String, String> construirMapaHorariosOcupados(List<Cargo> cargosEnDivision) {
         Map<String, String> horariosOcupados = new HashMap<>();
         
-        // Obtener todos los cargos de tipo ESPACIO_CURRICULAR para la misma división
-        List<Cargo> cargosEnDivision = cargoService.findAll().stream()
-            .filter(c -> c.getTipoDesignacion() == TipoDesignacion.ESPACIO_CURRICULAR)
-            .filter(c -> c.getDivision() != null && c.getDivision().getId() == cargo.getDivision().getId())
-            .filter(c -> c.getId() != cargo.getId()) // Excluir el cargo actual
-            .filter(c -> c.getHorario() != null && !c.getHorario().isEmpty())
-            .collect(java.util.stream.Collectors.toList());
-        
-        // Construir el mapa de horarios ocupados - O(n)
         for (Cargo cargoExistente : cargosEnDivision) {
             for (Horario horarioExistente : cargoExistente.getHorario()) {
-                String claveHorario = horarioExistente.getDia() + "-" + horarioExistente.getHora();
+                String claveHorario = construirClaveHorario(horarioExistente);
                 horariosOcupados.put(claveHorario, cargoExistente.getNombre());
             }
         }
         
-        // Verificar conflictos con los nuevos horarios - O(m)
+        return horariosOcupados;
+    }
+
+    /**
+     * Construye la clave única para identificar un horario específico.
+     */
+    private String construirClaveHorario(Horario horario) {
+        return horario.getDia() + "-" + horario.getHora();
+    }
+
+    /**
+     * Verifica si existen conflictos entre los horarios del nuevo cargo
+     * y los horarios ya ocupados en la división.
+     */
+    private void verificarConflictosHorarios(Cargo cargo, Map<String, String> horariosOcupados) {
         for (Horario horarioNuevo : cargo.getHorario()) {
-            String claveHorarioNuevo = horarioNuevo.getDia() + "-" + horarioNuevo.getHora();
+            String claveHorarioNuevo = construirClaveHorario(horarioNuevo);
             
             if (horariosOcupados.containsKey(claveHorarioNuevo)) {
                 String cargoConflicto = horariosOcupados.get(claveHorarioNuevo);
-                String mensaje = String.format(
-                    "Conflicto de horarios detectado: El %s a la %dº hora ya está ocupado por '%s' en la división %dº%dº %s. " +
-                    "No se puede asignar el mismo horario a '%s'.",
-                    horarioNuevo.getDia().toLowerCase(),
-                    horarioNuevo.getHora(),
-                    cargoConflicto,
-                    cargo.getDivision().getAnio(),
-                    cargo.getDivision().getNumDivision(),
-                    cargo.getDivision().getTurno().toString().toLowerCase(),
-                    cargo.getNombre()
-                );
-                
+                String mensaje = construirMensajeConflictoHorario(cargo, horarioNuevo, cargoConflicto);
                 throw new IllegalArgumentException(mensaje);
             }
         }
+    }
+
+    /**
+     * Construye el mensaje de error detallado para conflictos de horario.
+     */
+    private String construirMensajeConflictoHorario(Cargo cargo, Horario horario, String cargoConflicto) {
+        return String.format(
+            "Conflicto de horarios detectado: El %s a la %dº hora ya está ocupado por '%s' en la división %dº%dº %s. " +
+            "No se puede asignar el mismo horario a '%s'.",
+            horario.getDia().toLowerCase(),
+            horario.getHora(),
+            cargoConflicto,
+            cargo.getDivision().getAnio(),
+            cargo.getDivision().getNumDivision(),
+            cargo.getDivision().getTurno().toString().toLowerCase(),
+            cargo.getNombre()
+        );
     }
 }
