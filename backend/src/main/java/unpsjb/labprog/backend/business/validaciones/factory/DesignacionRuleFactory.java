@@ -5,8 +5,8 @@ import java.util.Map;
 
 import unpsjb.labprog.backend.business.interfaces.validaciones.IDesignacionRule;
 import unpsjb.labprog.backend.business.validaciones.locator.ServiceLocator;
-import unpsjb.labprog.backend.business.validaciones.plugins.ConflictoDesignacionRule;
-import unpsjb.labprog.backend.business.validaciones.plugins.TipoDesignacionDesignacionRule;
+import unpsjb.labprog.backend.business.validaciones.plugins.designaciones.ConflictoDesignacionRule;
+import unpsjb.labprog.backend.business.validaciones.plugins.designaciones.TipoDesignacionDesignacionRule;
 
 /**
  * Fábrica para crear reglas de validación de designaciones dinámicamente
@@ -105,7 +105,7 @@ public class DesignacionRuleFactory {
     /**
      * Construye el nombre completo de la clase siguiendo la convención.
      * 
-     * Convención: unpsjb.labprog.backend.business.validaciones.plugins.[NombreRegla]DesignacionRule
+     * Convención: unpsjb.labprog.backend.business.validaciones.plugins.designaciones.[NombreRegla]DesignacionRule
      * 
      * Ejemplos:
      * - "basic" -> "BasicDesignacionRule"
@@ -120,7 +120,7 @@ public class DesignacionRuleFactory {
         String capitalizedName = ruleName.substring(0, 1).toUpperCase() + 
                                 ruleName.substring(1);
         
-        return "unpsjb.labprog.backend.business.validaciones.plugins." + 
+        return "unpsjb.labprog.backend.business.validaciones.plugins.designaciones." + 
                capitalizedName + "DesignacionRule";
     }
     
@@ -161,6 +161,5 @@ public class DesignacionRuleFactory {
             conflictoRule.setLicenciaService(ServiceLocator.getLicenciaService());
         }
         
-        // Aquí se pueden agregar más plugins que necesiten servicios
     }
 }

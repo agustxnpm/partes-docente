@@ -29,5 +29,25 @@ public interface IArticuloLicenciaService {
      */
     ArticuloLicencia findByArticulo(String codigo);
     
+    /**
+     * Guarda o actualiza un artículo de licencia en el sistema.
+     * @param articulo El artículo de licencia a guardar
+     * @return El artículo de licencia guardado
+     */
+    ArticuloLicencia save(ArticuloLicencia articulo);
+    
+    /**
+     * Verifica si existe un artículo de licencia con el código especificado.
+     * @param codigo El código del artículo a verificar
+     * @return true si existe, false en caso contrario
+     */
+    boolean existePorCodigo(String codigo);
+    
+    /**
+     * Carga automáticamente todos los artículos de licencia definidos
+     * en el archivo de configuración articulos-licencia.properties.
+     * Esta operación se ejecuta al inicializar el sistema.
+     */
+    void cargarArticulosDesdeConfiguracion();
 
 }

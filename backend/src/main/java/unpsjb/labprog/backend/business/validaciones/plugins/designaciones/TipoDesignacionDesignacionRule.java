@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business.validaciones.plugins;
+package unpsjb.labprog.backend.business.validaciones.plugins.designaciones;
 
 import java.util.Optional;
 

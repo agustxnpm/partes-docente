@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business.validaciones.plugins;
+package unpsjb.labprog.backend.business.validaciones.plugins.designaciones;
 
 import unpsjb.labprog.backend.business.interfaces.validaciones.IDesignacionRule;
 import unpsjb.labprog.backend.model.Designacion;

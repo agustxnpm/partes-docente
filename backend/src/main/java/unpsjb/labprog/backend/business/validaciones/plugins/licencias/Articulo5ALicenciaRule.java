@@ -1,10 +1,11 @@
-package unpsjb.labprog.backend.business.validaciones;
+package unpsjb.labprog.backend.business.validaciones.plugins.licencias;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import unpsjb.labprog.backend.business.utilidades.ValidadorArticulo;
+import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaRule;
 import unpsjb.labprog.backend.model.Licencia;
 
 /**
@@ -12,17 +13,35 @@ import unpsjb.labprog.backend.model.Licencia;
  * Este validador asegura que las licencias del artículo 5A cumplan con las restricciones
  * de certificado médico y el límite anual de días.
  */
-@ValidadorArticulo(codigoArticulo = "5A")
-public class Articulo5AValidator implements ArticuloLicenciaValidator {
+public class Articulo5ALicenciaRule implements ILicenciaRule {
 
     private static final int MAX_DIAS_POR_ANIO = 30;
+    private static Articulo5ALicenciaRule instance;
+    private ILicenciaService licenciaService;
 
+    private Articulo5ALicenciaRule() {}
+    public static Articulo5ALicenciaRule getInstance() {
+        if (instance == null) {
+            instance = new Articulo5ALicenciaRule();
+        }
+        return instance;
+    }
+    public void setLicenciaService(ILicenciaService licenciaService) {
+        this.licenciaService = licenciaService;
+    }
     @Override
-    public void validate(Licencia nuevaLicencia, List<Licencia> licenciasExistentesAnioPersona)
+    public void validate(Licencia nuevaLicencia)
             throws IllegalArgumentException {
-
+        // Solo aplicar validaciones si es artículo 5A
+        if (!"5A".equals(nuevaLicencia.getArticuloLicencia().getArticulo())) {
+            return; // No aplica a este artículo
+        }
+        
         validarCertificadoMedico(nuevaLicencia);
-        validarLimiteAnualDias(nuevaLicencia, licenciasExistentesAnioPersona);
+        if (licenciaService == null) {
+            throw new IllegalStateException("LicenciaService no está disponible para la validación");
+        }
+        validarLimiteAnualDias(nuevaLicencia, buscarLicenciasExistentesPorAnioYPersona(nuevaLicencia));
     }
 
     /**
@@ -34,6 +53,15 @@ public class Articulo5AValidator implements ArticuloLicenciaValidator {
                     "NO se otorga Licencia artículo 5A a " + licencia.getPersona().getNombre() +
                           " debido a que no presenta certificado médico requerido para este tipo de licencia.");
         }
+    }
+
+    /**
+     * Busca las licencias existentes de la persona en el año de la solicitud.
+     */
+    private List<Licencia> buscarLicenciasExistentesPorAnioYPersona (Licencia licencia) {
+        return licenciaService.findByPersonaAndYear(
+                licencia.getPersona(),
+                licencia.getPedidoDesde().getYear());
     }
 
     /**
@@ -115,4 +143,9 @@ public class Articulo5AValidator implements ArticuloLicenciaValidator {
                         MAX_DIAS_POR_ANIO + " días de licencia");
     }
 
+
+    @Override
+    public String getRuleName() {
+        return "Validación de Licencia Artículo 5A";
+    }
 }

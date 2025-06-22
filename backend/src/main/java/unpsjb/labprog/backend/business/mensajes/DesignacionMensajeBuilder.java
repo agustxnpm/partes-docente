@@ -71,13 +71,14 @@ public class DesignacionMensajeBuilder implements IDesignacionMensajeBuilder {
         String tipoCargoStr = suplente.getCargo().getTipoDesignacion() == TipoDesignacion.CARGO ? "al cargo" : "a la asignatura";
         Persona reemplazado = designacionService.encontrarPersonaReemplazada(suplente);
 
-        return String.format("%s %s ha sido designado/a %s %s exitosamente, en reemplazo de %s %s",
-                suplente.getPersona().getNombre(),
-                suplente.getPersona().getApellido(),
-                tipoCargoStr,
-                suplente.getCargo().getNombre().toLowerCase(),
-                reemplazado.getNombre(),
-                reemplazado.getApellido());
+            return String.format("%s %s ha sido designado/a %s %s exitosamente, en reemplazo de %s %s",
+                    suplente.getPersona().getNombre(),
+                    suplente.getPersona().getApellido(),
+                    tipoCargoStr,
+                    suplente.getCargo().getNombre().toLowerCase(),
+                    reemplazado.getNombre(),
+                    reemplazado.getApellido());
+        
     }
 
     /**

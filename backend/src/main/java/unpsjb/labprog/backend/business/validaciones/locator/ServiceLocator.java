@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import unpsjb.labprog.backend.business.interfaces.servicios.ICargoService;
 import unpsjb.labprog.backend.business.interfaces.servicios.IDesignacionService;
 import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
+import unpsjb.labprog.backend.business.interfaces.servicios.IPersonaService;
 
 /**
  * ServiceLocator para permitir que los plugins accedan a los servicios de Spring
@@ -64,6 +65,20 @@ public class ServiceLocator implements ApplicationContextAware {
             return applicationContext.getBean(ILicenciaService.class);
         } catch (Exception e) {
             System.err.println("Error obteniendo LicenciaService: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Obtiene el servicio de persona.
+     * 
+     * @return IPersonaService o null si no está disponible
+     */
+    public static IPersonaService getPersonaService() {
+        try {
+            return applicationContext.getBean(IPersonaService.class);
+        } catch (Exception e) {
+            System.err.println("Error obteniendo PersonaService: " + e.getMessage());
             return null;
         }
     }

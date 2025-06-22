@@ -95,6 +95,12 @@ public class LicenciaService implements ILicenciaService {
             licenciaRepository.save(licencia);
             agregarLog(licencia, EstadoLicencia.INVALIDA, e.getMessage());
             return licencia;
+        } catch (IllegalStateException e) {
+            // Error de configuración del sistema de validaciones
+            licencia.setEstado(EstadoLicencia.INVALIDA);
+            licenciaRepository.save(licencia);
+            agregarLog(licencia, EstadoLicencia.INVALIDA, "Error en la configuración del sistema de validaciones: " + e.getMessage());
+            return licencia;
         }
     }
 

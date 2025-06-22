@@ -1,132 +1,206 @@
 package unpsjb.labprog.backend.business.validaciones;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
-import unpsjb.labprog.backend.model.Licencia;
-import unpsjb.labprog.backend.model.Persona;
-import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
-import unpsjb.labprog.backend.business.interfaces.servicios.IPersonaService;
-import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaValidator;
-import unpsjb.labprog.backend.business.utilidades.ValidadorArticuloRegistry;
-import unpsjb.labprog.backend.business.validaciones.LicenciaValidator;
-
-import java.time.LocalDate;
-import java.util.Collections;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+
+import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaRule;
+import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaValidator;
+import unpsjb.labprog.backend.business.interfaces.servicios.IArticuloLicenciaService;
+import unpsjb.labprog.backend.business.validaciones.factory.LicenciaRuleFactory;
+import unpsjb.labprog.backend.model.Licencia;
 
 /**
- * Validador de licencias.
- * Implementa el Principio de Responsabilidad Única (SRP) de SOLID,
- * validando únicamente las reglas de negocio relacionadas con las licencias.
+ * Validador para operaciones relacionadas con la entidad Licencia.
  * 
- * Utiliza el patrón Registry para manejar validadores específicos de artículos.
+ * Esta clase implementa el Principio Abierto/Cerrado (OCP) de SOLID
+ * utilizando el patrón Plugin con Class Loader dinámico.
+ * 
+ * Las reglas de validación se cargan dinámicamente desde un archivo de configuración
+ * y pueden ser agregadas sin necesidad de recompilar el core de la aplicación.
+ * 
+ * Configuración: validation-rules.properties
+ * Convención de nombres: [NombreRegla]LicenciaRule
  */
 @Component
 public class LicenciaValidator implements ILicenciaValidator {
+    
+    private static final String CONFIG_FILE = "validation-rules.properties";
+    private LicenciaRuleFactory ruleFactory;
+    private List<String> configuredRules;
+    private List<String> configuredArticleRules;
+    
+    private IArticuloLicenciaService articuloLicenciaService;
 
     @Autowired
-    @Lazy
-    private ILicenciaService licenciaService; // Para buscar licencias existentes
+    public LicenciaValidator(IArticuloLicenciaService articuloLicenciaService) {
+        this.articuloLicenciaService = articuloLicenciaService;
+        this.ruleFactory = LicenciaRuleFactory.getInstance();
+        this.configuredRules = loadConfiguredRules();
+        this.configuredArticleRules = loadConfiguredArticleRules();
+        registerAllArticles();
 
-    @Autowired
-    private IPersonaService personaService; // Para cargar la persona completa
-
-    @Autowired
-    private ValidadorArticuloRegistry validadorRegistry;
-
-    public void validarLicencia(Licencia licencia) throws IllegalArgumentException {
-
-        // Validaciones básicas y generales
-        if (licencia == null) {
-            throw new IllegalArgumentException("La licencia no puede ser nula.");
-        }
-        if (licencia.getPersona() == null) {
-            throw new IllegalArgumentException("La persona de la licencia no puede ser nula.");
-        }
-        if (licencia.getArticuloLicencia() == null || licencia.getArticuloLicencia().getArticulo() == null
-                || licencia.getArticuloLicencia().getArticulo().trim().isEmpty()) {
-            throw new IllegalArgumentException("El artículo de la licencia es inválido o no puede ser nulo.");
-        }
-        if (licencia.getPedidoDesde() == null || licencia.getPedidoHasta() == null) {
-            throw new IllegalArgumentException("Las fechas de inicio y fin de la licencia son obligatorias.");
-        }
-        if (licencia.getPedidoDesde().isAfter(licencia.getPedidoHasta())) {
-            throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.");
-        }
-        // Cargar la persona completa desde la BD para verificar designaciones
-        Persona personaCompleta = personaService.findById(licencia.getPersona().getId());
-
-        if (personaCompleta == null) {
-            throw new IllegalArgumentException("Persona no encontrada");
-        }
-
-        // Verificar si la persona tiene algún cargo en la institución
-        if (personaCompleta.getDesignaciones() == null || personaCompleta.getDesignaciones().isEmpty()) {
-            throw new IllegalArgumentException("NO se otorga Licencia artículo " +
-                    licencia.getArticuloLicencia().getArticulo() + " a " +
-                    licencia.getPersona().getNombre() + " " +
-                    licencia.getPersona().getApellido() +
-                    " debido a que el agente no posee ningún cargo en la institución");
-        }
-
-        if (licencia.getDesignaciones() == null) {
-            licencia.setDesignaciones(Collections.emptyList()); // para evitar NullPointerException
-        }
-
-        // Validación: Docente debe tener designación activa que cubra el período
-        // solicitado.
-        validarDesignacionesActivasParaLicencia(licencia);
-
-        // Obtener licencias existentes para la persona en el año de la solicitud
-        List<Licencia> licenciasExistentesAnioPersona = licenciaService.findByPersonaAndYear(
-                licencia.getPersona(),
-                licencia.getPedidoDesde().getYear());
-
-        // 1. Validar superposición con CUALQUIER licencia existente
-        for (Licencia existente : licenciasExistentesAnioPersona) {
-            if (licencia.getId() != 0 && existente.getId() == licencia.getId()) {
-                continue; // No compararse consigo misma en caso de actualización
-            }
-            // Verifica si hay superposición: (InicioA <= FinB) y (FinA >= InicioB)
-            boolean haySuperposicion = !licencia.getPedidoDesde().isAfter(existente.getPedidoHasta()) &&
-                    !licencia.getPedidoHasta().isBefore(existente.getPedidoDesde());
-            if (haySuperposicion) {
-                throw new IllegalArgumentException(
-                        "NO se otorga Licencia artículo " + existente.getArticuloLicencia().getArticulo() + " a " +  licencia.getPersona().getNombre() + " " +
-                                licencia.getPersona().getApellido()
-                                + " debido a que ya posee una licencia en el mismo período");
-            }
-        }
-
-        String codigoArticulo = licencia.getArticuloLicencia().getArticulo();
-
-        if (validadorRegistry.existeValidador(codigoArticulo)) {
-            ArticuloLicenciaValidator validador = validadorRegistry.getValidador(codigoArticulo);
-            validador.validate(licencia, licenciasExistentesAnioPersona);
-        }
+    }
+    
+    /**
+     * Método que se ejecuta después de que Spring complete la inyección de dependencias.
+     * Esto asegura que todos los beans estén completamente inicializados antes de cargar los artículos.
+     */
+    @PostConstruct
+    public void inicializar() {
+        // Registrar automáticamente todos  los artículos de los plugins configurados
     }
 
-    private void validarDesignacionesActivasParaLicencia(Licencia licencia) {
-        // Verificar que cada día del período de licencia esté cubierto por al menos una
-        // designación
-        LocalDate currentDate = licencia.getPedidoDesde();
-
-        while (!currentDate.isAfter(licencia.getPedidoHasta())) {
-            final LocalDate date = currentDate;
-            boolean isDayCovered = licencia.getDesignaciones().stream()
-                    .anyMatch(d -> !date.isBefore(d.getFechaInicio()) &&
-                            (d.getFechaFin() == null || !date.isAfter(d.getFechaFin())));
-
-            if (!isDayCovered) {
-                throw new IllegalArgumentException("NO se otorga Licencia artículo " +
-                        licencia.getArticuloLicencia().getArticulo() + " a " +
-                        licencia.getPersona().getNombre() + " " +
-                        licencia.getPersona().getApellido() +
-                        " debido a que el agente no tiene designación ese día en la institución");
+    /**
+     * Carga la lista de reglas desde el archivo de configuración.
+     * 
+     * @return Lista de nombres de reglas configuradas
+     */
+    private List<String> loadConfiguredRules() {
+        List<String> rules = new ArrayList<>();
+        Properties props = new Properties();
+        
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
+            if (input == null) {
+                throw new IllegalStateException("Archivo de configuración " + CONFIG_FILE + " no encontrado. " +
+                    "El sistema de validaciones requiere configuración explícita.");
             }
+            
+            props.load(input);
+            
+            // Leer las reglas en orden
+            String rulesOrder = props.getProperty("licencia.rules.order");
+            if (rulesOrder == null || rulesOrder.trim().isEmpty()) {
+                throw new IllegalStateException("Configuración 'licencia.rules.order' no encontrada o vacía en " + CONFIG_FILE);
+            }
+            
+            String[] ruleNames = rulesOrder.split(",");
+            for (String ruleName : ruleNames) {
+                String trimmedName = ruleName.trim();
+                if (!trimmedName.isEmpty()) {
+                    rules.add(trimmedName);
+                }
+            }
+            
+        } catch (IOException e) {
+            throw new IllegalStateException("Error cargando configuración desde " + CONFIG_FILE + ": " + e.getMessage(), e);
+        }
+        
+        if (rules.isEmpty()) {
+            throw new IllegalStateException("No se encontraron reglas válidas en la configuración " + CONFIG_FILE);
+        }
+        
+        return rules;
+    }
+    
+    /**
+     * Carga la lista de reglas de artículos desde el archivo de configuración.
+     * 
+     * @return Lista de nombres de reglas de artículos configuradas
+     */
+    private List<String> loadConfiguredArticleRules() {
+        List<String> articleRules = new ArrayList<>();
+        Properties props = new Properties();
+        
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
+            if (input == null) {
+                throw new IllegalStateException("Archivo de configuración " + CONFIG_FILE + " no encontrado. " +
+                    "El sistema de validaciones requiere configuración explícita.");
+            }
+            
+            props.load(input);
+            
+            // Leer las reglas de artículos
+            String articleRulesOrder = props.getProperty("licencia.rules.articulos");
+            if (articleRulesOrder != null && !articleRulesOrder.trim().isEmpty()) {
+                String[] ruleNames = articleRulesOrder.split(",");
+                for (String ruleName : ruleNames) {
+                    String trimmedName = ruleName.trim();
+                    if (!trimmedName.isEmpty()) {
+                        articleRules.add(trimmedName);
+                    }
+                }
+            }
+            
+        } catch (IOException e) {
+            throw new IllegalStateException("Error cargando configuración de artículos desde " + CONFIG_FILE + ": " + e.getMessage(), e);
+        }
+        
+        // Las reglas de artículos son opcionales, por lo que pueden estar vacías
+        return articleRules;
+    }
 
-            currentDate = currentDate.plusDays(1);
+    /**
+     * Valida una licencia aplicando todas las reglas configuradas en orden.
+     * Primero aplica las reglas generales, luego las reglas específicas de artículos.
+     * 
+     * @param licencia La licencia a validar
+     * @throws IllegalArgumentException Si alguna regla de validación falla
+     */
+    @Override
+    public void validarLicencia(Licencia licencia) {
+        // Aplicar reglas generales
+        for (String ruleName : configuredRules) {
+            ILicenciaRule rule = ruleFactory.getRule(ruleName);
+            
+            if (rule == null) {
+                System.err.println("Advertencia: No se pudo cargar la regla: " + ruleName);
+                continue;
+            }
+            
+            try {
+                rule.validate(licencia);
+            } catch (IllegalArgumentException e) {
+                // Re-lanzar la excepción con información sobre qué regla falló
+                throw new IllegalArgumentException(e.getMessage());
+            }
+        }
+        
+        // Aplicar reglas específicas de artículos
+        for (String articleRuleName : configuredArticleRules) {
+            ILicenciaRule articleRule = ruleFactory.getRule(articleRuleName);
+            
+            if (articleRule == null) {
+                System.err.println("Advertencia: No se pudo cargar la regla de artículo: " + articleRuleName);
+                continue;
+            }
+            
+            try {
+                articleRule.validate(licencia);
+            } catch (IllegalArgumentException e) {
+                // Re-lanzar la excepción con información sobre qué regla falló
+                throw new IllegalArgumentException(e.getMessage());
+            }
         }
     }
+    
+    /**
+     * Registra automáticamente todos los artículos definidos en el archivo de configuración.
+     * Delega directamente al ArticuloLicenciaService.
+     */
+    private void registerAllArticles() {
+        if (articuloLicenciaService == null) {
+            System.err.println("ArticuloLicenciaService no disponible, omitiendo registro automático de artículos");
+            return;
+        }
+        
+        System.out.println("LicenciaValidator: Iniciando registro de artículos...");
+        try {
+            // Registrar todos los artículos desde el archivo de configuración
+            articuloLicenciaService.cargarArticulosDesdeConfiguracion();
+            System.out.println("LicenciaValidator: Registro de artículos completado exitosamente");
+        } catch (Exception e) {
+            System.err.println("LicenciaValidator: Error durante el registro de artículos: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+
 }

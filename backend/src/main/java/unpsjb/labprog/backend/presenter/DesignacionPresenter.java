@@ -38,7 +38,11 @@ public class DesignacionPresenter {
             return Response.ok(designacionGuardada, mensajeExito);
         } catch (IllegalArgumentException e) {
             return Response.internalServerError(designacion, e.getMessage());
+        } catch (IllegalStateException e) {
+            // Error de configuración del sistema de validaciones
+            return Response.internalServerError(designacion, "Error en la configuración del sistema de validaciones de designaciones: " + e.getMessage());
         }
+
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

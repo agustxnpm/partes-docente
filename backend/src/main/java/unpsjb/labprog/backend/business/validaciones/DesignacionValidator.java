@@ -48,43 +48,37 @@ public class DesignacionValidator implements IDesignacionValidator {
         
         try (InputStream input = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
             if (input == null) {
-                System.err.println("Archivo de configuración " + CONFIG_FILE + " no encontrado");
-                // Cargar reglas por defecto
-                return getDefaultRules();
+                throw new IllegalStateException("Archivo de configuración " + CONFIG_FILE + " no encontrado. " +
+                    "El sistema de validaciones requiere configuración explícita.");
             }
             
             props.load(input);
             
             // Leer las reglas en orden
-            String rulesOrder = props.getProperty("rules.order");
-            if (rulesOrder != null) {
-                String[] ruleNames = rulesOrder.split(",");
-                for (String ruleName : ruleNames) {
-                    rules.add(ruleName.trim());
+            String rulesOrder = props.getProperty("designacion.rules.order");
+            if (rulesOrder == null || rulesOrder.trim().isEmpty()) {
+                throw new IllegalStateException("Configuración 'designacion.rules.order' no encontrada o vacía en " + CONFIG_FILE);
+            }
+            
+            String[] ruleNames = rulesOrder.split(",");
+            for (String ruleName : ruleNames) {
+                String trimmedName = ruleName.trim();
+                if (!trimmedName.isEmpty()) {
+                    rules.add(trimmedName);
                 }
             }
             
         } catch (IOException e) {
-            System.err.println("Error cargando configuración: " + e.getMessage());
-            return getDefaultRules();
+            throw new IllegalStateException("Error cargando configuración desde " + CONFIG_FILE + ": " + e.getMessage(), e);
         }
         
-        return rules.isEmpty() ? getDefaultRules() : rules;
+        if (rules.isEmpty()) {
+            throw new IllegalStateException("No se encontraron reglas válidas en la configuración " + CONFIG_FILE);
+        }
+        
+        return rules;
     }
     
-    /**
-     * Reglas por defecto si no se encuentra el archivo de configuración.
-     * 
-     * @return Lista de reglas por defecto
-     */
-    private List<String> getDefaultRules() {
-        List<String> defaultRules = new ArrayList<>();
-        defaultRules.add("basic");
-        defaultRules.add("tipoDesignacion");
-        defaultRules.add("conflicto");
-        return defaultRules;
-    }
-
     /**
      * Valida una designación aplicando todas las reglas configuradas en orden.
      * 
@@ -111,12 +105,4 @@ public class DesignacionValidator implements IDesignacionValidator {
         }
     }
     
-    /**
-     * Recarga las reglas de validación desde el archivo de configuración.
-     * Útil para agregar nuevas reglas sin reiniciar la aplicación.
-     */
-    public void reloadRules() {
-        ruleFactory.clearCache();
-        configuredRules = loadConfiguredRules();
-    }
 }
