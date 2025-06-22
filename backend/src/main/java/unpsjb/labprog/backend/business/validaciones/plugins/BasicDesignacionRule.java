@@ -1,18 +1,28 @@
-package unpsjb.labprog.backend.business.validaciones.reglas_Designacion;
-
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+package unpsjb.labprog.backend.business.validaciones.plugins;
 
 import unpsjb.labprog.backend.business.interfaces.validaciones.IDesignacionRule;
 import unpsjb.labprog.backend.model.Designacion;
 
 /**
- * Regla de validación básica para designaciones.
+ * Plugin de validación básica para designaciones.
  * Verifica que los datos fundamentales de la designación estén presentes.
+ * 
+ * Este plugin implementa el patrón Singleton y puede ser cargado dinámicamente
+ * sin necesidad de recompilar el core de la aplicación.
  */
-@Component
-@Order(1)
-public class DesignacionBasicValidationRule implements IDesignacionRule {
+public class BasicDesignacionRule implements IDesignacionRule {
+
+    // Singleton
+    private static BasicDesignacionRule instance = null;
+    
+    private BasicDesignacionRule() {}
+    
+    public static BasicDesignacionRule getInstance() {
+        if (instance == null) {
+            instance = new BasicDesignacionRule();
+        }
+        return instance;
+    }
 
     @Override
     public void validate(Designacion designacion) {

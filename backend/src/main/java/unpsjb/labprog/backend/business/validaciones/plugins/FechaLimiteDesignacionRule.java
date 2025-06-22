@@ -1,28 +1,40 @@
-package unpsjb.labprog.backend.business.validaciones.reglas_Designacion;
+package unpsjb.labprog.backend.business.validaciones.plugins;
 
 import java.time.LocalDate;
-
-import org.springframework.stereotype.Component;
 
 import unpsjb.labprog.backend.business.interfaces.validaciones.IDesignacionRule;
 import unpsjb.labprog.backend.model.Designacion;
 
-// PARA LA DEMO
-
 /**
- * Ejemplo de regla de validación extensible para designaciones.
- * Esta regla valida que las designaciones no se hagan en fechas futuras muy lejanas.
+ * Ejemplo de plugin extensible para validación de fechas límite.
  * 
- * IMPORTANTE: Esta es una regla de ejemplo para demostrar cómo se puede
- * extender el sistema sin modificar el código existente.
+ * Este plugin demuestra cómo se puede agregar una nueva regla de validación
+ * sin modificar el core de la aplicación:
  * 
- * Para activar esta regla, simplemente descomenta la anotación @Component.
- * Para desactivarla, comenta la anotación @Component.
+ * 1. Crear esta clase en el paquete plugins
+ * 2. Implementar IDesignacionRule
+ * 3. Agregar el patrón Singleton
+ * 4. Agregar "fechaLimite" al archivo validation-rules.properties
+ * 5. La regla se carga automáticamente
+ * 
+ * Para activar esta regla:
+ * - Agregar "fechaLimite" a rules.order en validation-rules.properties
  */
-// @Component  // Descomenta esta línea para activar la regla
-public class FechaLimiteDesignacionValidationRule implements IDesignacionRule {
+public class FechaLimiteDesignacionRule implements IDesignacionRule {
 
     private static final int MAX_YEARS_FUTURE = 2; // Máximo 2 años en el futuro
+    
+    // Singleton
+    private static FechaLimiteDesignacionRule instance = null;
+    
+    private FechaLimiteDesignacionRule() {}
+    
+    public static FechaLimiteDesignacionRule getInstance() {
+        if (instance == null) {
+            instance = new FechaLimiteDesignacionRule();
+        }
+        return instance;
+    }
 
     @Override
     public void validate(Designacion designacion) {

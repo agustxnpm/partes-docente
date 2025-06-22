@@ -1,11 +1,7 @@
-package unpsjb.labprog.backend.business.validaciones.reglas_Designacion;
+package unpsjb.labprog.backend.business.validaciones.plugins;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import unpsjb.labprog.backend.business.interfaces.servicios.IDesignacionService;
 import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
@@ -15,22 +11,32 @@ import unpsjb.labprog.backend.model.Division;
 import unpsjb.labprog.backend.model.TipoDesignacion;
 
 /**
- * Regla de validación para conflictos de designación.
+ * Plugin de validación para conflictos de designación.
  * Verifica que no existan conflictos con designaciones existentes.
  */
-@Component
-@Order(3)
-public class ConflictoDesignacionValidationRule implements IDesignacionRule {
+public class ConflictoDesignacionRule implements IDesignacionRule {
 
-    @Autowired
+    // Singleton
+    private static ConflictoDesignacionRule instance = null;
     private IDesignacionService designacionService;
-
-    @Autowired
     private ILicenciaService licenciaService;
+    
+    private ConflictoDesignacionRule() {}
+    
+    public static ConflictoDesignacionRule getInstance() {
+        if (instance == null) {
+            instance = new ConflictoDesignacionRule();
+        }
+        return instance;
+    }
 
     @Override
     public void validate(Designacion designacion) {
-        validarConflictosDesignacion(designacion);
+        if (designacionService != null && licenciaService != null) {
+            validarConflictosDesignacion(designacion);
+        } else {
+            System.err.println("Advertencia: Servicios no disponibles en plugin. Validación de conflictos omitida.");
+        }
     }
 
     private void validarConflictosDesignacion(Designacion nuevaDesignacion) {
@@ -137,5 +143,16 @@ public class ConflictoDesignacionValidationRule implements IDesignacionRule {
     @Override
     public String getRuleName() {
         return "Validación de Conflictos de Designación";
+    }
+    
+    /**
+     * Métodos para inyectar los servicios necesarios.
+     */
+    public void setDesignacionService(IDesignacionService designacionService) {
+        this.designacionService = designacionService;
+    }
+    
+    public void setLicenciaService(ILicenciaService licenciaService) {
+        this.licenciaService = licenciaService;
     }
 }
