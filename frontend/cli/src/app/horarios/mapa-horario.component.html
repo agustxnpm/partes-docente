@@ -170,12 +170,6 @@
                         <small>
                           <i class="bi bi-person-fill me-1"></i>
                           {{getDocenteContent(getHorarioParaCelda(dia, hora))}}
-                          <span 
-                            *ngIf="getHorarioParaCelda(dia, hora)?.esSuplencia"
-                            class="badge bg-warning text-dark ms-1"
-                          >
-                            Suplente
-                          </span>
                         </small>
                       </div>
                     </div>
@@ -199,19 +193,31 @@
             Leyenda
           </h6>
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
               <div class="d-flex align-items-center mb-2">
                 <div class="legend-box ocupada me-2"></div>
                 <span>Clase programada</span>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
               <div class="d-flex align-items-center mb-2">
                 <div class="legend-box suplencia me-2"></div>
                 <span>Suplencia activa</span>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+              <div class="d-flex align-items-center mb-2">
+                <div class="legend-box sin-docente me-2"></div>
+                <span>Sin docente asignado</span>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="d-flex align-items-center mb-2">
+                <div class="legend-box licencia me-2"></div>
+                <span>Docente con licencia</span>
+              </div>
+            </div>
+            <div class="col-md-2">
               <div class="d-flex align-items-center mb-2">
                 <div class="legend-box vacia me-2"></div>
                 <span>Sin asignar</span>

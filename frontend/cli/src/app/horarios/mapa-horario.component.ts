@@ -143,19 +143,44 @@ export class MapaHorarioComponent implements OnInit {
   getCellClass(horario: HorarioMapa | null): string {
     if (!horario) return 'hora-vacia';
     
-    if (horario.horaLibre) return 'hora-libre';
+    if (horario.horaLibre) {
+      // Distinguir entre diferentes tipos de "hora libre"
+      if (horario.docente === 'Sin docente asignado') return 'hora-sin-docente';
+      if (horario.docente === 'Hora libre (docente con licencia)') return 'hora-licencia';
+      return 'hora-libre';
+    }
+    
     if (horario.esSuplencia) return 'hora-suplencia';
     return 'hora-ocupada';
   }
 
   getCellContent(horario: HorarioMapa | null): string {
-    if (!horario || horario.horaLibre) return '';
+    if (!horario) return '';
+    
+    // Si es hora libre, mostrar el espacio curricular si existe, sino vacío para horas sin asignar
+    if (horario.horaLibre) {
+      if (horario.espacioCurricular && horario.espacioCurricular !== 'Hora libre') {
+        return horario.espacioCurricular;
+      }
+      return ''; // Horas sin asignar quedan vacías
+    }
+    
     return horario.espacioCurricular;
   }
 
   getDocenteContent(horario: HorarioMapa | null): string {
-    if (!horario || horario.horaLibre) return '';
-    return horario.docente;
+    if (!horario) return '';
+    
+    // Mostrar información del docente siempre que exista
+    if (horario.docente && horario.docente.trim() !== '') {
+      // Si es suplencia, agregar indicador visual
+      if (horario.esSuplencia) {
+        return `${horario.docente} (Suplente)`;
+      }
+      return horario.docente;
+    }
+    
+    return '';
   }
 
   // Formateo de fechas para mostrar
