@@ -20,9 +20,10 @@ public class ConflictoDesignacionRule implements IDesignacionRule {
     private static ConflictoDesignacionRule instance = null;
     private IDesignacionService designacionService;
     private ILicenciaService licenciaService;
-    
-    private ConflictoDesignacionRule() {}
-    
+
+    private ConflictoDesignacionRule() {
+    }
+
     public static ConflictoDesignacionRule getInstance() {
         if (instance == null) {
             instance = new ConflictoDesignacionRule();
@@ -33,10 +34,12 @@ public class ConflictoDesignacionRule implements IDesignacionRule {
     @Override
     public void validate(Designacion designacion) {
         if (designacionService != null && licenciaService != null) {
-            validarConflictosDesignacion(designacion);
-        } else {
-            System.err.println("Advertencia: Servicios no disponibles en plugin. Validación de conflictos omitida.");
+            throw new IllegalStateException(
+                    "Advertencia: Servicios no disponibles en plugin. Validación de conflictos omitida.");
+
         }
+        validarConflictosDesignacion(designacion);
+
     }
 
     private void validarConflictosDesignacion(Designacion nuevaDesignacion) {
@@ -66,12 +69,15 @@ public class ConflictoDesignacionRule implements IDesignacionRule {
     }
 
     /**
-     * Verifica si existe un conflicto real entre una designación existente y una nueva
-     * considerando las licencias tanto de la persona existente como de otras personas
+     * Verifica si existe un conflicto real entre una designación existente y una
+     * nueva
+     * considerando las licencias tanto de la persona existente como de otras
+     * personas
      * que puedan justificar la designación existente.
      */
     private boolean existeConflictoReal(Designacion existente, Designacion nueva, LocalDate fechaFinNueva) {
-        // Primero verificar si la persona existente tiene licencias que cubran el período
+        // Primero verificar si la persona existente tiene licencias que cubran el
+        // período
         if (licenciaService.licenciasCubrenPeriodoCompleto(existente.getPersona(), nueva.getCargo(),
                 nueva.getFechaInicio(), fechaFinNueva)) {
             return false; // No hay conflicto, la persona existente tiene licencias
@@ -91,10 +97,11 @@ public class ConflictoDesignacionRule implements IDesignacionRule {
      * Verifica si existe justificación para una designación existente basada en
      * las licencias de otras personas que puedan haber originado la suplencia.
      */
-    private boolean existeJustificacionPorOtrasLicencias(Designacion designacionExistente, 
+    private boolean existeJustificacionPorOtrasLicencias(Designacion designacionExistente,
             LocalDate fechaInicio, LocalDate fechaFin) {
-        
-        // Buscar otras designaciones superpuestas para el mismo cargo que no sean la existente
+
+        // Buscar otras designaciones superpuestas para el mismo cargo que no sean la
+        // existente
         List<Designacion> otrasDesignaciones = designacionService
                 .findDesignacionesSuperpuestas(
                         designacionExistente.getCargo().getId(),
@@ -102,9 +109,10 @@ public class ConflictoDesignacionRule implements IDesignacionRule {
                         fechaFin,
                         designacionExistente.getId());
 
-        // Verificar si alguna de estas otras designaciones tiene licencias que justifiquen la suplencia
+        // Verificar si alguna de estas otras designaciones tiene licencias que
+        // justifiquen la suplencia
         for (Designacion otraDesignacion : otrasDesignaciones) {
-            if (licenciaService.licenciasCubrenPeriodoCompleto(otraDesignacion.getPersona(), 
+            if (licenciaService.licenciasCubrenPeriodoCompleto(otraDesignacion.getPersona(),
                     designacionExistente.getCargo(), fechaInicio, fechaFin)) {
                 return true; // Encontramos justificación
             }
@@ -144,14 +152,14 @@ public class ConflictoDesignacionRule implements IDesignacionRule {
     public String getRuleName() {
         return "Validación de Conflictos de Designación";
     }
-    
+
     /**
      * Métodos para inyectar los servicios necesarios.
      */
     public void setDesignacionService(IDesignacionService designacionService) {
         this.designacionService = designacionService;
     }
-    
+
     public void setLicenciaService(ILicenciaService licenciaService) {
         this.licenciaService = licenciaService;
     }

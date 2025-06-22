@@ -36,7 +36,7 @@ public class SuperposicionLicenciaRule implements ILicenciaRule {
     }
 
     @Override
-    public void validate(Licencia licencia) throws IllegalArgumentException {
+    public void validate(Licencia licencia) {
         if (licenciaService == null) {
             licenciaService = ServiceLocator.getLicenciaService();
         }

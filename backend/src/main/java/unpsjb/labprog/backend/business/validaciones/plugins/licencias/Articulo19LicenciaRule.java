@@ -29,7 +29,7 @@ public class Articulo19LicenciaRule implements ILicenciaRule {
     }
 
     @Override
-    public void validate(Licencia licencia) throws IllegalArgumentException {
+    public void validate(Licencia licencia) {
         if (!"19".equals(licencia.getArticuloLicencia().getArticulo())) {
             return; // No aplica
         }

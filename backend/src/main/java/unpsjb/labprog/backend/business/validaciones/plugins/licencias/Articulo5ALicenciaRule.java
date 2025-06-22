@@ -20,18 +20,20 @@ public class Articulo5ALicenciaRule implements ILicenciaRule {
     private ILicenciaService licenciaService;
 
     private Articulo5ALicenciaRule() {}
+    
     public static Articulo5ALicenciaRule getInstance() {
         if (instance == null) {
             instance = new Articulo5ALicenciaRule();
         }
         return instance;
     }
+
     public void setLicenciaService(ILicenciaService licenciaService) {
         this.licenciaService = licenciaService;
     }
+
     @Override
-    public void validate(Licencia nuevaLicencia)
-            throws IllegalArgumentException {
+    public void validate(Licencia nuevaLicencia) {
         // Solo aplicar validaciones si es artículo 5A
         if (!"5A".equals(nuevaLicencia.getArticuloLicencia().getArticulo())) {
             return; // No aplica a este artículo

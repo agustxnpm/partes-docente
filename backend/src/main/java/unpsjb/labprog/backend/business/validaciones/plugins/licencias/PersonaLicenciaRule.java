@@ -8,14 +8,16 @@ import unpsjb.labprog.backend.model.Licencia;
 import unpsjb.labprog.backend.model.Persona;
 
 /**
- * Regla de validación para verificar que la persona esté habilitada para licencias.
+ * Regla de validación para verificar que la persona esté habilitada para
+ * licencias.
  * Verifica que la persona exista y tenga cargos en la institución.
  */
 public class PersonaLicenciaRule implements ILicenciaRule {
     private static PersonaLicenciaRule instance;
     private IPersonaService personaService;
 
-    private PersonaLicenciaRule() {}
+    private PersonaLicenciaRule() {
+    }
 
     public static PersonaLicenciaRule getInstance() {
         if (instance == null) {
@@ -37,6 +39,10 @@ public class PersonaLicenciaRule implements ILicenciaRule {
             throw new IllegalArgumentException("Persona no encontrada");
         }
 
+        if (personaService == null) {
+            throw new IllegalStateException("LicenciaService no está disponible para la validación");
+        }
+
         // Verificar si la persona tiene algún cargo en la institución
         if (personaCompleta.getDesignaciones() == null || personaCompleta.getDesignaciones().isEmpty()) {
             throw new IllegalArgumentException("NO se otorga Licencia artículo " +
@@ -46,7 +52,8 @@ public class PersonaLicenciaRule implements ILicenciaRule {
                     " debido a que el agente no posee ningún cargo en la institución");
         }
 
-        // Inicializar designaciones si es null para evitar NullPointerException en validaciones posteriores
+        // Inicializar designaciones si es null para evitar NullPointerException en
+        // validaciones posteriores
         if (licencia.getDesignaciones() == null) {
             licencia.setDesignaciones(Collections.emptyList());
         }

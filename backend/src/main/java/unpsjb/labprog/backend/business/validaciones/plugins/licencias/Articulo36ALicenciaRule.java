@@ -42,16 +42,22 @@ public class Articulo36ALicenciaRule implements ILicenciaRule {
 
         @Override
         public void validate(Licencia nuevaLicencia)
-                        throws IllegalArgumentException {
+                        {
                 // Solo aplicar validaciones si es artículo 36A
                 if (!"36A".equals(nuevaLicencia.getArticuloLicencia().getArticulo())) {
                         return; // No aplica a este artículo
                 }
-                
+
+                if (licenciaService == null) {
+                        throw new IllegalStateException("LicenciaService no está disponible para la validación");
+                }
+
                 long diasSolicitados = calcularDiasSolicitados(nuevaLicencia);
 
-                validarTopeMensual(nuevaLicencia, buscarLicenciasExistentesPorAnioYPersona(nuevaLicencia), diasSolicitados);
-                validarTopeAnual(nuevaLicencia, buscarLicenciasExistentesPorAnioYPersona(nuevaLicencia), diasSolicitados);
+                validarTopeMensual(nuevaLicencia, buscarLicenciasExistentesPorAnioYPersona(nuevaLicencia),
+                                diasSolicitados);
+                validarTopeAnual(nuevaLicencia, buscarLicenciasExistentesPorAnioYPersona(nuevaLicencia),
+                                diasSolicitados);
         }
 
         /**

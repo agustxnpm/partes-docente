@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import unpsjb.labprog.backend.business.interfaces.servicios.ILicenciaService;
 import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaRule;
-import unpsjb.labprog.backend.business.validaciones.locator.ServiceLocator;
 import unpsjb.labprog.backend.model.Licencia;
 
 /**
@@ -41,14 +40,10 @@ public class Articulo23ALicenciaRule implements ILicenciaRule {
     }
 
     @Override
-    public void validate(Licencia nuevaLicencia) throws IllegalArgumentException {
+    public void validate(Licencia nuevaLicencia) {
         // Solo validar si es una licencia del artículo 23A
         if (!"23A".equals(nuevaLicencia.getArticuloLicencia().getArticulo())) {
             return; // No aplica a esta licencia
-        }
-        
-        if (licenciaService == null) {
-            licenciaService = ServiceLocator.getLicenciaService();
         }
         
         if (licenciaService == null) {
