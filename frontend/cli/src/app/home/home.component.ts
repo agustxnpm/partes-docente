@@ -82,6 +82,18 @@ export class HomeComponent {
       icon: 'bi-collection-fill',
       link: '/divisiones/new',
       color: 'secondary'
+    },
+    {
+      title: 'Parte Diario',
+      icon: 'bi-file-earmark-text',
+      link: '/licencias/parte-diario',
+      color: 'warning'
+    },
+    {
+      title: 'Reporte de Concepto',
+      icon: 'bi-person-check',
+      link: '/personas/reporte-concepto',
+      color: 'info'
     }
   ];
 
