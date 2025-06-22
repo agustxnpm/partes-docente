@@ -33,7 +33,7 @@ public class ConflictoDesignacionRule implements IDesignacionRule {
 
     @Override
     public void validate(Designacion designacion) {
-        if (designacionService != null && licenciaService != null) {
+        if (designacionService == null && licenciaService == null) {
             throw new IllegalStateException(
                     "Advertencia: Servicios no disponibles en plugin. Validación de conflictos omitida.");
 
