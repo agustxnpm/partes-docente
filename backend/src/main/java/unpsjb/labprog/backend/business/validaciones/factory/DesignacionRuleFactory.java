@@ -10,17 +10,16 @@ import unpsjb.labprog.backend.business.validaciones.plugins.designaciones.TipoDe
 
 /**
  * Fábrica para crear reglas de validación de designaciones dinámicamente
- * utilizando reflection y class loading basado en naming conventions.
+ * utilizando reflection y class loading.
  * 
  * Esta implementación permite cargar validadores como plugins sin necesidad
  * de recompilar el core de la aplicación.
  * 
- * Convención de nombres:
- * - Clase: [NombreRegla]DesignacionRule
- * - Paquete: unpsjb.labprog.backend.business.validaciones.plugins
+ * Los nombres de las clases se especifican directamente en el archivo de configuración:
+ * - Paquete: unpsjb.labprog.backend.business.validaciones.plugins.designaciones
  * - Método: getInstance() (patrón Singleton)
  * 
- * Ejemplo: "basic" -> BasicDesignacionRule
+ * Ejemplo: "BasicDesignacionRule" -> BasicDesignacionRule
  */
 public class DesignacionRuleFactory {
     
@@ -45,7 +44,7 @@ public class DesignacionRuleFactory {
      * Obtiene una regla de validación por su nombre.
      * Si no está en cache, intenta cargarla dinámicamente.
      * 
-     * @param ruleName Nombre de la regla (ej: "basic", "tipoDesignacion", "conflicto")
+     * @param ruleName Nombre completo de la clase (ej: "BasicDesignacionRule", "TipoDesignacionDesignacionRule")
      * @return La regla de validación o null si no se pudo cargar
      */
     public IDesignacionRule getRule(String ruleName) {
@@ -68,12 +67,12 @@ public class DesignacionRuleFactory {
     /**
      * Carga una regla dinámicamente usando reflection.
      * 
-     * @param ruleName Nombre de la regla
+     * @param ruleName Nombre completo de la clase
      * @return La regla cargada o null si falló
      */
     private IDesignacionRule loadRule(String ruleName) {
         try {
-            // Construir el nombre de la clase siguiendo la convención
+            // Construir el nombre completo de la clase con el paquete
             String className = buildClassName(ruleName);
             
             // Cargar la clase
@@ -103,25 +102,13 @@ public class DesignacionRuleFactory {
     }
     
     /**
-     * Construye el nombre completo de la clase siguiendo la convención.
+     * Construye el nombre completo de la clase agregando el paquete.
      * 
-     * Convención: unpsjb.labprog.backend.business.validaciones.plugins.designaciones.[NombreRegla]DesignacionRule
-     * 
-     * Ejemplos:
-     * - "basic" -> "BasicDesignacionRule"
-     * - "tipoDesignacion" -> "TipoDesignacionDesignacionRule"
-     * - "conflicto" -> "ConflictoDesignacionRule"
-     * 
-     * @param ruleName Nombre base de la regla
-     * @return Nombre completo de la clase
+     * @param ruleName Nombre completo de la clase (ej: "BasicDesignacionRule")
+     * @return Nombre completo de la clase con paquete
      */
     private String buildClassName(String ruleName) {
-        // Convertir primera letra a mayúscula
-        String capitalizedName = ruleName.substring(0, 1).toUpperCase() + 
-                                ruleName.substring(1);
-        
-        return "unpsjb.labprog.backend.business.validaciones.plugins.designaciones." + 
-               capitalizedName + "DesignacionRule";
+        return "unpsjb.labprog.backend.business.validaciones.plugins.designaciones." + ruleName;
     }
     
     /**

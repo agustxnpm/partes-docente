@@ -12,9 +12,6 @@ import unpsjb.labprog.backend.model.Licencia;
  * - Solo para artículo 19
  * - Máximo 10 días
  * - Requiere documentación (certificado)
- * 
- * El artículo 19 se registra automáticamente en el sistema mediante el
- * archivo de configuración articulos-licencia.properties.
  */
 public class Articulo19LicenciaRule implements ILicenciaRule {
 

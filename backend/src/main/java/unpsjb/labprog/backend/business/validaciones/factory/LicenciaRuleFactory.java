@@ -13,17 +13,16 @@ import unpsjb.labprog.backend.business.validaciones.plugins.licencias.Superposic
 
 /**
  * Fábrica para crear reglas de validación de licencias dinámicamente
- * utilizando reflection y class loading basado en naming conventions.
+ * utilizando reflection y class loading.
  * 
  * Esta implementación permite cargar validadores como plugins sin necesidad
  * de recompilar el core de la aplicación.
  * 
- * Convención de nombres:
- * - Clase: [NombreRegla]LicenciaRule
+ * Los nombres de las clases se especifican directamente en el archivo de configuración:
  * - Paquete: unpsjb.labprog.backend.business.validaciones.plugins.licencias
  * - Método: getInstance() (patrón Singleton)
  * 
- * Ejemplo: "basic" -> BasicLicenciaRule
+ * Ejemplo: "BasicLicenciaRule" -> BasicLicenciaRule
  */
 public class LicenciaRuleFactory {
 
@@ -48,8 +47,7 @@ public class LicenciaRuleFactory {
      * Obtiene una regla de validación por su nombre.
      * Si no está en cache, intenta cargarla dinámicamente.
      * 
-     * @param ruleName Nombre de la regla (ej: "basic", "persona", "superposicion",
-     *                 "articulo23A")
+     * @param ruleName Nombre completo de la clase (ej: "BasicLicenciaRule", "PersonaLicenciaRule")
      * @return La regla de validación o null si no se pudo cargar
      */
     public ILicenciaRule getRule(String ruleName) {
@@ -72,12 +70,12 @@ public class LicenciaRuleFactory {
     /**
      * Carga una regla dinámicamente usando reflection.
      * 
-     * @param ruleName Nombre de la regla
+     * @param ruleName Nombre completo de la clase
      * @return La regla cargada o null si falló
      */
     private ILicenciaRule loadRule(String ruleName) {
         try {
-            // Construir el nombre de la clase siguiendo la convención
+            // Construir el nombre completo de la clase con el paquete
             String className = buildClassName(ruleName);
 
             // Cargar la clase
@@ -107,27 +105,13 @@ public class LicenciaRuleFactory {
     }
 
     /**
-     * Construye el nombre completo de la clase siguiendo la convención.
+     * Construye el nombre completo de la clase agregando el paquete.
      * 
-     * Convención:
-     * unpsjb.labprog.backend.business.validaciones.plugins.licencias.[NombreRegla]LicenciaRule
-     * 
-     * Ejemplos:
-     * - "basic" -> "BasicLicenciaRule"
-     * - "persona" -> "PersonaLicenciaRule"
-     * - "superposicion" -> "SuperposicionLicenciaRule"
-     * - "articulo23A" -> "Articulo23ALicenciaRule"
-     * 
-     * @param ruleName Nombre base de la regla
-     * @return Nombre completo de la clase
+     * @param ruleName Nombre completo de la clase (ej: "BasicLicenciaRule")
+     * @return Nombre completo de la clase con paquete
      */
     private String buildClassName(String ruleName) {
-        // Convertir primera letra a mayúscula
-        String capitalizedName = ruleName.substring(0, 1).toUpperCase() +
-                ruleName.substring(1);
-
-        return "unpsjb.labprog.backend.business.validaciones.plugins.licencias." +
-                capitalizedName + "LicenciaRule";
+        return "unpsjb.labprog.backend.business.validaciones.plugins.licencias." + ruleName;
     }
 
     /**

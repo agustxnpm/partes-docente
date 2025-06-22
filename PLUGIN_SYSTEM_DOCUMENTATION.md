@@ -29,34 +29,14 @@ Plugin System
 └── validation-rules.properties      # Configuración de plugins activos
 ```
 
-## Convención de Nombres
-
-El sistema utiliza una convención específica para cargar plugins dinámicamente:
-
-- **Nombre de configuración**: `basic`, `tipoDesignacion`, `conflicto`, etc.
-- **Nombre de clase**: `[NombreRegla]DesignacionRule`
-- **Paquete**: `unpsjb.labprog.backend.business.validaciones.plugins`
-- **Método requerido**: `getInstance()` (patrón Singleton)
-
-### Ejemplos de Mapeo
-
-| Configuración | Clase Real |
-|---------------|------------|
-| `basic` | `BasicDesignacionRule` |
-| `tipoDesignacion` | `TipoDesignacionDesignacionRule` |
-| `conflicto` | `ConflictoDesignacionRule` |
-| `fechaLimite` | `FechaLimiteDesignacionRule` |
-
-## Configuración
-
 ### Archivo: `validation-rules.properties`
 
 ```properties
 # Orden de ejecución de las reglas (separadas por comas)
-rules.order=basic,tipoDesignacion,conflicto
+rules.order=BasicDesignacionRule,TipoDesignacionDesignacionRule,ConflictoDesignacionRule
 
 # Para agregar una nueva regla, simplemente agregar a la lista:
-# rules.order=basic,tipoDesignacion,conflicto,fechaLimite,nuevaRegla
+# rules.order=BasicDesignacionRule,TipoDesignacionDesignacionRule,ConflictoDesignacionRule,FechaLimiteDesignacionRule,NuevaRegla
 ```
 
 ## Cómo Crear un Nuevo Plugin
@@ -103,8 +83,8 @@ public class MiNuevoDesignacionRule implements IDesignacionRule {
 En `validation-rules.properties`:
 
 ```properties
-# Agregar 'miNuevo' a la lista
-rules.order=basic,tipoDesignacion,conflicto,miNuevo
+# Agregar 'MiNuevoDesignacionRule' a la lista
+rules.order=BasicDesignacionRule,TipoDesignacionDesignacionRule,ConflictoDesignacionRule,MiNuevoDesignacionRule
 ```
 
 ### Paso 3: ¡Listo!
@@ -194,42 +174,12 @@ public static IMiServicio getMiServicio() {
 designacionValidator.reloadRules();
 ```
 
-### Verificar Disponibilidad de Plugin
-
-```java
-DesignacionRuleFactory factory = DesignacionRuleFactory.getInstance();
-if (factory.isRuleAvailable("miNuevaRegla")) {
-    // El plugin está disponible
-}
-```
-
-### Plugin Condicional
-
-```java
-@Override
-public void validate(Designacion designacion) {
-    // Solo validar en ciertas condiciones
-    if (shouldValidate(designacion)) {
-        // Aplicar validación
-    }
-}
-```
-
-## Migración desde Sistema Anterior
-
-El nuevo sistema mantiene **100% compatibilidad** con la funcionalidad anterior:
-
-1. ✅ **Mismas validaciones**: Todas las reglas anteriores están implementadas
-2. ✅ **Mismo orden**: basic → tipoDesignacion → conflicto
-3. ✅ **Mismos errores**: Mensajes de error idénticos
-4. ✅ **Misma interfaz**: `IDesignacionValidator.validarDesignacion()` sin cambios
-
 ## Ejemplo de Extensión Futura
 
 Para agregar validación de presupuesto:
 
 1. **Crear**: `PresupuestoDesignacionRule.java`
-2. **Configurar**: Agregar `presupuesto` a `rules.order`  
+2. **Configurar**: Agregar `PresupuestoDesignacionRule` a `rules.order`  
 3. **Deploy**: El plugin se activa automáticamente
 
-¡El sistema está completamente preparado para futuras extensiones sin modificaciones al código base!
+

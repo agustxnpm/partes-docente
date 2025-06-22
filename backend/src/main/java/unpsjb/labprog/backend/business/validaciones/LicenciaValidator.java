@@ -9,8 +9,6 @@ import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-
 import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaRule;
 import unpsjb.labprog.backend.business.interfaces.validaciones.ILicenciaValidator;
 import unpsjb.labprog.backend.business.interfaces.servicios.IArticuloLicenciaService;
@@ -27,7 +25,7 @@ import unpsjb.labprog.backend.model.Licencia;
  * y pueden ser agregadas sin necesidad de recompilar el core de la aplicación.
  * 
  * Configuración: validation-rules.properties
- * Convención de nombres: [NombreRegla]LicenciaRule
+ * Los nombres de las clases se especifican directamente en el archivo de configuración.
  */
 @Component
 public class LicenciaValidator implements ILicenciaValidator {
@@ -47,15 +45,6 @@ public class LicenciaValidator implements ILicenciaValidator {
         this.configuredArticleRules = loadConfiguredArticleRules();
         registerAllArticles();
 
-    }
-    
-    /**
-     * Método que se ejecuta después de que Spring complete la inyección de dependencias.
-     * Esto asegura que todos los beans estén completamente inicializados antes de cargar los artículos.
-     */
-    @PostConstruct
-    public void inicializar() {
-        // Registrar automáticamente todos  los artículos de los plugins configurados
     }
 
     /**
@@ -191,13 +180,10 @@ public class LicenciaValidator implements ILicenciaValidator {
             return;
         }
         
-        System.out.println("LicenciaValidator: Iniciando registro de artículos...");
         try {
             // Registrar todos los artículos desde el archivo de configuración
             articuloLicenciaService.cargarArticulosDesdeConfiguracion();
-            System.out.println("LicenciaValidator: Registro de artículos completado exitosamente");
         } catch (Exception e) {
-            System.err.println("LicenciaValidator: Error durante el registro de artículos: " + e.getMessage());
             e.printStackTrace();
         }
     }

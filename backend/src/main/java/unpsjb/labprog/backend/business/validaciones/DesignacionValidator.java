@@ -23,7 +23,7 @@ import unpsjb.labprog.backend.model.Designacion;
  * y pueden ser agregadas sin necesidad de recompilar el core de la aplicación.
  * 
  * Configuración: validation-rules.properties
- * Convención de nombres: [NombreRegla]DesignacionRule
+ * Los nombres de las clases se especifican directamente en el archivo de configuración.
  */
 @Component
 public class DesignacionValidator implements IDesignacionValidator {
