@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.presenter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +55,8 @@ public class DesignacionPresenter {
                     designacionMensajeBuilder.generarMensajeExitoBorrado(designacion));
         } catch (IllegalArgumentException e) {
             return Response.badRequest(e, e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            return Response.internalServerError(e, "No se puede eliminar la designación porque tiene una licencia asignada.");
         }
     }
 
