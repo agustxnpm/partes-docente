@@ -38,24 +38,56 @@
           </h6>
           
           <div class="row align-items-end">
-            <!-- Selección de División -->
+            <!-- Selección de División con TypeAhead -->
             <div class="col-md-4">
               <label for="division" class="form-label fw-bold">División</label>
-              <select 
-                class="form-select"
-                [(ngModel)]="divisionSeleccionada"
-                (change)="onDivisionChange()"
-                [disabled]="loading"
-              >
-                <option [ngValue]="null">Seleccione una división</option>
-                <option 
-                  *ngFor="let division of divisiones" 
-                  [ngValue]="division"
+              <div class="position-relative">
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="divisionSeleccionada ? formatterDivision(divisionSeleccionada) : ''"
+                  [(ngModel)]="divisionInputValue"
+                  placeholder="Buscar por año, división, turno..."
+                  (focus)="onDivisionFocus()"
+                  (blur)="onDivisionBlur()"
+                  (input)="onDivisionInput($event)"
+                  [disabled]="loading"
+                  autocomplete="off"
+                />
+
+                <!-- Dropdown con opciones -->
+                <div
+                  *ngIf="showDivisionDropdown && divisionesFiltradas.length > 0"
+                  class="dropdown-menu show position-absolute w-100 mt-1"
+                  style="max-height: 250px; overflow-y: auto; z-index: 1050"
                 >
-                  {{division.anio}}° {{division.numDivision}}° - {{division.turno}}
-                  <span *ngIf="division.orientacion"> ({{division.orientacion}})</span>
-                </option>
-              </select>
+                  <button
+                    *ngFor="let division of divisionesFiltradas; let i = index"
+                    type="button"
+                    class="dropdown-item d-flex align-items-center py-2"
+                    (click)="selectDivision(division)"
+                    [class.active]="divisionSeleccionada?.id === division.id"
+                  >
+                    <div class="flex-grow-1">
+                      <div class="fw-bold">
+                        {{division.anio}}° {{division.numDivision}}° - {{division.turno}}
+                      </div>
+                      <small class="text-muted" *ngIf="division.orientacion">
+                        <i class="bi bi-mortarboard me-1"></i>
+                        {{division.orientacion}}
+                      </small>
+                    </div>
+                  </button>
+
+                  <!-- Mensaje cuando no hay resultados -->
+                  <div
+                    *ngIf="divisionesFiltradas.length === 0"
+                    class="dropdown-item-text text-muted"
+                  >
+                    <i class="bi bi-search me-2"></i>No se encontraron divisiones
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Navegación de semana -->

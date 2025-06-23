@@ -29,6 +29,11 @@ export class MapaHorarioComponent implements OnInit {
   divisionSeleccionada: Division | null = null;
   fechaSeleccionada: Date = new Date();
   
+  // Propiedades para typeahead de divisiones
+  showDivisionDropdown = false;
+  divisionesFiltradas: Division[] = [];
+  divisionInputValue: string = '';
+  
   // Para navegación semanal
   fechaInicio: Date = new Date();
   fechaFin: Date = new Date();
@@ -59,6 +64,7 @@ export class MapaHorarioComponent implements OnInit {
     this.horarioService.obtenerDivisionesDisponibles().subscribe({
       next: (response) => {
         this.divisiones = response.data as Division[];
+        this.divisionesFiltradas = [...this.divisiones]; // inicializar filtradas
         this.loading = false;
       },
       error: (error) => {
@@ -200,4 +206,56 @@ export class MapaHorarioComponent implements OnInit {
       year: 'numeric'
     });
   }
+
+  // Métodos para el typeahead de divisiones
+  onDivisionFocus(): void {
+    this.showDivisionDropdown = true;
+    this.divisionesFiltradas = [...this.divisiones];
+  }
+
+  onDivisionBlur(): void {
+    // Delay para permitir click en opciones
+    setTimeout(() => {
+      this.showDivisionDropdown = false;
+    }, 150);
+  }
+
+  onDivisionInput(event: any): void {
+    const term = event.target.value.toLowerCase();
+    this.divisionInputValue = event.target.value;
+    
+    // Si se borra el contenido, limpiar la selección
+    if (term.length === 0) {
+      this.divisionSeleccionada = null;
+      this.divisionesFiltradas = [...this.divisiones];
+      this.mapaHorario = null; // Limpiar el mapa cuando no hay división seleccionada
+    } else {
+      this.divisionesFiltradas = this.divisiones.filter(
+        (division) =>
+          division.anio?.toString().includes(term) ||
+          division.numDivision?.toString().includes(term) ||
+          division.turno?.toLowerCase().includes(term) ||
+          division.orientacion?.toLowerCase().includes(term) ||
+          `${division.anio}°${division.numDivision}°`.includes(term) ||
+          `${division.anio} ${division.numDivision}`.includes(term)
+      );
+    }
+    this.showDivisionDropdown = true;
+  }
+
+  selectDivision(division: Division): void {
+    this.divisionSeleccionada = division;
+    this.divisionInputValue = this.formatterDivision(division);
+    this.showDivisionDropdown = false;
+    this.onDivisionChange(); // Mantener la funcionalidad existente
+  }
+
+  formatterDivision = (division: Division) => {
+    if (!division) return "";
+    let texto = `${division.anio}° ${division.numDivision}° - ${division.turno}`;
+    if (division.orientacion) {
+      texto += ` (${division.orientacion})`;
+    }
+    return texto;
+  };
 }

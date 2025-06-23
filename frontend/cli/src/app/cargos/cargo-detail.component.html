@@ -160,26 +160,65 @@
           class="col-md-6"
           *ngIf="cargo.tipoDesignacion === TipoDesignacion.ESPACIO_CURRICULAR"
         >
-          <label for="division" class="form-label required-field"
-            >División</label
-          >
-          <select
-            class="form-select enhanced-select"
-            [ngClass]="{
-              'is-invalid':
-                division.invalid && (division.dirty || division.touched)
-            }"
-            [(ngModel)]="cargo.division"
-            name="division"
-            #division="ngModel"
-            (change)="onDivisionChange()"
-            required
-          >
-            <option [ngValue]="null">Seleccione una división</option>
-            <option *ngFor="let div of divisiones" [ngValue]="div">
-              {{ div.anio }}° {{ div.numDivision }}º - {{ div.turno }}
-            </option>
-          </select>
+          <label for="division" class="form-label required-field">
+            <i class="bi bi-mortarboard-fill text-primary me-1"></i>
+            División
+          </label>
+
+          <div class="position-relative">
+            <input
+              type="text"
+              class="form-control enhanced-input"
+              [ngClass]="{
+                'is-invalid':
+                  (!cargo.division && cargo.tipoDesignacion === TipoDesignacion.ESPACIO_CURRICULAR) ||
+                  (divisionInput.invalid && divisionInput.touched)
+              }"
+              [value]="cargo.division ? formatterDivision(cargo.division) : ''"
+              name="division"
+              #divisionInput="ngModel"
+              [(ngModel)]="divisionInputValue"
+              placeholder="Buscar por año, división, turno..."
+              (focus)="onDivisionFocus()"
+              (blur)="onDivisionBlur()"
+              (input)="onDivisionInput($event)"
+              autocomplete="off"
+              required
+            />
+
+            <!-- Dropdown con opciones -->
+            <div
+              *ngIf="showDivisionDropdown && divisionesFiltradas.length > 0"
+              class="dropdown-menu show position-absolute w-100 mt-1"
+              style="max-height: 250px; overflow-y: auto; z-index: 1050"
+            >
+              <button
+                *ngFor="let division of divisionesFiltradas; let i = index"
+                type="button"
+                class="dropdown-item d-flex align-items-center py-2"
+                (click)="selectDivision(division)"
+                [class.active]="cargo.division?.id === division.id"
+              >
+                <div class="flex-grow-1">
+                  <div class="fw-bold">
+                    {{ division.anio }}° {{ division.numDivision }}º
+                  </div>
+                  <small class="text-muted">
+                    <i class="bi bi-clock me-1"></i>
+                    Turno: {{ division.turno }}
+                  </small>
+                </div>
+              </button>
+
+              <!-- Mensaje cuando no hay resultados -->
+              <div
+                *ngIf="divisionesFiltradas.length === 0"
+                class="dropdown-item-text text-muted"
+              >
+                <i class="bi bi-search me-2"></i>No se encontraron divisiones
+              </div>
+            </div>
+          </div>
 
           <!-- Preview de la división seleccionada -->
           <div class="mt-2" *ngIf="cargo.division">
@@ -196,7 +235,7 @@
 
           <small
             class="error-message"
-            *ngIf="division.invalid && (division.dirty || division.touched)"
+            *ngIf="divisionInput.invalid && divisionInput.touched"
           >
             Campo obligatorio para espacios curriculares
           </small>

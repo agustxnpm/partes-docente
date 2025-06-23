@@ -48,6 +48,11 @@ export class CargoDetailComponent {
   horasUnicas: number[] = [];
   cargosEnDivision: Cargo[] = []; // Para validación de conflictos
 
+  // Propiedades para typeahead de divisiones
+  showDivisionDropdown = false;
+  divisionesFiltradas: Division[] = [];
+  divisionInputValue: string = '';
+
   constructor(
     private cargoService: CargoService,
     private divisionService: DivisionService,
@@ -71,6 +76,7 @@ export class CargoDetailComponent {
 
       if (id === "new") {
         this.isNew = true;
+        this.divisionInputValue = '';
       } else {
         this.isNew = false;
         this.cargoService.findById(Number(id)).subscribe({
@@ -80,6 +86,10 @@ export class CargoDetailComponent {
             if (!this.cargo.horario) {
               this.cargo.horario = [];
             }
+            
+            // Inicializar el valor del input de división
+            this.divisionInputValue = this.cargo.division ? this.formatterDivision(this.cargo.division) : '';
+            
             // Cargar cargos de la división si es un espacio curricular
             if (this.cargo.tipoDesignacion === 'ESPACIO_CURRICULAR' && this.cargo.division) {
               this.cargarCargosEnDivision();
@@ -98,6 +108,7 @@ export class CargoDetailComponent {
     this.divisionService.findAll().subscribe({
       next: (response) => {
         this.divisiones = response.data as Division[];
+        this.divisionesFiltradas = [...this.divisiones]; // inicializar filtradas
 
         // Si estamos editando un cargo con división, asegurarse de que la división coincida
         if (!this.isNew && this.cargo.division) {
@@ -393,4 +404,50 @@ export class CargoDetailComponent {
     }
     this.cargo.horario.splice(index, 1);
   }
+
+  // Métodos para el typeahead de divisiones
+  onDivisionFocus(): void {
+    this.showDivisionDropdown = true;
+    this.divisionesFiltradas = [...this.divisiones];
+  }
+
+  onDivisionBlur(): void {
+    // Delay para permitir click en opciones
+    setTimeout(() => {
+      this.showDivisionDropdown = false;
+    }, 150);
+  }
+
+  onDivisionInput(event: any): void {
+    const term = event.target.value.toLowerCase();
+    this.divisionInputValue = event.target.value;
+    
+    // Si se borra el contenido, limpiar la selección
+    if (term.length === 0) {
+      this.cargo.division = null;
+      this.divisionesFiltradas = [...this.divisiones];
+    } else {
+      this.divisionesFiltradas = this.divisiones.filter(
+        (division) =>
+          division.anio?.toString().includes(term) ||
+          division.numDivision?.toString().includes(term) ||
+          division.turno?.toLowerCase().includes(term) ||
+          `${division.anio}°${division.numDivision}°`.includes(term) ||
+          `${division.anio} ${division.numDivision}`.includes(term)
+      );
+    }
+    this.showDivisionDropdown = true;
+  }
+
+  selectDivision(division: Division): void {
+    this.cargo.division = division;
+    this.divisionInputValue = this.formatterDivision(division);
+    this.showDivisionDropdown = false;
+    this.onDivisionChange(); // Mantener la funcionalidad existente
+  }
+
+  formatterDivision = (division: Division) => {
+    if (!division) return "";
+    return `${division.anio}° ${division.numDivision}º - ${division.turno}`;
+  };
 }
