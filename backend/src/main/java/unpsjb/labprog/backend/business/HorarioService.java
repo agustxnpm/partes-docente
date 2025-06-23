@@ -1,5 +1,6 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +140,9 @@ public class HorarioService implements IHorarioService {
                 configurarHoraLibre(horarioMapa);
             } else {
                 Cargo cargo = cargosEspaciosCurriculares.get(0);
-                procesarCargoConHorario(horarioMapa, cargo, fechaInicio, fechaFin);
+                // Calcular la fecha específica del día que se está procesando
+                LocalDate fechaEspecifica = calcularFechaEspecificaDelDia(dia, fechaInicio, fechaFin);
+                procesarCargoConHorario(horarioMapa, cargo, fechaEspecifica, fechaFin);
             }
 
         } catch (Exception e) {
@@ -198,28 +201,29 @@ public class HorarioService implements IHorarioService {
      * Procesa un cargo que tiene horario asignado
      */
     private void procesarCargoConHorario(HorarioMapaDTO horarioMapa, Cargo cargo,
-            LocalDate fechaInicio, LocalDate fechaFin) {
+            LocalDate fechaEspecifica, LocalDate fechaFin) {
         horarioMapa.setEspacioCurricular(cargo.getNombre());
         horarioMapa.setHoraLibre(false);
 
-        Optional<Designacion> designacionActiva = buscarDesignacionTitular(cargo, fechaInicio, fechaFin);
+        // Usar la fecha específica del día para buscar la designación activa
+        Optional<Designacion> designacionActiva = buscarDesignacionTitular(cargo, fechaEspecifica);
 
         if (designacionActiva.isPresent()) {
-            procesarDesignacionActiva(horarioMapa, designacionActiva.get(), cargo, fechaInicio);
+            procesarDesignacionActiva(horarioMapa, designacionActiva.get(), cargo, fechaEspecifica);
         } else {
             configurarSinDocenteAsignado(horarioMapa);
         }
     }
 
     /**
-     * Busca la designación titular activa para un cargo en el período dado
+     * Busca la designación titular activa para un cargo en una fecha específica
      */
-    private Optional<Designacion> buscarDesignacionTitular(Cargo cargo, LocalDate fechaInicio, LocalDate fechaFin) {
+    private Optional<Designacion> buscarDesignacionTitular(Cargo cargo, LocalDate fecha) {
         return designacionService.findAll().stream()
                 .filter(d -> d.getCargo().getId() == cargo.getId())
-                .filter(d -> !d.getFechaInicio().isAfter(fechaFin))
-                .filter(d -> d.getFechaFin() == null || !d.getFechaFin().isBefore(fechaInicio))
                 .filter(d -> "Titular".equalsIgnoreCase(d.getSituacionRevista()))
+                .filter(d -> !d.getFechaInicio().isAfter(fecha))
+                .filter(d -> d.getFechaFin() == null || !d.getFechaFin().isBefore(fecha))
                 .findFirst();
     }
 
@@ -227,11 +231,11 @@ public class HorarioService implements IHorarioService {
      * Procesa una designación activa verificando licencias y suplencias
      */
     private void procesarDesignacionActiva(HorarioMapaDTO horarioMapa, Designacion designacion,
-            Cargo cargo, LocalDate fechaInicio) {
+            Cargo cargo, LocalDate fechaEspecifica) {
         Persona docente = designacion.getPersona();
 
-        if (docenteTieneLicencia(docente.getId(), fechaInicio)) {
-            procesarDocenteConLicencia(horarioMapa, cargo, fechaInicio);
+        if (docenteTieneLicencia(docente.getId(), fechaEspecifica)) {
+            procesarDocenteConLicencia(horarioMapa, cargo, fechaEspecifica);
         } else {
             configurarDocenteTitular(horarioMapa, docente);
         }
@@ -240,8 +244,8 @@ public class HorarioService implements IHorarioService {
     /**
      * Procesa el caso cuando el docente titular tiene licencia
      */
-    private void procesarDocenteConLicencia(HorarioMapaDTO horarioMapa, Cargo cargo, LocalDate fechaInicio) {
-        String suplente = obtenerSuplenteParaCargo(cargo.getId(), fechaInicio);
+    private void procesarDocenteConLicencia(HorarioMapaDTO horarioMapa, Cargo cargo, LocalDate fechaEspecifica) {
+        String suplente = obtenerSuplenteParaCargo(cargo.getId(), fechaEspecifica);
 
         if (suplente != null && !suplente.isEmpty()) {
             configurarSuplente(horarioMapa, suplente);
@@ -298,11 +302,23 @@ public class HorarioService implements IHorarioService {
     }
 
     private String obtenerSuplenteParaCargo(Long cargoId, LocalDate fecha) {
+        // Buscar la designación suplente activa para la fecha específica
         Optional<Designacion> suplencia = designacionService.findAll().stream()
                 .filter(d -> d.getCargo().getId() == cargoId)
                 .filter(d -> "Suplente".equalsIgnoreCase(d.getSituacionRevista()))
                 .filter(d -> !d.getFechaInicio().isAfter(fecha))
                 .filter(d -> d.getFechaFin() == null || !d.getFechaFin().isBefore(fecha))
+                .sorted((d1, d2) -> {
+                    // Priorizar designaciones más específicas (con fecha fin) sobre las indefinidas
+                    if (d1.getFechaFin() != null && d2.getFechaFin() == null) return -1;
+                    if (d1.getFechaFin() == null && d2.getFechaFin() != null) return 1;
+                    // Si ambas tienen fecha fin, priorizar la más reciente
+                    if (d1.getFechaFin() != null && d2.getFechaFin() != null) {
+                        return d2.getFechaInicio().compareTo(d1.getFechaInicio());
+                    }
+                    // Si ambas son indefinidas, priorizar la más reciente
+                    return d2.getFechaInicio().compareTo(d1.getFechaInicio());
+                })
                 .findFirst();
 
         if (suplencia.isPresent()) {
@@ -343,6 +359,44 @@ public class HorarioService implements IHorarioService {
             .filter(d -> d.getId() == divisionId.longValue())
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("División no encontrada con ID: " + divisionId));
+    }
+
+    /**
+     * Calcula la fecha específica para un día de la semana dentro del rango dado
+     */
+    private LocalDate calcularFechaEspecificaDelDia(String dia, LocalDate fechaInicio, LocalDate fechaFin) {
+        // Mapear el nombre del día al DayOfWeek
+        DayOfWeek diaSemana;
+        switch (dia.toUpperCase()) {
+            case "LUNES":
+                diaSemana = DayOfWeek.MONDAY;
+                break;
+            case "MARTES":
+                diaSemana = DayOfWeek.TUESDAY;
+                break;
+            case "MIERCOLES":
+                diaSemana = DayOfWeek.WEDNESDAY;
+                break;
+            case "JUEVES":
+                diaSemana = DayOfWeek.THURSDAY;
+                break;
+            case "VIERNES":
+                diaSemana = DayOfWeek.FRIDAY;
+                break;
+            default:
+                return fechaInicio; // Fallback
+        }
+
+        // Buscar la fecha específica del día dentro del rango
+        LocalDate fechaActual = fechaInicio;
+        while (!fechaActual.isAfter(fechaFin)) {
+            if (fechaActual.getDayOfWeek() == diaSemana) {
+                return fechaActual;
+            }
+            fechaActual = fechaActual.plusDays(1);
+        }
+
+        return fechaInicio; // Fallback si no se encuentra el día
     }
 
 }
