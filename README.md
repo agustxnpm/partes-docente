@@ -3,7 +3,7 @@
 # Novedades Docentes Secundarios
 
 Para la instalación y configuración del entorno de desarrollo es necesario seguir el siguiente 
-<a href="https://git.fi.mdn.unp.edu.ar/labprog/talleres/taller-restful-uix" target="_blank">INSTRUCTIVO</a>
+<a href="https://github.com/agustxnpm/partes-docente/blob/main/Setup/INSTRUCTIVO.md" target="_blank">INSTRUCTIVO</a>
 
 ---
 
